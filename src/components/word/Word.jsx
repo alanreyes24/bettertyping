@@ -1,23 +1,18 @@
-import React from 'react'
 
 
-const words = ["miles", "reyes"]
+const words = ["miles", "reyes", "drip", "swag", "end"]
 
-
-
-const generateWord = () => {
-
-    const word = words[0].split("");
-    console.log(word)
-
-    return word.map(item => <div className='letter' key={item}>{item}</div>)
-
-}
 
 function Word() {
+
+    const word = words[Math.floor(Math.random() * 5)].split("");
+
+    let test = word.map((item) => <div className='letter' key={item}>{item}</div>)
+
+
     return (
 
-        generateWord()
+        test
 
     )
 }
