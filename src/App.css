@@ -1,0 +1,13 @@
+.letter {
+  font-size: 7rem;
+}
+
+.correct {
+  font-size: 7rem;
+  color: green;
+}
+
+.incorrect {
+  font-size: 7rem;
+  color: red;
+}
