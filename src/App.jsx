@@ -32,7 +32,7 @@ function App() {
 
       }}>Start</button>
       <Timer time={timerLength} start={startTimer} />
-      <Cursor />
+      {/* <Cursor /> */}
       <TextArea />
 
     </div>

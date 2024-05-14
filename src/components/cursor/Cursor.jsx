@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react'
 
 function Cursor(props) {
 
-
-
     const getOffset = (element) => {
         console.log('getoffset called')
         const rect = element.getBoundingClientRect();

@@ -1,17 +1,26 @@
+:root {
+  --fontSize: 4rem;
+}
+
 .letter {
-  font-size: 7rem;
+  font-size: var(--fontSize);
 }
 
 .correct {
-  font-size: 7rem;
-  color: green;
+  font-size: var(--fontSize);
+  color: #30ff40;
+  opacity: 1;
 }
 
 .incorrect {
-  font-size: 7rem;
-  color: red;
+  font-size: var(--fontSize);
+  color: #ff2020;
 }
 
 .space {
   padding-left: 2.2rem;
+}
+
+.next {
+  background-color: #90909020;
 }
