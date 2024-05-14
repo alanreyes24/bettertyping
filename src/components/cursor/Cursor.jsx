@@ -25,7 +25,6 @@ function Cursor(props) {
         console.log(letterX)
         console.log(letterY)
 
-
         document.getElementById('cursor').style.position = "absolute"
         document.getElementById('cursor').style.top = letterY + 'px'
         document.getElementById('cursor').style.left = letterX + 'px'
