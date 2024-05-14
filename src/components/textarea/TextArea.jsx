@@ -47,7 +47,7 @@ function TextArea() {
                 focusInput()
                 console.log("click")
             }} className='type-box' style={{ margin: "4rem", background: '#404040', display: "flex", flex: 1, width: "100%", height: "100%" }}>
-                {Array(5).fill(true).map((_, i) => <Word key={i} />)}
+                {Array(5).fill(false).map((_, i) => <Word key={i} />)}
             </div>
         </>
 
