@@ -9,7 +9,7 @@ import Cursor from "./components/cursor/Cursor";
 function App() {
   const [startTimer, setStartTimer] = useState(false);
   const [stopTimer, setStopTimer] = useState(false);
-  const [timerLength, setTimerLength] = useState(30.0);
+  const [timerLength, setTimerLength] = useState(30);
   const [timerZero, setTimerZero] = useState(false);
   const [isTextFinished, setIsTextFinished] = useState(false);
   const [correctLetters, setCorrectLetters] = useState(0);

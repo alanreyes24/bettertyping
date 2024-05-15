@@ -3,6 +3,7 @@ import Word from "../word/Word";
 import Cursor from "../cursor/Cursor";
 
 function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onTextStarted }) {
+    
     const focusInput = () => {
         document.getElementById("input").focus();
     };
@@ -50,6 +51,9 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
         // check to see if on the last space (know when to end the test)
         if (document.getElementsByClassName("letter").length == 1) {
             // give credit for last word since we're skipping the space at the end
+            let currentLetter = document.getElementsByClassName("letter")[0];
+            currentLetter.classList.remove("next");
+
             setTotalCorrectWords(totalCorrectWords + 1);
             passCorrectWords(totalCorrectWords);
             //passes the prop onTextFinished which is a callback function to an App state
@@ -76,7 +80,7 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
                     // focus input & adds next class to first letter
                     focusInput();
 
-                    document.getElementsByClassName("letter")[0].classList.add("next");
+                    document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
                 }}
                 className="type-box"
                 style={{
