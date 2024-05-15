@@ -1,16 +1,33 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
-function Timer(props) {
-    const [timeLeft, setTimeLeft] = React.useState(props.time);
+function Timer({ time, start, stop, onTimerZero, passTimeLeft }) {
+    const [timeLeft, setTimeLeft] = useState(time);
 
     useEffect(() => {
-        console.log(props.start);
+        // console.log(start);
 
-        if (props.start && timeLeft > 0) {
-            setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+        if (start && timeLeft > 0) {
+
+            setTimeout(() => setTimeLeft(timeLeft - 1), 100);
         }
-    }, [props.start, timeLeft, props.time]);
+        if (timeLeft == 0) {
+            onTimerZero()
+            // console.log(onTimerZero)
+        }
 
+        if (!start) {
+            console.log('should pass time left here')
+            console.log(timeLeft)
+            passTimeLeft(timeLeft)
+        }
+
+
+
+    }, [start, stop, timeLeft,]);
+
+
+
+    //MAKE THIS HAVE DECIMAL instead of "300" ie 30.0
     return <div>{timeLeft}</div>;
 }
 
