@@ -53,6 +53,8 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
             // give credit for last word since we're skipping the space at the end
             let currentLetter = document.getElementsByClassName("letter")[0];
             currentLetter.classList.remove("next");
+            currentLetter.classList.remove("letter");
+
 
             setTotalCorrectWords(totalCorrectWords + 1);
             passCorrectWords(totalCorrectWords);
