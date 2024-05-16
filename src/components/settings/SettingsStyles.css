@@ -1,5 +1,6 @@
 .modal__container {
   transition: all 0.15s ease;
+
   display: flex;
   flex: 1;
   /* background-color: #273356; */
@@ -50,6 +51,7 @@
 }
 
 .modal__small__container {
+  transition: all 0.15s ease-out;
   display: flex;
   flex: 1;
   /* background-color: #273356; */

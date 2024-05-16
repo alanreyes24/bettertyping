@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 
-function Cursor() {
+function Cursor({ shouldUpdate }) {
+
+
 
     const getOffset = (element) => {
         const rect = element.getBoundingClientRect();
@@ -13,7 +15,6 @@ function Cursor() {
     const updateCursor = () => {
 
         if (document.getElementsByClassName('letter').length > 0) {
-
 
             let currentLetter = document.getElementsByClassName('letter')[0]
 
@@ -32,7 +33,11 @@ function Cursor() {
     useEffect(() => {
 
         updateCursor()
-
+        if (!shouldUpdate) {
+            document.getElementById('cursor').style.opacity = 0;
+        } else {
+            document.getElementById('cursor').style.opacity = 1;
+        }
     })
 
     return (

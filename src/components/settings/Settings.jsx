@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 
 import "./SettingsStyles.css";
 
-function Settings({ passSettings }) {
+function Settings({ passSettings, hideModal }) {
     const [modalVisible, setModalVisible] = React.useState(false);
     const [testType, setTestType] = React.useState("time");
     const [testLength, setTestLength] = React.useState(30);
@@ -13,8 +13,16 @@ function Settings({ passSettings }) {
             type: testType,
             length: testLength,
             count: testWordCount,
+            visible: modalVisible
         });
-    }, [testType, testLength, testWordCount, passSettings]);
+    }, [testType, testLength, testWordCount, modalVisible, passSettings]);
+
+    useEffect(() => {
+        if (modalVisible) {
+            setModalVisible(!hideModal)
+        }
+
+    }, [hideModal, modalVisible])
 
     return (
 
@@ -157,7 +165,7 @@ function Settings({ passSettings }) {
 
                 <div
                     className="modal__close"
-                    style={{ alignSelf: "flex-end", color: "#FF5757" }}
+                    style={{ alignSelf: "center", color: "#FF5757" }}
                 >
                     <a onClick={() => {
                         setModalVisible(!modalVisible)

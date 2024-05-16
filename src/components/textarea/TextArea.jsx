@@ -1,28 +1,59 @@
 import React, { Component, createElement, useEffect, useState } from "react";
 import Word from "../word/Word";
 import Cursor from "../cursor/Cursor";
-import './TextAreaStyles.css'
+import "./TextAreaStyles.css";
 
-function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onTextStarted }) {
-
-    const focusInput = () => {
-        document.getElementById("input").focus();
-    };
-
-    useEffect(() => {
-        // focusInput();
-    });
-
+function TextArea({
+    onTextFinished,
+    passCorrectLetters,
+    passCorrectWords,
+    onTextStarted,
+    onFocus,
+    onFocusLost,
+    settings,
+}) {
+    const [wordList, setWordList] = useState({});
+    const [wordsLoaded, setWordsLoaded] = useState(false)
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
 
-    const handleUserInput = (event) => {
+    const focusInput = () => {
+        document.getElementById("input").focus();
+        onFocus();
+    };
 
+    //async function to get wordMap because it takes a second
+    const wordMap = (amount) => {
+        return new Promise((resolve) => {
+
+            resolve(
+
+                Array(amount)
+                    .fill(false)
+                    .map((_, i) => (
+                        <div key={i} className="word">
+                            <Word key={i} />{" "}
+                        </div>
+                    ))
+            );
+        });
+    };
+
+    async function populateWordList(amount) {
+        const result = await wordMap(amount);
+        setWordsLoaded(true);
+        setWordList(result);
+    }
+
+    useEffect(() => {
+        populateWordList(settings.count)
+    }, [settings.type, settings.count]);
+
+    const handleUserInput = (event) => {
         //if user inputs anything start the timer
-        onTextStarted()
+        onTextStarted();
 
         let input = event.target.value;
-        console.log(input);
 
         let currentLetter = document.getElementsByClassName("letter")[0];
         let nextLetter = document.getElementsByClassName("letter")[1];
@@ -34,7 +65,6 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
 
                 passCorrectLetters(totalCorrectLetters);
             } else if (currentLetter.textContent == " ") {
-
                 setTotalCorrectWords(totalCorrectWords + 1);
                 //passes correct words callback with data
                 passCorrectWords(totalCorrectWords);
@@ -56,7 +86,6 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
             currentLetter.classList.remove("next");
             currentLetter.classList.remove("letter");
 
-
             setTotalCorrectWords(totalCorrectWords + 1);
             passCorrectWords(totalCorrectWords);
             //passes the prop onTextFinished which is a callback function to an App state
@@ -67,6 +96,9 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
     return (
         <>
             <input
+                onBlur={() => {
+                    onFocusLost();
+                }}
                 id="input"
                 onChange={(event) => {
                     //stops error when no letters left
@@ -86,15 +118,9 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
                     document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
                 }}
                 className="type-box"
-                style={{
-                }}
+                style={{}}
             >
-                {Array(30)
-                    .fill(false)
-                    .map((_, i) => (
-                        <div key={i} className="word">
-                            <Word key={i} /> </div>
-                    ))}
+                {wordsLoaded == true ? <> {wordList} </> : <></>}
             </div>
         </>
     );
