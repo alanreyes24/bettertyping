@@ -44,7 +44,7 @@ function Cursor(props) {
     })
 
     return (
-        <div id='cursor' style={{ marginLeft: '0.4rem', backgroundColor: 'gold', height: '1.75rem', width: "0.1rem", transition: "all .15s ease-out", position: 'absolute', }} />
+        <div id='cursor' style={{ marginLeft: '0.4rem', backgroundColor: 'white', height: '1.75rem', width: "0.1rem", transition: "all .15s ease-out", position: 'absolute', }} />
 
     )
 }
