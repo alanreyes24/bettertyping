@@ -9,3 +9,10 @@ body {
   margin: 0;
   overflow-x: hidden;
 }
+
+a:hover {
+  cursor: pointer;
+  display: inline-block;
+  transform: scale(1.05);
+  transition: "all .15s ease-out";
+}

@@ -8,6 +8,8 @@
   padding: 1rem;
   min-width: 30rem;
   max-width: 40rem;
+  min-height: 15rem;
+  max-height: 15rem;
 }
 
 .modal__subcontainer {
@@ -19,12 +21,18 @@
 
 .modal__option__container {
   display: flex;
+  flex: 1;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 1rem;
 }
 
 .modal__title {
   font-size: 1rem;
   font-weight: 300;
   letter-spacing: 0.07rem;
+  align-self: center;
+  margin-top: 1rem;
 }
 
 .modal__option {
