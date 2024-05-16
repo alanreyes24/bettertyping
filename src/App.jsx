@@ -5,6 +5,7 @@ import TextArea from "./components/textarea/TextArea";
 
 import { React, useState, useEffect } from "react";
 import Cursor from "./components/cursor/Cursor";
+import Settings from "./components/settings/Settings";
 
 function App() {
   const [startTimer, setStartTimer] = useState(false);
@@ -51,50 +52,15 @@ function App() {
         width: "100vw",
         height: "100vh",
         flexDirection: "column",
+        justifyContent: 'center'
       }}
     >
-      <div>
-        <button
-          onClick={() => {
-            setStartTimer(false);
-            console.log("set timer to 15");
-            setTimerLength(15);
-          }}
-        >
-          15
-        </button>
-        <button
-          onClick={() => {
-            setStartTimer(false);
-            setTimerLength(30);
-          }}
-        >
-          30
-        </button>
-        <button
-          onClick={() => {
-            setStartTimer(false);
-            setTimerLength(60);
-          }}
-        >
-          60
-        </button>
-        <button
-          onClick={() => {
-            console.log("start");
-            startTest();
-          }}
-        >
-          Start
-        </button>
-        <button
-          onClick={() => {
-            console.log("stop");
-            stopTest();
-          }}
-        >
-          Stop
-        </button>
+      <div style={{ alignSelf: 'center' }}>
+
+
+        <Settings />
+
+
         <Timer
           time={timerLength}
           start={startTimer}
@@ -112,6 +78,7 @@ function App() {
         {WPM < Infinity ? <>{"WPM: " + WPM}</> : <>{"WPM: 0"}</>}
       </div>
 
+
       <Cursor />
       <TextArea
         passCorrectLetters={setCorrectLetters}
@@ -124,6 +91,7 @@ function App() {
           stopTest();
         }}
       />
+
     </div>
   );
 }

@@ -5,12 +5,12 @@
 
 .letter {
   font-size: var(--fontSize);
-  color: #a99985a0;
+  color: #818181;
 }
 
 .correct {
   font-size: var(--fontSize);
-  color: #dad2bc;
+  color: #fff;
   opacity: 1;
 }
 
