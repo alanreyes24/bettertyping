@@ -104,10 +104,10 @@ function App() {
             display: "flex",
             alignSelf: "center",
             justifyContent: "center",
+          }} >
 
-          <Login />
           <Cursor />
-
+          <Login />
           <TextArea
             passCorrectLetters={setNumOfCorrectLetters}
             passCorrectWords={setNumOfCorrectWords}
@@ -119,6 +119,7 @@ function App() {
               stopTest();
             }}
           />
+
         </div>
       </div>
     </>
