@@ -4,11 +4,12 @@
 
 .letter {
   font-size: var(--fontSize);
+  color: #a8a8a8;
 }
 
 .correct {
   font-size: var(--fontSize);
-  color: #30ff40;
+  color: #fff;
   opacity: 1;
 }
 
