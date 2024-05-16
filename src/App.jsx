@@ -7,6 +7,7 @@ import { React, useState, useEffect } from "react";
 import Cursor from "./components/cursor/Cursor";
 import Settings from "./components/settings/Settings";
 import Header from "./components/header/Header";
+import Login from "./components/login/Login";
 
 function App() {
   // organized all of the states to be cleaner and follow conventions
@@ -103,9 +104,8 @@ function App() {
             display: "flex",
             alignSelf: "center",
             justifyContent: "center",
-          }}
-        >
 
+          <Login />
           <Cursor />
 
           <TextArea
