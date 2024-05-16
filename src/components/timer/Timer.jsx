@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from "react";
 
-function Timer({ time, start, stop, onTimerZero, changeTimerOption }) {
-    
-    const [timeLeft, setTimeLeft] = useState(time);    
+function Timer({ time, start, stop, onTimerZero, passTimeLeft }) {
+
+    const [timeLeft, setTimeLeft] = useState(time);
     useEffect(() => {
 
-        changeTimerOption(timeLeft)
+        passTimeLeft(timeLeft)
 
         if (!start) {
 
-            changeTimerOption(timeLeft);
+            passTimeLeft(timeLeft);
         }
 
         if (start && timeLeft > 0) {

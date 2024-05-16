@@ -64,63 +64,48 @@ function App() { // organized all of the states to be cleaner and follow convent
         width: "100vw",
         height: "100vh",
         flexDirection: "column",
-        justifyContent: 'center'
+        justifyContent: 'center',
+        // overflowY: 'hidden'
       }}
     >
-      <div style={{ alignSelf: 'center' }}>
 
+      <div style={{ alignSelf: 'center' }}>
 
         <Settings />
 
-
         <Timer
           time={timerLength}
-          // start={startTimer}
-          // stop={stopTimer}
+          start={isTimerActive}
+          stop={isTimerActive}
           onTimerZero={() => {
-            stopTest();
             setIsTimerZero(!isTimerZero);
           }}
           passTimeLeft={setTimeLeft}
         />
 
-        <div style={{
-          display: 'flex', width: '100vw',
-          height: '100vh', flexDirection: 'column'
-        }}>
+        {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
+        {" LETTERS " + numOfCorrectLetters}
+        {" WORDS " + numOfCorrectWords}
+        {currentTestWPM < Infinity ? <>{"WPM: " + currentTestWPM}</> : <>{"WPM: 0"}</>}
 
-          <Timer
-            time={timerLength}
-            start={isTimerActive}
-            stop={isTimerActive}
-            onTimerZero={() => {
-              setIsTimerZero(!isTimerZero);
-            }}
-            changeTimerOption={setTimeLeft}
-          />
-
-          {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
-          {" LETTERS " + numOfCorrectLetters}
-          {" WORDS " + numOfCorrectWords}
-          {currentTestWPM < Infinity ? <>{"WPM: " + currentTestWPM}</> : <>{"WPM: 0"}</>}
-          <Cursor />
-
-          <TextArea
-            passCorrectLetters={setNumOfCorrectLetters}
-            passCorrectWords={setNumOfCorrectWords}
-            onTextStarted={() => {
-              setIsTimerActive(true)
-
-            }}
-            onTextFinished={() => {
-              setIsTextFinished(!isTextFinished);
-              stopTest();
-            }}
-          />
-
-        </div>
 
       </div>
+
+      <Cursor />
+      <TextArea
+        passCorrectLetters={setNumOfCorrectLetters}
+        passCorrectWords={setNumOfCorrectWords}
+        onTextStarted={() => {
+          setIsTimerActive(true)
+
+        }}
+        onTextFinished={() => {
+          setIsTextFinished(!isTextFinished);
+          stopTest();
+        }}
+      />
+
+
     </div>
   );
 }
