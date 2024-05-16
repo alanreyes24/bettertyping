@@ -14,5 +14,5 @@ a:hover {
   cursor: pointer;
   display: inline-block;
   transform: scale(1.05);
-  transition: "all .15s ease-out";
+  transition: all 0.15s ease;
 }

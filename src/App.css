@@ -1,5 +1,6 @@
 :root {
   --fontSize: 1.5rem;
+  letter-spacing: 0.05em;
   font-family: "Montserrat", sans-serif;
 }
 

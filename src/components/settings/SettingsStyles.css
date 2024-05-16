@@ -1,7 +1,8 @@
 .modal__container {
+  transition: all 0.15s ease;
   display: flex;
   flex: 1;
-  background-color: #273356;
+  /* background-color: #273356; */
   align-self: center;
   flex-direction: column;
   border-radius: 15px;
@@ -46,4 +47,26 @@
   font-size: 1.75rem;
   font-weight: 600;
   color: #fff;
+}
+
+.modal__small__container {
+  display: flex;
+  flex: 1;
+  /* background-color: #273356; */
+  align-self: center;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  padding: 1rem;
+  width: 20rem;
+  min-height: 1rem;
+  max-height: 1rem;
+  transition: all 0.15s ease;
+}
+
+.modal__small__option {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0.07rem;
 }

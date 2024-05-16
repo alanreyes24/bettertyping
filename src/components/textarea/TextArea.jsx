@@ -10,7 +10,7 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
     };
 
     useEffect(() => {
-        focusInput();
+        // focusInput();
     });
 
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
