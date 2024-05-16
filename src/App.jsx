@@ -26,6 +26,12 @@ function App() {
 
   const [currentTestWPM, setCurrentTestWPM] = useState(0); // changed from "WPM" to "currentTestWPM"
 
+  const [settings, setSettings] = useState({})
+
+  useEffect(() => {
+    console.log(settings)
+  }, [settings])
+
   useEffect(() => {
     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
@@ -51,62 +57,71 @@ function App() {
   }
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flex: 1,
-
-        flexDirection: "column",
-      }}
-    >
+    <>
 
       <Header />
 
 
-      <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
-        <Settings />
-      </div>
-
-      <div style={{ display: "flex", alignSelf: "center" }}>
-        <Timer
-          time={timerLength}
-          start={isTimerActive}
-          stop={isTimerActive}
-          onTimerZero={() => {
-            setIsTimerZero(!isTimerZero);
-          }}
-          passTimeLeft={setTimeLeft}
-        />
-
-        {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
-        {" LETTERS " + numOfCorrectLetters}
-        {" WORDS " + numOfCorrectWords}
-        {currentTestWPM < Infinity ? <>{"WPM: " + currentTestWPM}</> : <>{"WPM: 0"}</>}
-
-      </div>
-
       <div
         style={{
           display: "flex",
-          alignSelf: "center",
-          justifyContent: "center",
+          flex: 1,
+
+          flexDirection: "column",
         }}
       >
-        <Cursor />
 
-        <TextArea
-          passCorrectLetters={setNumOfCorrectLetters}
-          passCorrectWords={setNumOfCorrectWords}
-          onTextStarted={() => {
-            setIsTimerActive(true);
+
+
+
+        <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
+          <Settings
+            passSettings={setSettings}
+          />
+        </div>
+
+        <div style={{ display: "flex", alignSelf: "center", marginTop: '3rem' }}>
+          <Timer
+            time={timerLength}
+            start={isTimerActive}
+            stop={isTimerActive}
+            onTimerZero={() => {
+              setIsTimerZero(!isTimerZero);
+            }}
+            passTimeLeft={setTimeLeft}
+          />
+
+          {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
+          {" LETTERS " + numOfCorrectLetters}
+          {" WORDS " + numOfCorrectWords}
+          {currentTestWPM < Infinity ? <>{"WPM: " + currentTestWPM}</> : <>{"WPM: 0"}</>}
+
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            alignSelf: "center",
+            justifyContent: "center",
           }}
-          onTextFinished={() => {
-            setIsTextFinished(!isTextFinished);
-            stopTest();
-          }}
-        />
+        >
+
+          <Cursor />
+
+          <TextArea
+            passCorrectLetters={setNumOfCorrectLetters}
+            passCorrectWords={setNumOfCorrectWords}
+            onTextStarted={() => {
+              setIsTimerActive(true);
+            }}
+            onTextFinished={() => {
+              setIsTextFinished(!isTextFinished);
+              stopTest();
+            }}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
