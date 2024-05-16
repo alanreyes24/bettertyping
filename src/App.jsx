@@ -49,7 +49,14 @@ function App() {
 
 
   return (
-    <div style={{ overflow: "hidden" }}>
+    <div style={{
+      display: 'flex', width: '100vw',
+      height: '100vh', flexDirection: 'column'
+    }}>
+
+
+
+
       <button
         onClick={() => {
           setStartTimer(false);

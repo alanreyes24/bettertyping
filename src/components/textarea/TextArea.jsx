@@ -3,7 +3,7 @@ import Word from "../word/Word";
 import Cursor from "../cursor/Cursor";
 
 function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onTextStarted }) {
-    
+
     const focusInput = () => {
         document.getElementById("input").focus();
     };
@@ -87,11 +87,11 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
                 className="type-box"
                 style={{
                     margin: "4rem",
-                    background: "#404040",
+                    padding: '1.5rem',
+                    borderRadius: 20,
+                    background: "#40404040",
                     display: "flex",
                     flex: 1,
-                    width: "80%",
-                    height: "40rem",
                 }}
             >
                 {Array(6)
