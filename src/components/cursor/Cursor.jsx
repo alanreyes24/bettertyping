@@ -12,36 +12,40 @@ function Cursor(props) {
     }
 
     const updateCursor = () => {
-        console.log('update called')
-        let currentLetter = document.getElementsByClassName('letter')[0]
 
-        console.log(currentLetter)
+        if (document.getElementsByClassName('letter').length > 0) {
 
-        let letterX = getOffset(currentLetter).left
-        let letterY = getOffset(currentLetter).top
 
-        console.log(letterX)
-        console.log(letterY)
 
-        document.getElementById('cursor').style.position = "absolute"
-        document.getElementById('cursor').style.top = letterY + 'px'
-        document.getElementById('cursor').style.left = letterX + 'px'
+            console.log('update called')
+            let currentLetter = document.getElementsByClassName('letter')[0]
 
-        console.log(document.getElementById('cursor').style.left)
-        console.log(document.getElementById('cursor').style.top)
+            console.log(currentLetter)
+
+            let letterX = getOffset(currentLetter).left
+            let letterY = getOffset(currentLetter).top
+
+            console.log(letterX)
+            console.log(letterY)
+
+            document.getElementById('cursor').style.position = "absolute"
+            document.getElementById('cursor').style.top = letterY + 'px'
+            document.getElementById('cursor').style.left = letterX - 8 + 'px'
+        } else {
+            document.getElementById('cursor').style.opacity = 0;
+        }
+
     }
 
     useEffect(() => {
 
-        console.log('useeffect called')
         updateCursor()
 
     })
 
     return (
-        <div id='cursor' style={{ position: 'absolute', color: 'gold', fontSize: '8rem' }}>
-            |
-        </div>
+        <div id='cursor' style={{ marginLeft: '0.4rem', backgroundColor: 'gold', height: '1.75rem', width: "0.1rem", transition: "all .15s ease-out", position: 'absolute', }} />
+
     )
 }
 

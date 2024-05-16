@@ -1,6 +1,7 @@
 import React, { Component, createElement, useEffect, useState } from "react";
 import Word from "../word/Word";
 import Cursor from "../cursor/Cursor";
+import './TextAreaStyles.css'
 
 function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onTextStarted }) {
 
@@ -74,7 +75,7 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
                         event.target.value = "";
                     }
                 }}
-                style={{ opacity: 0 }}
+                style={{ opacity: 0, height: 0, width: 0 }}
             ></input>
 
             <div
@@ -86,18 +87,13 @@ function TextArea({ onTextFinished, passCorrectLetters, passCorrectWords, onText
                 }}
                 className="type-box"
                 style={{
-                    margin: "4rem",
-                    padding: '1.5rem',
-                    borderRadius: 20,
-                    background: "#40404040",
-                    display: "flex",
-                    flex: 1,
                 }}
             >
-                {Array(6)
+                {Array(30)
                     .fill(false)
                     .map((_, i) => (
-                        <Word key={i} />
+                        <div key={i} className="word">
+                            <Word key={i} /> </div>
                     ))}
             </div>
         </>

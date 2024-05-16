@@ -24,13 +24,12 @@ function App() { // organized all of the states to be cleaner and follow convent
 
   const [currentTestWPM, setCurrentTestWPM] = useState(0); // changed from "WPM" to "currentTestWPM"
 
-  // const getCorrect = (total) => {
-  //   console.log("TOTAL" + total)
-  // }
 
   useEffect(() => {
+
     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)) // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
+
 
   const startTest = () => {
     console.log("starting test");
@@ -42,6 +41,7 @@ function App() { // organized all of the states to be cleaner and follow convent
 
   const stopTest = () => {
 
+
     setIsTimerActive(true)
     //timeleft is still zero until timer sends it (obviously) it takes a second to come in
     // console.log('TIME LEFT' + timeLeft) doesnt work its still 0
@@ -52,19 +52,16 @@ function App() { // organized all of the states to be cleaner and follow convent
   };
 
   if (isTimerZero) {
+
     stopTest();
   }
 
-
   return (
+
     <div style={{
       display: 'flex', width: '100vw',
       height: '100vh', flexDirection: 'column'
     }}>
-
-
-
-
       <button
         onClick={() => {
           setIsTimerActive(false);
@@ -120,15 +117,17 @@ function App() { // organized all of the states to be cleaner and follow convent
       {" LETTERS " + numOfCorrectLetters}
       {" WORDS " + numOfCorrectWords}
       {currentTestWPM < Infinity ? <>{"WPM: " + currentTestWPM}</> : <>{"WPM: 0"}</>}
-      {/* <Cursor /> */}
+      <Cursor />
+
       <TextArea
         passCorrectLetters={setNumOfCorrectLetters}
         passCorrectWords={setNumOfCorrectWords}
         onTextStarted={() => {
           setIsTimerActive(true)
+
         }}
         onTextFinished={() => {
-          setIsTextFinished(!isTextFinished)
+          setIsTextFinished(!isTextFinished);
           stopTest();
         }}
       />
