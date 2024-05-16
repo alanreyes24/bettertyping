@@ -22,7 +22,7 @@ function App() {
   // }
 
   useEffect(() => {
-    setWPM((600 * correctWords) / (timerLength - timeLeft))
+    setWPM((60 * correctWords) / (timerLength - timeLeft))
   }, [WPM, correctWords, timerLength, timeLeft]);
 
   const startTest = () => {
