@@ -16,15 +16,15 @@ function Word() {
         "are", "was", "were", "has", "been", "being", "had", "do", "does", "did",
         "here", "than", "much", "such", "very", "should", "those", "own", "don't", "can't",
         "cannot", "aren't", "isn't", "wasn't", "weren't", "hasn't", "haven't", "doesn't", "didn't", "won't",
-        "wouldn't", "shan't", "shouldn't", "mustn't", "mightn't", "mayn't", "let's", "ought", "hadn't", "couldn't",
-        "can", "will", "shall", "would", "should", "must", "might", "may", "ought", "need",
+        "wouldn't", "shan't", "shouldn't", "ought", "hadn't", "couldn't",
+        "will", "shall", "would", "should", "must", "might", "may", "ought", "need",
         "dare", "used", "going", "going", "goes", "gone", "come", "comes", "coming", "try",
         "tries", "trying", "tried", "think", "thinks", "thinking", "thought", "make", "makes", "making",
         "made", "see", "sees", "seeing", "saw", "put", "puts", "putting", "say", "says",
         "saying", "said", "tell", "tells", "telling", "told", "ask", "asks", "asking", "asked",
         "work", "works", "working", "worked", "seem", "seems", "seeming", "seemed", "feel", "feels",
         "feeling", "felt", "look", "looks", "looking", "looked", "appear", "appears", "appearing", "appeared",
-        "become", "becomes", "becoming", "became", "remain", "remains", "remaining", "remained", "turn", "turns",
+        "become", "becomes", "remaining", "remained", "turn", "turns",
         "turning", "turned", "grow", "grows", "growing", "grew", "prove", "proves", "proving", "proved",
         "keep", "keeps", "keeping", "kept", "let", "lets", "letting", "allowed", "let", "hear",
         "hears", "hearing", "heard", "need", "needs", "needing", "needed", "mean", "means", "meaning",
@@ -32,7 +32,7 @@ function Word() {
         "end", "ends", "ending", "ended", "bring", "brings", "bringing", "brought", "set", "sets",
         "setting", "sets", "put", "puts", "putting", "begin", "begins", "beginning", "began", "begun",
         "like", "likes", "liking", "liked", "love", "loves", "loving", "loved", "hate", "hates",
-        "hating", "hated", "can", "could", "may", "might", "must", "will", "would", "shall",
+        "hating", "hated", "may", "might", "must", "will", "would", "shall",
         "should", "ought", "dare", "need", "use", "used", "using", "put", "puts", "putting",
         "choose", "chooses", "choosing", "chose", "chosen", "feel", "feels", "feeling", "felt", "believe",
         "believes", "believing", "believed", "know", "knows", "knowing", "knew", "known", "try", "tries",
@@ -46,7 +46,9 @@ function Word() {
         "getting", "got", "gotten", "keep", "keeps", "keeping", "kept", "come", "comes", "coming",
         "came", "come", "become", "becomes", "becoming", "became", "become", "set", "sets", "setting",
         "setting", "begin", "begins", "beginning", "began", "begun", "like", "likes", "liking", "liked",
-        "love", "loves", "loving", "loved", "hate", "hates", "hating", "hated"];
+        "love", "loves", "loving", "loved", "hate", "hates", "hating", "hated"
+    ];
+    
     
     const [randomWord, setRandomWord] = useState('');
 
