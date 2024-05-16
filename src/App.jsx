@@ -17,12 +17,9 @@ function App() {
   const [timeLeft, setTimeLeft] = useState(timerLength);
   const [WPM, setWPM] = useState(0);
 
-  // const getCorrect = (total) => {
-  //   console.log("TOTAL" + total)
-  // }
 
   useEffect(() => {
-    setWPM((60 * correctWords) / (timerLength - timeLeft))
+    setWPM((60 * correctWords) / (timerLength - timeLeft));
   }, [WPM, correctWords, timerLength, timeLeft]);
 
   const startTest = () => {
@@ -33,94 +30,97 @@ function App() {
   };
 
   const stopTest = () => {
-
-    setStopTimer(true)
+    console.log("stopping test");
+    setStopTimer(true);
     //timeleft is still zero until timer sends it (obviously) it takes a second to come in
     // console.log('TIME LEFT' + timeLeft) doesnt work its still 0
 
     setStartTimer(false);
-
-
   };
 
   if (timerZero) {
+    console.log('timerzero')
+    setTimeLeft(0);
     stopTest();
   }
 
-
   return (
-    <div style={{
-      display: 'flex', width: '100vw',
-      height: '100vh', flexDirection: 'column'
-    }}>
+    <div
+      style={{
+        display: "flex",
+        width: "100vw",
+        height: "100vh",
+        flexDirection: "column",
+      }}
+    >
+      <div>
+        <button
+          onClick={() => {
+            setStartTimer(false);
+            console.log("set timer to 15");
+            setTimerLength(15);
+          }}
+        >
+          15
+        </button>
+        <button
+          onClick={() => {
+            setStartTimer(false);
+            setTimerLength(30);
+          }}
+        >
+          30
+        </button>
+        <button
+          onClick={() => {
+            setStartTimer(false);
+            setTimerLength(60);
+          }}
+        >
+          60
+        </button>
+        <button
+          onClick={() => {
+            console.log("start");
+            startTest();
+          }}
+        >
+          Start
+        </button>
+        <button
+          onClick={() => {
+            console.log("stop");
+            stopTest();
+          }}
+        >
+          Stop
+        </button>
+        <Timer
+          time={timerLength}
+          start={startTimer}
+          stop={stopTimer}
+          onTimerZero={() => {
+            stopTest();
+            setTimerZero(!timerZero);
+          }}
+          passTimeLeft={setTimeLeft}
+        />
 
+        {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
+        {" LETTERS " + correctLetters}
+        {" WORDS " + correctWords}
+        {WPM < Infinity ? <>{"WPM: " + WPM}</> : <>{"WPM: 0"}</>}
+      </div>
 
-
-
-      <button
-        onClick={() => {
-          setStartTimer(false);
-          console.log("set timer to 15");
-          setTimerLength(15);
-        }}
-      >
-        15
-      </button>
-      <button
-        onClick={() => {
-          setStartTimer(false);
-          setTimerLength(30);
-        }}
-      >
-        30
-      </button>
-      <button
-        onClick={() => {
-          setStartTimer(false);
-          setTimerLength(60);
-        }}
-      >
-        60
-      </button>
-      <button
-        onClick={() => {
-          console.log("start");
-          startTest();
-        }}
-      >
-        Start
-      </button>
-      <button
-        onClick={() => {
-          console.log("stop");
-          stopTest();
-        }}
-      >
-        Stop
-      </button>
-      <Timer
-        time={timerLength}
-        start={startTimer}
-        stop={stopTimer}
-        onTimerZero={() => {
-          setTimerZero(!timerZero);
-        }}
-        passTimeLeft={setTimeLeft}
-      />
-
-      {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
-      {" LETTERS " + correctLetters}
-      {" WORDS " + correctWords}
-      {WPM < Infinity ? <>{"WPM: " + WPM}</> : <>{"WPM: 0"}</>}
-      {/* <Cursor /> */}
+      <Cursor />
       <TextArea
         passCorrectLetters={setCorrectLetters}
         passCorrectWords={setCorrectWords}
         onTextStarted={() => {
-          setStartTimer(true)
+          setStartTimer(true);
         }}
         onTextFinished={() => {
-          setIsTextFinished(!isTextFinished)
+          setIsTextFinished(!isTextFinished);
           stopTest();
         }}
       />
