@@ -4,6 +4,7 @@ import "./Login.css";
 function Login({loginVisible}) {
 
     const [showLogin, setLoginVisible] = useState(loginVisible)
+    const [showRegister, setShowRegister] = useState(false)
 
     useEffect( () => {
 
@@ -42,10 +43,10 @@ function Login({loginVisible}) {
                             backgroundColor: '#252945'
                         }
                     }} type="password" />
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-                        <a style={{ fontSize: '14px', color: '#509EF0', textDecoration: 'underline', marginTop: '16px' }} href="#">signup</a>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <a onClick={() => setShowRegister(!showRegister)}style={{ fontSize: '14px', color: '#509EF0', textDecoration: 'underline', marginTop: '16px', marginBottom: '10px' }} href="#"> {showRegister? "register" : "login"} </a>
                     </div>
-                    <a style={{ fontSize: '24px', fontWeight: 'bold', color: '#E2E8F0', marginBottom: '16px', alignSelf: "center"}}>login</a>
+                    <a style={{ fontSize: '24px', fontWeight: 'bold', color: '#E2E8F0', marginBottom: '16px', alignSelf: "center"}}>{showRegister? "login" : "register"}</a>
                 </form>
             </div>
         </div>
