@@ -31,6 +31,10 @@ function App() {
   const [hideSettings, setHideSettings] = useState();
   const [settings, setSettings] = useState({});
 
+
+  const [showLogin, setShowLogin] = useState(false);
+
+  
   //makes the cursor blink if the test is not started and textarea is selected
   useEffect(() => {
     console.log(isTimerActive);
@@ -108,7 +112,7 @@ function App() {
           }}
         >
           <Cursor shouldUpdate={shouldUpdateCursor} />
-          {/* <Login /> */}
+          <Login loginVisible={showLogin}/>
           <TextArea
             settings={settings}
             passCorrectLetters={setNumOfCorrectLetters}
