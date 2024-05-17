@@ -11,11 +11,13 @@ function TextArea({
     onFocus,
     onFocusLost,
     settings,
+
 }) {
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
+
 
     const focusInput = () => {
         document.getElementById("input").focus();
@@ -42,6 +44,7 @@ function TextArea({
         setWordsLoaded(true);
         setWordList(result);
     }
+
 
     useEffect(() => {
         populateWordList(settings.count);
@@ -115,7 +118,7 @@ function TextArea({
                 }}
                 style={{ opacity: 0, height: 0, width: 0 }}
             ></input>
-            <div className="type__container">
+            <div style={{}} className="type__container">
                 <div
                     onClick={() => {
                         // focus input & adds next class to first letter
@@ -124,7 +127,7 @@ function TextArea({
                         document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
                     }}
                     className="type__box"
-                    style={{}}
+                // style={{ marginTop: numDeleteLines * -2 + 'rem' }}
                 >
                     {wordsLoaded == true ? <> {wordList} </> : <></>}
                 </div>

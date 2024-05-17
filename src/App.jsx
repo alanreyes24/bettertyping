@@ -3,7 +3,7 @@ import Word from "./components/word/Word";
 import Timer from "./components/timer/Timer";
 import TextArea from "./components/textarea/TextArea";
 
-import { React, useState, useEffect } from "react";
+import { React, useState, useEffect, useCallback } from "react";
 import Cursor from "./components/cursor/Cursor";
 import Settings from "./components/settings/Settings";
 import Header from "./components/header/Header";
@@ -31,10 +31,8 @@ function App() {
   const [hideSettings, setHideSettings] = useState();
   const [settings, setSettings] = useState({});
 
-
   const [showLogin, setShowLogin] = useState(false);
 
-  
   //makes the cursor blink if the test is not started and textarea is selected
   useEffect(() => {
     console.log(isTimerActive);
@@ -60,7 +58,7 @@ function App() {
   return (
     <>
       <Header />
-
+      <Cursor shouldUpdate={shouldUpdateCursor} />
       <div
         style={{
           display: "flex",
@@ -111,8 +109,8 @@ function App() {
             transition: "all .15s ease-out",
           }}
         >
-          <Cursor shouldUpdate={shouldUpdateCursor} />
-          <Login loginVisible={showLogin}/>
+
+          <Login loginVisible={showLogin} />
           <TextArea
             settings={settings}
             passCorrectLetters={setNumOfCorrectLetters}
@@ -133,6 +131,7 @@ function App() {
               setHideSettings(false);
               setShouldUpdateCursor(false);
             }}
+
           />
         </div>
       </div>
