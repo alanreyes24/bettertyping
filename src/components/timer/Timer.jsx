@@ -1,29 +1,34 @@
 import React, { useEffect, useState } from "react";
 
-function Timer({ time, start, stop, onTimerZero, passTimeLeft }) {
+function Timer({ isActive, time, onTimerZero, passTimeLeft }) {
 
     const [timeLeft, setTimeLeft] = useState(time);
+
+    useEffect(() => {
+        console.log(time)
+        setTimeLeft(time)
+    }, [setTimeLeft, time])
+
     useEffect(() => {
 
         passTimeLeft(timeLeft)
 
-        if (!start) {
+        if (!isActive) {
 
             passTimeLeft(timeLeft);
         }
 
-        if (start && timeLeft > 0) {
-            setTimeout(() => setTimeLeft(timeLeft - 0.1), 100);
+        if (isActive && timeLeft > 0) {
+            setTimeout(() => setTimeLeft(timeLeft - 1), 100);
         }
 
-        if (timeLeft === 0) {
-            onTimerZero();
-        }
 
-    }, [start, stop, timeLeft]);
+    }, [isActive, timeLeft]);
+
+
 
     // Display timeLeft as a floating-point number
-    return <div>{parseFloat(timeLeft).toFixed(1)}</div>;
+    return <div style={{ fontSize: '3rem', fontWeight: '700' }}>{(timeLeft / 10).toFixed(1)}</div>;
 }
 
 export default Timer;

@@ -22,7 +22,7 @@ function App() {
   const [numOfCorrectLetters, setNumOfCorrectLetters] = useState(0); // changed from "correctLetters" to "numOfCorrectLetters"
   const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); // changed from "correctWords" to "numOfCorrectWords"
 
-  const [timerLength, setTimerLength] = useState(30); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
+  const [timerLength, setTimerLength] = useState(300); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
   const [timeLeft, setTimeLeft] = useState(timerLength);
 
   const [currentTestWPM, setCurrentTestWPM] = useState(0); // changed from "WPM" to "currentTestWPM"
@@ -34,31 +34,19 @@ function App() {
 
   useEffect(() => {
     console.log(settings);
+
   }, [settings]);
+
+  useEffect(() => {
+    if (settings.type == "time") {
+      setTimerLength(settings.length)
+    }
+
+  }, [settings.type, settings.length]);
 
   useEffect(() => {
     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
-
-  // const startTest = () => {
-  //   console.log("starting test");
-  //   console.log(timerLength);
-  //   setTimerLength(timerLength);
-  //   setIsTimerZero(false);
-  //   setIsTimerActive(true);
-  // };
-
-  const stopTest = () => {
-    setIsTimerActive(true);
-    //timeleft is still zero until timer sends it (obviously) it takes a second to come in
-    // console.log('TIME LEFT' + timeLeft) doesnt work its still 0
-
-    setIsTimerActive(false);
-  };
-
-  if (isTimerZero) {
-    stopTest();
-  }
 
   return (
     <>
@@ -77,18 +65,21 @@ function App() {
           <Settings hideModal={hideSettings} passSettings={setSettings} />
         </div>
 
-        <div
-          style={{ display: "flex", alignSelf: "center", marginTop: "3rem" }}
-        >
+
+        <div style={{ justifyContent: 'center', alignSelf: 'center' }}>
           <Timer
             time={timerLength}
-            start={isTimerActive}
-            stop={isTimerActive}
+            isActive={isTimerActive}
             onTimerZero={() => {
               setIsTimerZero(!isTimerZero);
             }}
             passTimeLeft={setTimeLeft}
           />
+        </div>
+
+        <div
+          style={{ display: "flex", alignSelf: "center", marginTop: "3rem" }}
+        >
 
           {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
           {" LETTERS " + numOfCorrectLetters}
@@ -120,7 +111,6 @@ function App() {
             }}
             onTextFinished={() => {
               setIsTextFinished(!isTextFinished);
-              stopTest();
               setShouldUpdateCursor(false);
             }}
             onFocus={() => {

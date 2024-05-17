@@ -12,8 +12,10 @@ function TextArea({
     onFocusLost,
     settings,
 }) {
+
+
     const [wordList, setWordList] = useState({});
-    const [wordsLoaded, setWordsLoaded] = useState(false)
+    const [wordsLoaded, setWordsLoaded] = useState(false);
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
 
@@ -25,9 +27,7 @@ function TextArea({
     //async function to get wordMap because it takes a second
     const wordMap = (amount) => {
         return new Promise((resolve) => {
-
             resolve(
-
                 Array(amount)
                     .fill(false)
                     .map((_, i) => (
@@ -46,7 +46,7 @@ function TextArea({
     }
 
     useEffect(() => {
-        populateWordList(settings.count)
+        populateWordList(settings.count);
     }, [settings.type, settings.count]);
 
     const handleUserInput = (event) => {
