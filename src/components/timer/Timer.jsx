@@ -5,7 +5,6 @@ function Timer({ isActive, time, onTimerZero, passTimeLeft }) {
     const [timeLeft, setTimeLeft] = useState(time);
 
     useEffect(() => {
-        console.log(time)
         setTimeLeft(time)
     }, [setTimeLeft, time])
 
@@ -28,7 +27,7 @@ function Timer({ isActive, time, onTimerZero, passTimeLeft }) {
 
 
     // Display timeLeft as a floating-point number
-    return <div style={{ fontSize: '3rem', fontWeight: '700' }}>{(timeLeft / 10).toFixed(1)}</div>;
+    return <div style={{ fontSize: '3rem', fontWeight: '700', }}>{(timeLeft / 10).toFixed(1)}</div>;
 }
 
 export default Timer;

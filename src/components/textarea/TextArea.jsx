@@ -12,8 +12,6 @@ function TextArea({
     onFocusLost,
     settings,
 }) {
-
-
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
@@ -100,6 +98,14 @@ function TextArea({
                     onFocusLost();
                 }}
                 id="input"
+                autoComplete="off"
+                autoCapitalize="off"
+                autoCorrect="off"
+                type="text"
+                data-gramm="false"
+                data-gramm_editor="false"
+                data-enable-grammarly="false"
+                list="autocompleteOff"
                 onChange={(event) => {
                     //stops error when no letters left
                     if (document.getElementsByClassName("letter").length > 1) {
@@ -109,18 +115,19 @@ function TextArea({
                 }}
                 style={{ opacity: 0, height: 0, width: 0 }}
             ></input>
+            <div className="type__container">
+                <div
+                    onClick={() => {
+                        // focus input & adds next class to first letter
+                        focusInput();
 
-            <div
-                onClick={() => {
-                    // focus input & adds next class to first letter
-                    focusInput();
-
-                    document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
-                }}
-                className="type-box"
-                style={{}}
-            >
-                {wordsLoaded == true ? <> {wordList} </> : <></>}
+                        document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
+                    }}
+                    className="type__box"
+                    style={{}}
+                >
+                    {wordsLoaded == true ? <> {wordList} </> : <></>}
+                </div>
             </div>
         </>
     );

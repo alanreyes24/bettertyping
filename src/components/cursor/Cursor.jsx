@@ -36,6 +36,7 @@ function Cursor({ shouldUpdate }) {
     return (
         <div
             id="cursor"
+            className="cursor"
             style={{
                 marginLeft: "0.4rem",
                 backgroundColor: "white",

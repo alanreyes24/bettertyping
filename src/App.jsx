@@ -11,7 +11,6 @@ import Login from "./components/login/Login";
 
 function App() {
   // organized all of the states to be cleaner and follow conventions
-
   // condensed "startTimer" and "stopTimer" to be one state "isTimerActive"
 
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -32,20 +31,26 @@ function App() {
   const [hideSettings, setHideSettings] = useState();
   const [settings, setSettings] = useState({});
 
+  //makes the cursor blink if the test is not started and textarea is selected
+  useEffect(() => {
+    console.log(isTimerActive);
+    if (shouldUpdateCursor && !isTimerActive) {
+      document.getElementById("cursor").classList.add("cursorBlink");
+    } else document.getElementById("cursor").classList.remove("cursorBlink");
+  }, [shouldUpdateCursor, isTimerActive]);
+
   useEffect(() => {
     console.log(settings);
-
   }, [settings]);
 
   useEffect(() => {
     if (settings.type == "time") {
-      setTimerLength(settings.length)
+      setTimerLength(settings.length);
     }
-
   }, [settings.type, settings.length]);
 
   useEffect(() => {
-    setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
+    setCurrentTestWPM((600 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
   return (
@@ -65,8 +70,7 @@ function App() {
           <Settings hideModal={hideSettings} passSettings={setSettings} />
         </div>
 
-
-        <div style={{ justifyContent: 'center', alignSelf: 'center' }}>
+        <div style={{ justifyContent: "center", alignSelf: "center" }}>
           <Timer
             time={timerLength}
             isActive={isTimerActive}
@@ -80,14 +84,18 @@ function App() {
         <div
           style={{ display: "flex", alignSelf: "center", marginTop: "3rem" }}
         >
-
-          {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
-          {" LETTERS " + numOfCorrectLetters}
-          {" WORDS " + numOfCorrectWords}
-          {currentTestWPM < Infinity ? (
-            <>{"WPM: " + currentTestWPM}</>
+          {isTextFinished ? (
+            <>
+              {" LETTERS " + numOfCorrectLetters}
+              {" WORDS " + numOfCorrectWords}
+              {currentTestWPM < Infinity ? (
+                <>{"WPM: " + currentTestWPM}</>
+              ) : (
+                <>{"WPM: 0"}</>
+              )}
+            </>
           ) : (
-            <>{"WPM: 0"}</>
+            <>FINISHED NO</>
           )}
         </div>
 

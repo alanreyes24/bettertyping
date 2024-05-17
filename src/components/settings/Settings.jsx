@@ -189,7 +189,7 @@ function Settings({ passSettings, hideModal }) {
                         {testType}
                     </div>
                     {testType == "time" ? (
-                        <div className="modal__small__option">{testLength}</div>
+                        <div className="modal__small__option">{testLength / 10}</div>
                     ) : (
                         <div className="modal__small__option">{testWordCount}</div>
                     )}

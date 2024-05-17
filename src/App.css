@@ -27,3 +27,18 @@
 .next {
   /* background-color: #90909020; */
 }
+
+.cursorBlink {
+  animation: cursorBlink 1s infinite;
+}
+
+@keyframes cursorBlink {
+  0%,
+  to {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
