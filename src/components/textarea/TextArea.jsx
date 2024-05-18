@@ -1,5 +1,6 @@
 import React, { Component, createElement, useEffect, useState } from "react";
 import Word from "../word/Word";
+import Timer from "../timer/Timer";
 import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
 
