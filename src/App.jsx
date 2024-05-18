@@ -30,20 +30,42 @@ function App() {
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
   const [hideSettings, setHideSettings] = useState();
+
+  //settings object
   const [settings, setSettings] = useState({});
 
-// ALAN WORKSPACE
+  //timer object
+  const [timer, setTimer] = useState({})
 
-const [timerInfo, setTimerInfo] = useState({})
+  //game object
+  const [game, setGame] = useState({
+    isRunning: false,
+    isFinished: false,
+    WPM: 0,
+    correctWords: 0,
+    correctLetters: 0,
+    settings: {},
+    timer: {},
+  })
 
+  //game state updating
 
+  useEffect(() => {
+    console.log(game)
+  }, [game])
 
+  useEffect(() => {
+    setGame({
+      isRunning: isTimerActive,
+      isFinished: false,
+      WPM: 0,
+      correctWords: numOfCorrectWords,
+      correctLetters: numOfCorrectLetters,
+      settings: settings,
+      timer: timer,
+    })
 
-
-
-
-
-
+  }, [timer, currentTestWPM, isTimerActive, numOfCorrectWords, settings]);
 
   //makes the cursor blink if the test is not started and textarea is selected
   useEffect(() => {
@@ -55,41 +77,61 @@ const [timerInfo, setTimerInfo] = useState({})
 
 
 
-
-useEffect(() => {
-  console.log(timerInfo);
-}, [timerInfo]);
-//
-
-
   useEffect(() => {
+    console.log(timerLength - timeLeft)
     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
-  // const startTest = () => {
-  //   console.log("starting test");
-  //   console.log(timerLength);
-  //   setTimerLength(timerLength);
-  //   setIsTimerZero(false);
-  //   setIsTimerActive(true);
-  // };
 
-  const stopTest = () => {
-    setIsTimerActive(true);
-    //timeleft is still zero until timer sends it (obviously) it takes a second to come in
-    // console.log('TIME LEFT' + timeLeft) doesnt work its still 0
+  useEffect(() => {
+    if (game.isRunning) {
+      // console.log(game.isRunning)
 
-    setIsTimerActive(false);
+      if (!game.timer.isActive && game.timer.timeLeft == 0) {
+        setIsTimerActive(false)
+        console.log("times up")
+        setGame({
+          ...game,
+          isFinished: true,
+        })
+      }
+
+      //figure out what test it is, use timer down vs timer up
+    }
+    if (game.isFinished) {
+
+      // console.log(currentTestWPM)
+      setGame({
+        ...game,
+        WPM: ((game.correctWords * 60) / (game.settings.length - game.timer.timeLeft) * 10),
+      })
+    }
+  }, [game.isRunning, game.isFinished, game.timer.isActive])
+
+  useEffect(() => {
+    if (isTextFinished || timeLeft == 0) {
+      setGame({
+        ...game,
+        isFinished: true,
+
+      })
+    }
+  }, [isTextFinished, timeLeft])
+
+  //game logic
+
+  const startTest = () => {
+
   };
 
-  if (isTimerZero) {
-    stopTest();
-  }
+  const stopTest = () => {
+
+  };
 
   return (
     <>
       <Header />
-
+      <Login />
       <div
         style={{
           display: "flex",
@@ -105,8 +147,9 @@ useEffect(() => {
 
         <div style={{ justifyContent: "center", alignSelf: "center" }}>
           <Timer
-            passTimerInfo={timerInfo}
-            passSetTimerInfo={setTimerInfo}
+            settings={settings}
+            updateTimerInfo={setTimer}
+            start={isTimerActive}
           />
 
           {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
@@ -128,18 +171,18 @@ useEffect(() => {
           }}
         >
           <Cursor shouldUpdate={shouldUpdateCursor} />
-           <Login />
+
           <TextArea
             settings={settings}
             passCorrectLetters={setNumOfCorrectLetters}
             passCorrectWords={setNumOfCorrectWords}
             onTextStarted={() => {
               setIsTimerActive(true);
+              setIsTextFinished(false)
               setShouldUpdateCursor(true);
             }}
             onTextFinished={() => {
-              setIsTextFinished(!isTextFinished);
-              stopTest();
+              setIsTextFinished(true);
               setShouldUpdateCursor(false);
             }}
             onFocus={() => {

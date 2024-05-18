@@ -81,7 +81,6 @@ function TextArea({
 
         if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
             setDeleteLines(deleteLines + 1)
-            console.log("line down" + deleteLines)
         }
 
         if (input == currentLetter.textContent) {
