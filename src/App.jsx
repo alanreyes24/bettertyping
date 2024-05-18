@@ -3,7 +3,7 @@ import Word from "./components/word/Word";
 import Timer from "./components/timer/Timer";
 import TextArea from "./components/textarea/TextArea";
 
-import { React, useState, useEffect, useCallback } from "react";
+import { React, useState, useEffect } from "react";
 import Cursor from "./components/cursor/Cursor";
 import Settings from "./components/settings/Settings";
 import Header from "./components/header/Header";
@@ -11,6 +11,7 @@ import Login from "./components/login/Login";
 
 function App() {
   // organized all of the states to be cleaner and follow conventions
+
   // condensed "startTimer" and "stopTimer" to be one state "isTimerActive"
 
   const [isTimerActive, setIsTimerActive] = useState(false);
@@ -21,7 +22,7 @@ function App() {
   const [numOfCorrectLetters, setNumOfCorrectLetters] = useState(0); // changed from "correctLetters" to "numOfCorrectLetters"
   const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); // changed from "correctWords" to "numOfCorrectWords"
 
-  const [timerLength, setTimerLength] = useState(300); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
+  const [timerLength, setTimerLength] = useState(30); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
   const [timeLeft, setTimeLeft] = useState(timerLength);
 
   const [currentTestWPM, setCurrentTestWPM] = useState(0); // changed from "WPM" to "currentTestWPM"
@@ -31,7 +32,18 @@ function App() {
   const [hideSettings, setHideSettings] = useState();
   const [settings, setSettings] = useState({});
 
-  const [showLogin, setShowLogin] = useState(false);
+// ALAN WORKSPACE
+
+const [timerInfo, setTimerInfo] = useState({})
+
+
+
+
+
+
+
+
+
 
   //makes the cursor blink if the test is not started and textarea is selected
   useEffect(() => {
@@ -41,24 +53,43 @@ function App() {
     } else document.getElementById("cursor").classList.remove("cursorBlink");
   }, [shouldUpdateCursor, isTimerActive]);
 
-  useEffect(() => {
-    console.log(settings);
-  }, [settings]);
+
+
+
+useEffect(() => {
+  console.log(timerInfo);
+}, [timerInfo]);
+//
+
 
   useEffect(() => {
-    if (settings.type == "time") {
-      setTimerLength(settings.length);
-    }
-  }, [settings.type, settings.length]);
-
-  useEffect(() => {
-    setCurrentTestWPM((600 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
+    setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
+
+  // const startTest = () => {
+  //   console.log("starting test");
+  //   console.log(timerLength);
+  //   setTimerLength(timerLength);
+  //   setIsTimerZero(false);
+  //   setIsTimerActive(true);
+  // };
+
+  const stopTest = () => {
+    setIsTimerActive(true);
+    //timeleft is still zero until timer sends it (obviously) it takes a second to come in
+    // console.log('TIME LEFT' + timeLeft) doesnt work its still 0
+
+    setIsTimerActive(false);
+  };
+
+  if (isTimerZero) {
+    stopTest();
+  }
 
   return (
     <>
       <Header />
-      <Cursor shouldUpdate={shouldUpdateCursor} />
+
       <div
         style={{
           display: "flex",
@@ -74,30 +105,17 @@ function App() {
 
         <div style={{ justifyContent: "center", alignSelf: "center" }}>
           <Timer
-            time={timerLength}
-            isActive={isTimerActive}
-            onTimerZero={() => {
-              setIsTimerZero(!isTimerZero);
-            }}
-            passTimeLeft={setTimeLeft}
+            passTimerInfo={timerInfo}
+            passSetTimerInfo={setTimerInfo}
           />
-        </div>
 
-        <div
-          style={{ display: "flex", alignSelf: "center", marginTop: "3rem" }}
-        >
-          {isTextFinished ? (
-            <>
-              {" LETTERS " + numOfCorrectLetters}
-              {" WORDS " + numOfCorrectWords}
-              {currentTestWPM < Infinity ? (
-                <>{"WPM: " + currentTestWPM}</>
-              ) : (
-                <>{"WPM: 0"}</>
-              )}
-            </>
+          {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
+          {" LETTERS " + numOfCorrectLetters}
+          {" WORDS " + numOfCorrectWords}
+          {currentTestWPM < Infinity ? (
+            <>{"WPM: " + currentTestWPM}</>
           ) : (
-            <>FINISHED NO</>
+            <>{"WPM: 0"}</>
           )}
         </div>
 
@@ -109,8 +127,8 @@ function App() {
             transition: "all .15s ease-out",
           }}
         >
-
-          <Login loginVisible={showLogin} />
+          <Cursor shouldUpdate={shouldUpdateCursor} />
+           <Login />
           <TextArea
             settings={settings}
             passCorrectLetters={setNumOfCorrectLetters}
@@ -121,6 +139,7 @@ function App() {
             }}
             onTextFinished={() => {
               setIsTextFinished(!isTextFinished);
+              stopTest();
               setShouldUpdateCursor(false);
             }}
             onFocus={() => {
@@ -131,7 +150,6 @@ function App() {
               setHideSettings(false);
               setShouldUpdateCursor(false);
             }}
-
           />
         </div>
       </div>
