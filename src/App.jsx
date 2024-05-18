@@ -35,7 +35,7 @@ function App() {
 
   //makes the cursor blink if the test is not started and textarea is selected
   useEffect(() => {
-    console.log(isTimerActive);
+    // console.log(isTimerActive);
     if (shouldUpdateCursor && !isTimerActive) {
       document.getElementById("cursor").classList.add("cursorBlink");
     } else document.getElementById("cursor").classList.remove("cursorBlink");

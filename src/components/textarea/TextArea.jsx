@@ -17,6 +17,7 @@ function TextArea({
     const [wordsLoaded, setWordsLoaded] = useState(false);
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
+    const [deleteLines, setDeleteLines] = useState(0)
 
 
     const focusInput = () => {
@@ -46,9 +47,27 @@ function TextArea({
     }
 
 
+    const getOffset = (element) => {
+        const rect = element.getBoundingClientRect();
+        return {
+            left: rect.left + window.scrollX,
+            top: rect.top + window.scrollY,
+        };
+    };
+
     useEffect(() => {
         populateWordList(settings.count);
     }, [settings.type, settings.count]);
+
+
+    //get first Y to stop undefined error
+    // useEffect(() => {
+    //     setTimeout(() => {
+    //         setLastY(getOffset(document.getElementsByClassName("letter")[1]).top)
+    //     })
+
+    // })
+
 
     const handleUserInput = (event) => {
         //if user inputs anything start the timer
@@ -58,6 +77,11 @@ function TextArea({
 
         let currentLetter = document.getElementsByClassName("letter")[0];
         let nextLetter = document.getElementsByClassName("letter")[1];
+
+        if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
+            setDeleteLines(deleteLines + 1)
+            console.log("line down" + deleteLines)
+        }
 
         if (input == currentLetter.textContent) {
             if (currentLetter.textContent != " ") {
@@ -127,7 +151,7 @@ function TextArea({
                         document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
                     }}
                     className="type__box"
-                // style={{ marginTop: numDeleteLines * -2 + 'rem' }}
+                    style={{ marginTop: deleteLines > 1 ? (deleteLines - 1) * -2 + 'rem' : 0 }}
                 >
                     {wordsLoaded == true ? <> {wordList} </> : <></>}
                 </div>
