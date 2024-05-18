@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-function Cursor({ shouldUpdate, deleteLines }) {
+function Cursor({ shouldUpdate }) {
 
 
 
