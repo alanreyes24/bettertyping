@@ -22,7 +22,7 @@ function App() {
   const [numOfCorrectLetters, setNumOfCorrectLetters] = useState(0); // changed from "correctLetters" to "numOfCorrectLetters"
   const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); // changed from "correctWords" to "numOfCorrectWords"
 
-  const [timerLength, setTimerLength] = useState(30); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
+  const [timerLength, setTimerLength] = useState(300); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
   const [timeLeft, setTimeLeft] = useState(timerLength);
 
   const [currentTestWPM, setCurrentTestWPM] = useState(0); // changed from "WPM" to "currentTestWPM"
@@ -35,7 +35,7 @@ function App() {
   const [settings, setSettings] = useState({});
 
   //timer object
-  const [timer, setTimer] = useState({})
+  const [timer, setTimer] = useState({});
 
   //game object
   const [game, setGame] = useState({
@@ -45,14 +45,18 @@ function App() {
     correctWords: 0,
     correctLetters: 0,
     settings: {},
-    timer: {},
-  })
+    timer: {
+      timeLeft: timerLength,
+      isActive: isTimerActive,
+      timerGoesUp: false,
+    },
+  });
 
   //game state updating
 
   useEffect(() => {
-    console.log(game)
-  }, [game])
+    console.log(game);
+  }, [game]);
 
   useEffect(() => {
     setGame({
@@ -62,9 +66,8 @@ function App() {
       correctWords: numOfCorrectWords,
       correctLetters: numOfCorrectLetters,
       settings: settings,
-      timer: timer,
-    })
-
+      timer: timer
+    });
   }, [timer, currentTestWPM, isTimerActive, numOfCorrectWords, settings]);
 
   //makes the cursor blink if the test is not started and textarea is selected
@@ -75,57 +78,128 @@ function App() {
     } else document.getElementById("cursor").classList.remove("cursorBlink");
   }, [shouldUpdateCursor, isTimerActive]);
 
-
-
   useEffect(() => {
-    console.log(timerLength - timeLeft)
+    // console.log(timerLength - timeLeft)
     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft)); // i'm just not going to touch this
   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
+  //timer reset if settings changed
+  // useEffect(() => {
+  //   if (isTimerActive && !settings.visible) {
+  //     console.log('timer active cause settings not visible')
+  //   }
+  //   if (isTimerActive && settings.visible) {
+  //     setIsTimerActive(false)
+  //     setGame({
+  //       ...game,
+  //       timer: {
+  //         ...game.timer,
+  //         timeLeft: settings.timeLeft
+  //       }
+  //     })
+  //     console.log('should have done something ')
+
+  //   }
+  // }, [isTimerActive, settings])
+
+  // useEffect(() => {
+  //   if (settings.visible) {
+  //     setIsTimerActive(false)
+  //     setIsTextFinished(false)
+  //     setNumOfCorrectLetters(0)
+  //     setNumOfCorrectWords(0)
+
+  // setGame({
+  //   isRunning: false,
+  //   isFinished: false,
+  //   WPM: 0,
+  //   correctWords: numOfCorrectWords,
+  //   correctLetters: numOfCorrectLetters,
+  //   settings: settings,
+  //   timer: timer,
+  // })
+  //   }
+  // }, [settings.visible, settings])
 
   useEffect(() => {
     if (game.isRunning) {
       // console.log(game.isRunning)
 
       if (!game.timer.isActive && game.timer.timeLeft == 0) {
-        setIsTimerActive(false)
-        console.log("times up")
+        setIsTimerActive(false);
+        console.log("times up");
         setGame({
           ...game,
           isFinished: true,
-        })
+          isRunning: false,
+        });
       }
 
       //figure out what test it is, use timer down vs timer up
     }
     if (game.isFinished) {
-
       // console.log(currentTestWPM)
       setGame({
         ...game,
-        WPM: ((game.correctWords * 60) / (game.settings.length - game.timer.timeLeft) * 10),
-      })
+        WPM:
+          ((game.correctWords * 60) /
+            (game.settings.length - game.timer.timeLeft)) *
+          10,
+      });
     }
-  }, [game.isRunning, game.isFinished, game.timer.isActive])
+  }, [game.isRunning, game.isFinished, game.timer.isActive]);
 
   useEffect(() => {
     if (isTextFinished || timeLeft == 0) {
       setGame({
         ...game,
         isFinished: true,
-
-      })
+      });
     }
-  }, [isTextFinished, timeLeft])
+  }, [isTextFinished, timeLeft]);
 
   //game logic
 
-  const startTest = () => {
+  const startTest = () => { };
+  const resetTest = () => {
+    setIsTimerActive(false);
+    setIsTextFinished(false);
+    setCurrentTestWPM(0);
+    setNumOfCorrectLetters(0);
+    setNumOfCorrectWords(0);
 
+    setGame({
+      ...game,
+      isRunning: false,
+      isFinished: false,
+      WPM: 0,
+      correctWords: numOfCorrectWords,
+      correctLetters: numOfCorrectLetters,
+      settings: settings,
+      // timer: {
+      //   timeLeft: settings.length,
+      //   isActive: false,
+      //   timerGoesUp: false,
+      // },
+    });
   };
 
   const stopTest = () => {
-
+    setIsTimerActive(false);
+    setGame({
+      ...game,
+      isRunning: false,
+      isFinished: false,
+      WPM: 0,
+      correctWords: numOfCorrectWords,
+      correctLetters: numOfCorrectLetters,
+      settings: settings,
+      // timer: {
+      //   timeLeft: settings.length,
+      //   isActive: false,
+      //   timerGoesUp: false,
+      // },
+    });
   };
 
   return (
@@ -148,6 +222,7 @@ function App() {
         <div style={{ justifyContent: "center", alignSelf: "center" }}>
           <Timer
             settings={settings}
+            game={game}
             updateTimerInfo={setTimer}
             start={isTimerActive}
           />
@@ -174,11 +249,12 @@ function App() {
 
           <TextArea
             settings={settings}
+            game={game}
             passCorrectLetters={setNumOfCorrectLetters}
             passCorrectWords={setNumOfCorrectWords}
             onTextStarted={() => {
               setIsTimerActive(true);
-              setIsTextFinished(false)
+              setIsTextFinished(false);
               setShouldUpdateCursor(true);
             }}
             onTextFinished={() => {
@@ -190,6 +266,9 @@ function App() {
               setHideSettings(true);
             }}
             onFocusLost={() => {
+              console.log("focus lost");
+              stopTest();
+
               setHideSettings(false);
               setShouldUpdateCursor(false);
             }}

@@ -12,7 +12,7 @@ function TextArea({
     onFocus,
     onFocusLost,
     settings,
-
+    game
 }) {
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
@@ -59,15 +59,6 @@ function TextArea({
     useEffect(() => {
         populateWordList(settings.count);
     }, [settings.type, settings.count]);
-
-
-    //get first Y to stop undefined error
-    // useEffect(() => {
-    //     setTimeout(() => {
-    //         setLastY(getOffset(document.getElementsByClassName("letter")[1]).top)
-    //     })
-
-    // })
 
 
     const handleUserInput = (event) => {
@@ -135,7 +126,7 @@ function TextArea({
                 list="autocompleteOff"
                 onChange={(event) => {
                     //stops error when no letters left
-                    if (document.getElementsByClassName("letter").length > 1) {
+                    if (document.getElementsByClassName("letter").length > 1 && !game.isFinished) {
                         handleUserInput(event);
                         event.target.value = "";
                     }
