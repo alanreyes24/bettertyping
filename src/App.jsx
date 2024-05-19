@@ -8,6 +8,7 @@ import Cursor from "./components/cursor/Cursor";
 import Settings from "./components/settings/Settings";
 import Header from "./components/header/Header";
 import Login from "./components/login/Login";
+import EndTest from "./components/endtest/EndTest";
 
 function App() {
   // organized all of the states to be cleaner and follow conventions
@@ -274,6 +275,7 @@ function App() {
             }}
           />
         </div>
+        <EndTest />
       </div>
     </>
   );
