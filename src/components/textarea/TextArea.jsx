@@ -120,10 +120,10 @@ function TextArea({
                 // console.log("Input Typed:", input);
     
                 setCorrectLetters(prevLetters => ({
-                  ...prevLetters,
-                    [currentLetterObjectPropertyValue]: input
-                }));
-    
+                    ...prevLetters,
+                     [currentLetterObjectPropertyValue]: [...(prevLetters[currentLetterObjectPropertyValue] || []), input]
+                   }));
+                   
                 passCorrectLetters(totalCorrectLetters);
             } else if (currentLetter.textContent == " ") {
                 setTotalCorrectWords(totalCorrectWords + 1);
@@ -137,10 +137,11 @@ function TextArea({
             currentLetter.classList.add("correct");
         } else {
             // Update the incorrectLetters object with the current letter position
+
             setIncorrectLetters(prevLetters => ({
-              ...prevLetters,
-                [currentLetterObjectPropertyValue]: input
-            }));
+                ...prevLetters,
+                 [currentLetterObjectPropertyValue]: [...(prevLetters[currentLetterObjectPropertyValue] || []), input]
+               }));
         }
     
         // check to see if on the last space (know when to end the test)

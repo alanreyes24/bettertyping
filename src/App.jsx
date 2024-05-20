@@ -65,7 +65,9 @@ function App() {
 
   useEffect(() => {
     // console.log(game);
+    console.log("correctLetters:")
     console.log(correctLetters)
+    console.log("incorrectLetters:")
     console.log(incorrectLetters)
   }, [game]);
 
@@ -296,7 +298,7 @@ function App() {
             }}
             onFocusLost={() => {
               setRenderTextArea(false)
-              resetTest();
+              // resetTest();
               setHideSettings(false);
               setShouldUpdateCursor(false);
             }}
