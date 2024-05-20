@@ -53,13 +53,13 @@ function Test() {
 
     //game state updating
 
-    // useEffect(() => {
-    //     // console.log(game);
-    //     console.log("correctLetters:")
-    //     console.log(correctLetters)
-    //     console.log("incorrectLetters:")
-    //     console.log(incorrectLetters)
-    // }, [game]);
+    useEffect(() => {
+        // console.log(game);
+        console.log("correctLetters:")
+        console.log(correctLetters)
+        // console.log("incorrectLetters:")
+        // console.log(incorrectLetters)
+    }, [game]);
 
     useEffect(() => {
         setGame({
