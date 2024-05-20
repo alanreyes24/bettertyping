@@ -26,13 +26,6 @@ function App() {
       >
 
         <Test />
-        {/* <p>{"CORRECT LETTERS " + correctLetters} </p>
-        <p>{"INCORRECT LETTERS " + incorrectLetters} </p> */}
-
-//         < EndTest 
-//           //correctLetters = {correctLetters}
-//           //incorrectLetters = {incorrectLetters}
-//         />
 
       </div>
     </div>

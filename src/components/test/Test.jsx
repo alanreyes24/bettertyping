@@ -290,6 +290,10 @@ function Test() {
                     )}
                 </>
             </div>
+            <EndTest
+                correctLetters={correctLetters}
+                incorrectLetters={incorrectLetters}
+            />
         </>
     );
 }
