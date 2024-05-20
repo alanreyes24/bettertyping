@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function Timer({ settings, updateTimerInfo, start, game }) {
 
-    const [timeLeft, setTimeLeft] = useState(300); // need to make this assignment stuff work
+    const [timeLeft, setTimeLeft] = useState(300); 
     const [isActive, setIsActive] = useState(false);
     const [timerGoesUp, setTimerGoesUp] = useState(false) //is the timer counting up or down
 

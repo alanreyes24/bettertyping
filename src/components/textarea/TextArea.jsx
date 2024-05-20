@@ -19,19 +19,19 @@ function TextArea({
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
 
+    // for some reason gets defined as NaN before defined as timerLength / 100 so I set the default as 1 and that seems to work
+    let timerLength = game.settings?.length ? Math.floor(game.settings.length / 10) : 1;
+
     const [correctLetters, setCorrectLetters] = useState(
         Object.fromEntries(
-            Array(game.settings.length)
-                .fill()
-                .map((_, index) => [index.toString(), null])
+            Array(timerLength).fill().map((_, index) => [index.toString(), null])
         )
     );
 
     const [incorrectLetters, setIncorrectLetters] = useState(
         Object.fromEntries(
-            Array(game.settings.length)
-                .fill()
-                .map((_, index) => [index.toString(), null])
+            Array(timerLength).fill().map((_, index) => [index.toString(), null])
+
         )
     );
 
@@ -69,8 +69,8 @@ function TextArea({
     }, [correctLetters, passCorrectLetters]);
 
     useEffect(() => {
-        passIncorrectLetters(incorrectLetters); // i don't know if i can condense these into one useEffect
-    }, [incorrectLetters, passIncorrectLetters]);
+        passIncorrectLetters(incorrectLetters)
+    }, [incorrectLetters, passIncorrectLetters])
 
     const focusInput = () => {
         document.getElementById("input").focus();
