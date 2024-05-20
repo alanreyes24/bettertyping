@@ -11,41 +11,33 @@ import Login from "./components/login/Login";
 import EndTest from "./components/endtest/EndTest";
 
 function App() {
-  // organized all of the states to be cleaner and follow conventions
-
-  // condensed "startTimer" and "stopTimer" to be one state "isTimerActive"
 
   const [isTimerActive, setIsTimerActive] = useState(false);
 
-  const [isTimerZero, setIsTimerZero] = useState(false); // changed "isTimerZero" to be "isTimerZero"
-  const [isTextFinished, setIsTextFinished] = useState(false); // this was named correctly good job
+  const [isTimerZero, setIsTimerZero] = useState(false); 
+  const [isTextFinished, setIsTextFinished] = useState(false); 
 
-  const [correctLetters, setCorrectLetters] = useState([]); // changed from "correctLetters" to "correctLetters"
+  const [correctLetters, setCorrectLetters] = useState([]); 
   const [incorrectLetters, setIncorrectLetters] = useState([]);
 
 
 
-  const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); // changed from "correctWords" to "numOfCorrectWords"
+  const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); 
 
-  const [timerLength, setTimerLength] = useState(300); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
+  const [timerLength, setTimerLength] = useState(300); 
   const [timeLeft, setTimeLeft] = useState(timerLength);
 
-  const [currentTestWPM, setCurrentTestWPM] = useState(0); // changed from "WPM" to "currentTestWPM"
-
+  const [currentTestWPM, setCurrentTestWPM] = useState(0); 
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
   const [hideSettings, setHideSettings] = useState();
 
   const [renderTextArea, setRenderTextArea] = useState(true);
 
-
-  //settings object
   const [settings, setSettings] = useState({});
 
-  //timer object
   const [timer, setTimer] = useState({});
 
-  //game object
   const [game, setGame] = useState({
     isRunning: false,
     isFinished: false,
@@ -315,10 +307,11 @@ function App() {
 
 
         </div>
-        <p>{"CORRECT LETTERS " + correctLetters} </p>
-        <p>{"INCORRECT LETTERS " + incorrectLetters} </p>
 
-
+        < EndTest 
+          correctLetters = {correctLetters}
+          incorrectLetters = {incorrectLetters}
+        />
 
       </div>
     </div>

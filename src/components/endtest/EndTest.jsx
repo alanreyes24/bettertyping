@@ -7,10 +7,13 @@ import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 
-const LineChart = () => {
-    const [testCorrectChartData, setTestCorrectChartData] = useState([]);
-    const [testErrorChartData, setErrorChartData] = useState([]);
+const LineChart = (correctLetters, incorrectLetters) => {
 
+    const [testCorrectChartData, setTestCorrectChartData] = useState(correctLetters);
+    const [testErrorChartData, setTestErrorChartData] = useState(correctLetters);
+
+
+    
     const data = {
         labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
         datasets: [

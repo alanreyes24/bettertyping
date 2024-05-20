@@ -20,15 +20,18 @@ function TextArea({
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
 
-    const [correctLetters, setCorrectLetters] = useState(
-        Object.fromEntries(
-          Array(game.settings.length).fill().map((_, index) => [index.toString(), null])
-        )
-    );
+// for some reason gets defined as NaN before defined as timerLength / 100 so I set the default as 1 and that seems to work
+let timerLength = game.settings?.length? Math.floor(game.settings.length / 10) : 1; 
+
+const [correctLetters, setCorrectLetters] = useState(
+    Object.fromEntries(
+        Array(timerLength).fill().map((_, index) => [index.toString(), null])
+    )
+);
 
     const [incorrectLetters, setIncorrectLetters] = useState(
         Object.fromEntries(
-          Array(game.settings.length).fill().map((_, index) => [index.toString(), null])
+          Array(timerLength).fill().map((_, index) => [index.toString(), null])
         )
     );
 
@@ -54,7 +57,7 @@ function TextArea({
     }, [correctLetters, passCorrectLetters])
 
     useEffect(() => {
-        passIncorrectLetters(incorrectLetters) // i don't know if i can condense these into one useEffect
+        passIncorrectLetters(incorrectLetters)
     }, [incorrectLetters, passIncorrectLetters])
 
 
@@ -116,8 +119,6 @@ function TextArea({
             if (currentLetter.textContent!= " ") {
                 setTotalCorrectLetters(totalCorrectLetters + 1);
     
-                // console.log("Current Letter Object Property Value:", currentLetterObjectPropertyValue);
-                // console.log("Input Typed:", input);
     
                 setCorrectLetters(prevLetters => ({
                     ...prevLetters,
@@ -128,6 +129,12 @@ function TextArea({
             } else if (currentLetter.textContent == " ") {
                 setTotalCorrectWords(totalCorrectWords + 1);
                 passCorrectWords(totalCorrectWords);
+
+                setCorrectLetters(prevLetters => ({
+                    ...prevLetters,
+                     [currentLetterObjectPropertyValue]: [...(prevLetters[currentLetterObjectPropertyValue] || []), input]
+                   }));
+
             }
         
             currentLetter.classList.remove("incorrect");
@@ -136,7 +143,6 @@ function TextArea({
             nextLetter.classList.add("next");
             currentLetter.classList.add("correct");
         } else {
-            // Update the incorrectLetters object with the current letter position
 
             setIncorrectLetters(prevLetters => ({
                 ...prevLetters,
