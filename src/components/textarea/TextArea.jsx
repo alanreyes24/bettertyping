@@ -15,52 +15,67 @@ function TextArea({
     onFocusLost,
     settings,
     game,
-
 }) {
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
 
     const [correctLetters, setCorrectLetters] = useState(
         Object.fromEntries(
-          Array(game.settings.length).fill().map((_, index) => [index.toString(), null])
+            Array(game.settings.length)
+                .fill()
+                .map((_, index) => [index.toString(), null])
         )
     );
 
     const [incorrectLetters, setIncorrectLetters] = useState(
         Object.fromEntries(
-          Array(game.settings.length).fill().map((_, index) => [index.toString(), null])
+            Array(game.settings.length)
+                .fill()
+                .map((_, index) => [index.toString(), null])
         )
     );
 
-    const [currentLetterObjectPropertyValue, setCurrentLetterObjectPropertyValue] = useState(0);
+    const [
+        currentLetterObjectPropertyValue,
+        setCurrentLetterObjectPropertyValue,
+    ] = useState(0);
 
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
-    const [deleteLines, setDeleteLines] = useState(0)
+    const [deleteLines, setDeleteLines] = useState(0);
 
+    const [textTyped, setTextTyped] = useState("");
+    const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
+
+    const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
+
+    //makes the cursor blink if the test is not started and textarea is selected
+    useEffect(() => {
+        if (shouldUpdateCursor && !game.isRunning) {
+            document.getElementById("cursor").classList.add("cursorBlink");
+        } else document.getElementById("cursor").classList.remove("cursorBlink");
+    }, [shouldUpdateCursor, game.isRunning]);
 
     useEffect(() => {
-        
         const timerId = setInterval(() => {
-            setCurrentLetterObjectPropertyValue(prevValue => prevValue + 1);
+            setCurrentLetterObjectPropertyValue((prevValue) => prevValue + 1);
         }, 1000);
 
         return () => clearInterval(timerId);
     }, []);
 
+    useEffect(() => {
+        passCorrectLetters(correctLetters);
+    }, [correctLetters, passCorrectLetters]);
 
     useEffect(() => {
-        passCorrectLetters(correctLetters)
-    }, [correctLetters, passCorrectLetters])
-
-    useEffect(() => {
-        passIncorrectLetters(incorrectLetters) // i don't know if i can condense these into one useEffect
-    }, [incorrectLetters, passIncorrectLetters])
-
+        passIncorrectLetters(incorrectLetters); // i don't know if i can condense these into one useEffect
+    }, [incorrectLetters, passIncorrectLetters]);
 
     const focusInput = () => {
         document.getElementById("input").focus();
         onFocus();
+        setShouldUpdateCursor(true);
         setWordsLoaded(true);
     };
 
@@ -85,7 +100,6 @@ function TextArea({
         setWordList(result);
     }
 
-
     const getOffset = (element) => {
         const rect = element.getBoundingClientRect();
         return {
@@ -98,73 +112,121 @@ function TextArea({
         populateWordList(settings.count);
     }, [settings.type, settings.count]);
 
-
     const handleUserInput = (event) => {
         // Existing logic...
+
         onTextStarted();
-    
-        let input = event.target.value;
-    
-        let currentLetter = document.getElementsByClassName("letter")[0];
-        let nextLetter = document.getElementsByClassName("letter")[1];
-    
-        if (getOffset(nextLetter).top!= getOffset(currentLetter).top) {
-            setDeleteLines(deleteLines + 1)
-        }
-    
-        if (input == currentLetter.textContent) {
-            if (currentLetter.textContent!= " ") {
-                setTotalCorrectLetters(totalCorrectLetters + 1);
-    
-                // console.log("Current Letter Object Property Value:", currentLetterObjectPropertyValue);
-                // console.log("Input Typed:", input);
-    
-                setCorrectLetters(prevLetters => ({
+        setShouldUpdateCursor(true);
+
+        let input = event.key;
+
+        let lastLetter =
+            document.getElementsByClassName("letter")[currentLetterIndex - 1];
+        let currentLetter =
+            document.getElementsByClassName("letter")[currentLetterIndex];
+        let nextLetter =
+            document.getElementsByClassName("letter")[currentLetterIndex + 1];
+
+        if (input !== "Backspace") {
+            setTextTyped(textTyped + input);
+
+            if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
+                setDeleteLines(deleteLines + 1);
+            }
+
+            if (input == currentLetter.textContent) {
+                if (currentLetter.textContent != " ") {
+                    setCurrentLetterIndex(currentLetterIndex + 1);
+                    setTotalCorrectLetters(totalCorrectLetters + 1);
+
+                    // console.log("Current Letter Object Property Value:", currentLetterObjectPropertyValue);
+                    // console.log("Input Typed:", input);
+
+                    setCorrectLetters((prevLetters) => ({
+                        ...prevLetters,
+                        [currentLetterObjectPropertyValue]: [
+                            ...(prevLetters[currentLetterObjectPropertyValue] || []),
+                            input,
+                        ],
+                    }));
+
+                    passCorrectLetters(totalCorrectLetters);
+                } else if (currentLetter.textContent == " ") {
+                    setTextTyped("");
+                    setTotalCorrectWords(totalCorrectWords + 1);
+                    passCorrectWords(totalCorrectWords);
+                }
+
+                currentLetter.classList.remove("incorrect");
+                currentLetter.classList.remove("next");
+                // currentLetter.classList.remove("letter");
+                nextLetter.classList.add("next");
+                currentLetter.classList.add("correct");
+                setCurrentLetterIndex(currentLetterIndex + 1);
+            } else if (
+                input != currentLetter.textContent &&
+                currentLetter.textContent != " "
+            ) {
+                currentLetter.classList.add("incorrect");
+                currentLetter.classList.remove("next");
+                nextLetter.classList.add("next");
+                // Update the incorrectLetters object with the current letter position
+                setIncorrectLetters((prevLetters) => ({
                     ...prevLetters,
-                     [currentLetterObjectPropertyValue]: [...(prevLetters[currentLetterObjectPropertyValue] || []), input]
-                   }));
-                   
-                passCorrectLetters(totalCorrectLetters);
-            } else if (currentLetter.textContent == " ") {
+                    [currentLetterObjectPropertyValue]: [
+                        ...(prevLetters[currentLetterObjectPropertyValue] || []),
+                        input,
+                    ],
+                }));
+                setCurrentLetterIndex(currentLetterIndex + 1);
+            }
+
+            // console.log(event)
+            // console.log(event.target.value)
+
+            // check to see if on the last space (know when to end the test)
+            if (document.getElementsByClassName("letter").length == 1) {
+                // give credit for last word since we're skipping the space at the end
+                let currentLetter = document.getElementsByClassName("letter")[0];
+                currentLetter.classList.remove("next");
+                currentLetter.classList.remove("letter");
+
                 setTotalCorrectWords(totalCorrectWords + 1);
                 passCorrectWords(totalCorrectWords);
+                //passes the prop onTextFinished which is a callback function to an App state
+                setShouldUpdateCursor(false);
+                onTextFinished();
             }
-        
-            currentLetter.classList.remove("incorrect");
-            currentLetter.classList.remove("next");
-            currentLetter.classList.remove("letter");
-            nextLetter.classList.add("next");
-            currentLetter.classList.add("correct");
-        } else {
-            // Update the incorrectLetters object with the current letter position
+        } else if (input === "Backspace" && lastLetter != undefined) {
+            //TODO: rewrite everything so letter doenst go away so we can support backspaces
+            // basically we need to not remove the letter class, and rely on correct checking
 
-            setIncorrectLetters(prevLetters => ({
-                ...prevLetters,
-                 [currentLetterObjectPropertyValue]: [...(prevLetters[currentLetterObjectPropertyValue] || []), input]
-               }));
-        }
-    
-        // check to see if on the last space (know when to end the test)
-        if (document.getElementsByClassName("letter").length == 1) {
-            // give credit for last word since we're skipping the space at the end
-            let currentLetter = document.getElementsByClassName("letter")[0];
+            //dont allow backspaces on correct letters?
+            // NO BECAUSE WHAT IF RIGHT WRONG WRONG RIGHT WRONG
+            // we just need to remove the "correct" class so its not white anymore
+
+            //find most recent letter and remove incorrect class, if there is one, and set currentletterindex to it's index (so we can retype it)
+
+            lastLetter.classList.remove("correct");
             currentLetter.classList.remove("next");
-            currentLetter.classList.remove("letter");
-    
-            setTotalCorrectWords(totalCorrectWords + 1);
-            passCorrectWords(totalCorrectWords);
-            //passes the prop onTextFinished which is a callback function to an App state
-            onTextFinished();
+            lastLetter.classList.remove("incorrect");
+            setCurrentLetterIndex(currentLetterIndex - 1);
+            setTextTyped(textTyped.slice(0, -1));
         }
     };
 
     return (
         <>
+            <Cursor
+                shouldUpdate={shouldUpdateCursor}
+                currentLetter={currentLetterIndex}
+            />
             <input
                 onBlur={() => {
+                    setShouldUpdateCursor(false);
                     onFocusLost();
                     setWordsLoaded(false);
-                    populateWordList(settings.count)
+                    populateWordList(settings.count);
                 }}
                 id="input"
                 autoComplete="off"
@@ -175,31 +237,39 @@ function TextArea({
                 data-gramm_editor="false"
                 data-enable-grammarly="false"
                 list="autocompleteOff"
-                onChange={(event) => {
-                    //stops error when no letters left
-                    if (document.getElementsByClassName("letter").length > 1 && !game.isFinished) {
+                onKeyDown={(event) => {
+                    //TODO: ONLY a-z,A-Z,0-9,backspace, and punctuation
+                    if (
+                        document.getElementsByClassName("letter").length > 1 &&
+                        !game.isFinished
+                    ) {
                         handleUserInput(event);
-                        event.target.value = "";
                     }
                 }}
+                // onChange={(event) => {
+
+                // }}
                 style={{ opacity: 0, height: 0, width: 0 }}
             ></input>
             <div style={{}} className="type__container">
                 <div
                     onClick={() => {
                         // focus input & adds next class to first letter
+                        console.log("focus");
                         focusInput();
 
-                        // if (document.getElementsByClassName("letter").length != undefined) {
-                        //     document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
-                        // }
-
+                        if (document.getElementsByClassName("letter").length != undefined) {
+                            document
+                                .getElementsByClassName("letter")[0]
+                                .classList.add("next"); // do we need this? (yes its for cursor)
+                        }
                     }}
                     className="type__box"
-                    style={{ marginTop: deleteLines > 1 ? (deleteLines - 1) * -2 + 'rem' : 0 }}
+                    style={{
+                        marginTop: deleteLines > 1 ? (deleteLines - 1) * -2 + "rem" : 0,
+                    }}
                 >
                     {wordsLoaded == true ? <> {wordList} </> : <></>}
-
                 </div>
             </div>
         </>
