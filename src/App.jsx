@@ -36,6 +36,9 @@ function App() {
 
   const [hideSettings, setHideSettings] = useState();
 
+  const [renderTextArea, setRenderTextArea] = useState(true);
+
+
   //settings object
   const [settings, setSettings] = useState({});
 
@@ -165,24 +168,36 @@ function App() {
     }
   }, [isTextFinished, timeLeft]);
 
+
+
+  //any time text is told to stop rendering, instantly rerender it, good for now may need to change later
+  useEffect(() => {
+    if (!renderTextArea) {
+      setRenderTextArea(true)
+    }
+  }, [renderTextArea])
+
   //game logic
 
   const startTest = () => { };
+
   const resetTest = () => {
     setIsTimerActive(false);
     setIsTextFinished(false);
     setCurrentTestWPM(0);
     setCorrectLetters(0);
     setNumOfCorrectWords(0);
-
+    setIsTimerActive(false);
+    setCorrectLetters([])
+    setIncorrectLetters([])
     setGame({
       ...game,
       isRunning: false,
       isFinished: false,
       WPM: 0,
       correctWords: numOfCorrectWords,
-      correctLetters: correctLetters,
-      incorrectLetters: incorrectLetters,
+      correctLetters: [],
+      incorrectLetters: [],
       settings: settings,
       // timer: {
       //   timeLeft: settings.length,
@@ -190,10 +205,14 @@ function App() {
       //   timerGoesUp: false,
       // },
     });
+
+    console.log('WIPE')
+    console.log(game)
   };
 
   const stopTest = () => {
     setIsTimerActive(false);
+
     setGame({
       ...game,
       isRunning: false,
@@ -208,11 +227,13 @@ function App() {
       //   isActive: false,
       //   timerGoesUp: false,
       // },
+
+
     });
   };
 
   return (
-    <>
+    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
       <Header />
       <Login />
       <div
@@ -255,7 +276,7 @@ function App() {
         >
           <Cursor shouldUpdate={shouldUpdateCursor} />
 
-          <TextArea
+          <>{renderTextArea ? <><TextArea
             settings={settings}
             game={game}
             passCorrectLetters={setCorrectLetters}
@@ -276,19 +297,31 @@ function App() {
             }}
             onFocusLost={() => {
               console.log("focus lost");
-              stopTest();
-
+              setRenderTextArea(false)
+              resetTest();
               setHideSettings(false);
               setShouldUpdateCursor(false);
             }}
-          />
+          /></> : <>
+            <div style={{
+              opacity: 0, overflow: "hidden",
+              minWidth: "65vw",
+              maxWidth: "80vw",
+              height: "6rem"
+            }}>
+
+            </div>
+          </>}</>
+
+
         </div>
         <p>{"CORRECT LETTERS " + correctLetters} </p>
         <p>{"INCORRECT LETTERS " + incorrectLetters} </p>
 
 
+
       </div>
-    </>
+    </div>
   );
 }
 

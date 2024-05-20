@@ -79,7 +79,7 @@ function Timer({ settings, updateTimerInfo, start, game }) {
             fontSize: '3rem',
             fontWeight: '700'
         }}>
-            {timeLeft!= undefined? (timeLeft / 10).toFixed(1) : 30.0}
+            {timeLeft != undefined ? (timeLeft / 10).toFixed(1) : (30.0).toFixed(1)}
         </div>
     );
 

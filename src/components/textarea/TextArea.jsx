@@ -14,7 +14,8 @@ function TextArea({
     onFocus,
     onFocusLost,
     settings,
-    game
+    game,
+
 }) {
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
@@ -28,15 +29,17 @@ function TextArea({
 
     useEffect(() => {
         passCorrectLetters(correctLetters)
-    },[correctLetters, passCorrectLetters])
+    }, [correctLetters, passCorrectLetters])
 
     useEffect(() => {
         passIncorrectLetters(incorrectLetters) // i don't know if i can condense these into one useEffect
-    },[incorrectLetters, passIncorrectLetters])
-    
+    }, [incorrectLetters, passIncorrectLetters])
+
+
     const focusInput = () => {
         document.getElementById("input").focus();
         onFocus();
+        setWordsLoaded(true);
     };
 
     //async function to get wordMap because it takes a second
@@ -130,6 +133,8 @@ function TextArea({
             <input
                 onBlur={() => {
                     onFocusLost();
+                    setWordsLoaded(false);
+                    populateWordList(settings.count)
                 }}
                 id="input"
                 autoComplete="off"
@@ -155,12 +160,16 @@ function TextArea({
                         // focus input & adds next class to first letter
                         focusInput();
 
-                        document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
+                        // if (document.getElementsByClassName("letter").length != undefined) {
+                        //     document.getElementsByClassName("letter")[0].classList.add("next"); // do we need this?
+                        // }
+
                     }}
                     className="type__box"
                     style={{ marginTop: deleteLines > 1 ? (deleteLines - 1) * -2 + 'rem' : 0 }}
                 >
                     {wordsLoaded == true ? <> {wordList} </> : <></>}
+
                 </div>
             </div>
         </>
