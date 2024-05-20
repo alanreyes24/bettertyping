@@ -205,9 +205,6 @@ function App() {
       //   timerGoesUp: false,
       // },
     });
-
-    console.log('WIPE')
-    console.log(game)
   };
 
   const stopTest = () => {
@@ -296,7 +293,6 @@ function App() {
               setHideSettings(true);
             }}
             onFocusLost={() => {
-              console.log("focus lost");
               setRenderTextArea(false)
               resetTest();
               setHideSettings(false);
