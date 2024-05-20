@@ -20,12 +20,34 @@ function TextArea({
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
 
-    const [correctLetters, setCorrectLetters] = useState([]); // going to have to pull size of array from test size option
-    const [incorrectLetters, setIncorrectLetters] = useState(() => Array(game.settings.length).fill(null));
+    const [correctLetters, setCorrectLetters] = useState(
+        Object.fromEntries(
+          Array(game.settings.length).fill().map((_, index) => [index.toString(), null])
+        )
+    );
+
+    const [incorrectLetters, setIncorrectLetters] = useState(
+        Object.fromEntries(
+          Array(game.settings.length).fill().map((_, index) => [index.toString(), null])
+        )
+    );
+
+    const [currentLetterObjectPropertyValue, setCurrentLetterObjectPropertyValue] = useState(0);
 
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
     const [deleteLines, setDeleteLines] = useState(0)
+
+
+    useEffect(() => {
+        
+        const timerId = setInterval(() => {
+            setCurrentLetterObjectPropertyValue(prevValue => prevValue + 1);
+        }, 1000);
+
+        return () => clearInterval(timerId);
+    }, []);
+
 
     useEffect(() => {
         passCorrectLetters(correctLetters)
@@ -78,49 +100,56 @@ function TextArea({
 
 
     const handleUserInput = (event) => {
-        //if user inputs anything start the timer
+        // Existing logic...
         onTextStarted();
-
+    
         let input = event.target.value;
-
+    
         let currentLetter = document.getElementsByClassName("letter")[0];
         let nextLetter = document.getElementsByClassName("letter")[1];
-
-        if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
+    
+        if (getOffset(nextLetter).top!= getOffset(currentLetter).top) {
             setDeleteLines(deleteLines + 1)
         }
-
+    
         if (input == currentLetter.textContent) {
-            if (currentLetter.textContent != " ") {
-                setTotalCorrectLetters(totalCorrectLetters + 1);  // HERE
-                setCorrectLetters(prevLetters => [...prevLetters, input]);
-
-                //passes correct letters callback with data
-
+            if (currentLetter.textContent!= " ") {
+                setTotalCorrectLetters(totalCorrectLetters + 1);
+    
+                // console.log("Current Letter Object Property Value:", currentLetterObjectPropertyValue);
+                // console.log("Input Typed:", input);
+    
+                setCorrectLetters(prevLetters => ({
+                  ...prevLetters,
+                    [currentLetterObjectPropertyValue]: input
+                }));
+    
                 passCorrectLetters(totalCorrectLetters);
             } else if (currentLetter.textContent == " ") {
                 setTotalCorrectWords(totalCorrectWords + 1);
-                //passes correct words callback with data
                 passCorrectWords(totalCorrectWords);
             }
-
+        
             currentLetter.classList.remove("incorrect");
             currentLetter.classList.remove("next");
             currentLetter.classList.remove("letter");
             nextLetter.classList.add("next");
             currentLetter.classList.add("correct");
         } else {
-            currentLetter.classList.add("incorrect");
-            setIncorrectLetters(prevLetters => [...prevLetters, input]);
+            // Update the incorrectLetters object with the current letter position
+            setIncorrectLetters(prevLetters => ({
+              ...prevLetters,
+                [currentLetterObjectPropertyValue]: input
+            }));
         }
-
+    
         // check to see if on the last space (know when to end the test)
         if (document.getElementsByClassName("letter").length == 1) {
             // give credit for last word since we're skipping the space at the end
             let currentLetter = document.getElementsByClassName("letter")[0];
             currentLetter.classList.remove("next");
             currentLetter.classList.remove("letter");
-
+    
             setTotalCorrectWords(totalCorrectWords + 1);
             passCorrectWords(totalCorrectWords);
             //passes the prop onTextFinished which is a callback function to an App state

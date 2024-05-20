@@ -64,7 +64,9 @@ function App() {
   //game state updating
 
   useEffect(() => {
-    console.log(game);
+    // console.log(game);
+    console.log(correctLetters)
+    console.log(incorrectLetters)
   }, [game]);
 
   useEffect(() => {

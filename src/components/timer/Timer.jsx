@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 
 function Timer({ settings, updateTimerInfo, start, game }) {
 
-    // console.log(passTimerInfo)
     const [timeLeft, setTimeLeft] = useState(300); // need to make this assignment stuff work
     const [isActive, setIsActive] = useState(false);
     const [timerGoesUp, setTimerGoesUp] = useState(false) //is the timer counting up or down
@@ -54,10 +53,6 @@ function Timer({ settings, updateTimerInfo, start, game }) {
         if (game.isRunning && timeLeft > 0 && !timerGoesUp) {
             setTimeout(() => setTimeLeft(timeLeft - 1), 100);
 
-
-            // THIS DOES NOT NEED TO UPDATE TIMER INFO BECAUSE IT ALREADY UPDATES FROM OUR LOCAL STATE CHANGING (THE EARLIER USEEFFECT)
-            // doing so causes the timerInfo to be just the time left, and not the object containing both timeleft and isactive
-            //setTimeout(() => updateTimerInfo(updateTimerInfo.timeLeft = timeLeft))
         }
 
         if (game.isRunning && timerGoesUp) {
