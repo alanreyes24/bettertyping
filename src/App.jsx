@@ -287,7 +287,6 @@ function App() {
         <p>{"INCORRECT LETTERS " + incorrectLetters} </p>
 
 
-        <EndTest />
       </div>
     </>
   );

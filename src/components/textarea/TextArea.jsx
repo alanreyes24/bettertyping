@@ -20,7 +20,7 @@ function TextArea({
     const [wordsLoaded, setWordsLoaded] = useState(false);
 
     const [correctLetters, setCorrectLetters] = useState([]); // going to have to pull size of array from test size option
-    const [incorrectLetters, setIncorrectLetters] = useState([]);
+    const [incorrectLetters, setIncorrectLetters] = useState(() => Array(game.settings.length).fill(null));
 
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);

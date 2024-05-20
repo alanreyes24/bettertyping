@@ -71,8 +71,17 @@ function Timer({ settings, updateTimerInfo, start, game }) {
         }
     }, [isActive, timeLeft, timerGoesUp, game.isRunning])
 
-    return <div style={{ fontSize: '3rem', fontWeight: '700', }}>{timeLeft != undefined ? (timeLeft / 10).toFixed(1) : 30.0}</div>;
-
+    return (
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            fontSize: '3rem',
+            fontWeight: '700'
+        }}>
+            {timeLeft!= undefined? (timeLeft / 10).toFixed(1) : 30.0}
+        </div>
+    );
 
 }
 
