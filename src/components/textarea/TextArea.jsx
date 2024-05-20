@@ -7,6 +7,8 @@ import "./TextAreaStyles.css";
 function TextArea({
     onTextFinished,
     passCorrectLetters,
+    passIncorrectLetters,
+    passNumCorrectLetters,
     passCorrectWords,
     onTextStarted,
     onFocus,
@@ -16,11 +18,22 @@ function TextArea({
 }) {
     const [wordList, setWordList] = useState({});
     const [wordsLoaded, setWordsLoaded] = useState(false);
+
+    const [correctLetters, setCorrectLetters] = useState([]); // going to have to pull size of array from test size option
+    const [incorrectLetters, setIncorrectLetters] = useState([]);
+
     const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
     const [totalCorrectWords, setTotalCorrectWords] = useState(1);
     const [deleteLines, setDeleteLines] = useState(0)
 
+    useEffect(() => {
+        passCorrectLetters(correctLetters)
+    },[correctLetters, passCorrectLetters])
 
+    useEffect(() => {
+        passIncorrectLetters(incorrectLetters) // i don't know if i can condense these into one useEffect
+    },[incorrectLetters, passIncorrectLetters])
+    
     const focusInput = () => {
         document.getElementById("input").focus();
         onFocus();
@@ -76,7 +89,9 @@ function TextArea({
 
         if (input == currentLetter.textContent) {
             if (currentLetter.textContent != " ") {
-                setTotalCorrectLetters(totalCorrectLetters + 1);
+                setTotalCorrectLetters(totalCorrectLetters + 1);  // HERE
+                setCorrectLetters(prevLetters => [...prevLetters, input]);
+
                 //passes correct letters callback with data
 
                 passCorrectLetters(totalCorrectLetters);
@@ -93,6 +108,7 @@ function TextArea({
             currentLetter.classList.add("correct");
         } else {
             currentLetter.classList.add("incorrect");
+            setIncorrectLetters(prevLetters => [...prevLetters, input]);
         }
 
         // check to see if on the last space (know when to end the test)

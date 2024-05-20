@@ -20,7 +20,11 @@ function App() {
   const [isTimerZero, setIsTimerZero] = useState(false); // changed "isTimerZero" to be "isTimerZero"
   const [isTextFinished, setIsTextFinished] = useState(false); // this was named correctly good job
 
-  const [numOfCorrectLetters, setNumOfCorrectLetters] = useState(0); // changed from "correctLetters" to "numOfCorrectLetters"
+  const [correctLetters, setCorrectLetters] = useState([]); // changed from "correctLetters" to "correctLetters"
+  const [incorrectLetters, setIncorrectLetters] = useState([]);
+
+
+
   const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); // changed from "correctWords" to "numOfCorrectWords"
 
   const [timerLength, setTimerLength] = useState(300); // going to need you to explain the relationship between "timerLength" and "timeLeft" more
@@ -44,7 +48,8 @@ function App() {
     isFinished: false,
     WPM: 0,
     correctWords: 0,
-    correctLetters: 0,
+    correctLetters: [],
+    incorrectLetters: [],
     settings: {},
     timer: {
       timeLeft: timerLength,
@@ -65,11 +70,12 @@ function App() {
       isFinished: false,
       WPM: 0,
       correctWords: numOfCorrectWords,
-      correctLetters: numOfCorrectLetters,
+      correctLetters: correctLetters,
+      incorrectLetters: incorrectLetters,
       settings: settings,
       timer: timer
     });
-  }, [timer, currentTestWPM, isTimerActive, numOfCorrectWords, settings]);
+  }, [timer, currentTestWPM, isTimerActive, numOfCorrectWords, correctLetters, incorrectLetters, settings]);
 
   //makes the cursor blink if the test is not started and textarea is selected
   useEffect(() => {
@@ -107,7 +113,7 @@ function App() {
   //   if (settings.visible) {
   //     setIsTimerActive(false)
   //     setIsTextFinished(false)
-  //     setNumOfCorrectLetters(0)
+  //     setCorrectLetters(0)
   //     setNumOfCorrectWords(0)
 
   // setGame({
@@ -115,7 +121,7 @@ function App() {
   //   isFinished: false,
   //   WPM: 0,
   //   correctWords: numOfCorrectWords,
-  //   correctLetters: numOfCorrectLetters,
+  //   correctLetters: correctLetters,
   //   settings: settings,
   //   timer: timer,
   // })
@@ -166,7 +172,7 @@ function App() {
     setIsTimerActive(false);
     setIsTextFinished(false);
     setCurrentTestWPM(0);
-    setNumOfCorrectLetters(0);
+    setCorrectLetters(0);
     setNumOfCorrectWords(0);
 
     setGame({
@@ -175,7 +181,8 @@ function App() {
       isFinished: false,
       WPM: 0,
       correctWords: numOfCorrectWords,
-      correctLetters: numOfCorrectLetters,
+      correctLetters: correctLetters,
+      incorrectLetters: incorrectLetters,
       settings: settings,
       // timer: {
       //   timeLeft: settings.length,
@@ -193,7 +200,8 @@ function App() {
       isFinished: false,
       WPM: 0,
       correctWords: numOfCorrectWords,
-      correctLetters: numOfCorrectLetters,
+      correctLetters: correctLetters,
+      incorrectLetters: incorrectLetters,
       settings: settings,
       // timer: {
       //   timeLeft: settings.length,
@@ -229,7 +237,6 @@ function App() {
           />
 
           {isTextFinished ? <>FINISHED YES</> : <>FINISHED NO</>}
-          {" LETTERS " + numOfCorrectLetters}
           {" WORDS " + numOfCorrectWords}
           {currentTestWPM < Infinity ? (
             <>{"WPM: " + currentTestWPM}</>
@@ -251,7 +258,8 @@ function App() {
           <TextArea
             settings={settings}
             game={game}
-            passCorrectLetters={setNumOfCorrectLetters}
+            passCorrectLetters={setCorrectLetters}
+            passIncorrectLetters={setIncorrectLetters}
             passCorrectWords={setNumOfCorrectWords}
             onTextStarted={() => {
               setIsTimerActive(true);
@@ -275,6 +283,10 @@ function App() {
             }}
           />
         </div>
+        <p>{"CORRECT LETTERS " + correctLetters} </p>
+        <p>{"INCORRECT LETTERS " + incorrectLetters} </p>
+
+
         <EndTest />
       </div>
     </>
