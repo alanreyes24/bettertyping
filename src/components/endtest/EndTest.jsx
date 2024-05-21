@@ -36,7 +36,6 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
       array.push(cords);
       
       setTestCorrectChartData(array)
-      console.log(testCorrectChartData)
     }
 
     for (let i=0; i < incorrectSecondCount; i++) {
@@ -54,13 +53,8 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
   useEffect(() => {
     if (game.isFinished) { 
       updateChart();
-      console.log("updateChart() is being ran")
     } 
   },[game.isRunning])
-
-  useEffect(() => {
-    console.log(game);
-  },[game])
 
   const data = {
     datasets: [
@@ -116,11 +110,11 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
   };
 
   return (
-    <div style={{ width: '100%', height: '50vh' }}>
+    <div style={{display: game.isFinished ? "flex":"none" , width: '100%', height: '50vh' }}>
       <Scatter data={data} options={options} />
     </div>
   );
 
-}; // Corrected closing brace for the component function
+};
 
 export default LineChart;
