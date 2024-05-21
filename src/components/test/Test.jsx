@@ -55,10 +55,10 @@ function Test() {
 
     useEffect(() => {
         // console.log(game);
-        console.log("correctLetters:")
-        console.log(correctLetters)
-        console.log("incorrectLetters:")
-        console.log(incorrectLetters)
+        // console.log("correctLetters:")
+        // console.log(correctLetters)
+        // console.log("incorrectLetters:")
+        // console.log(incorrectLetters)
     }, [game.correctLetters]);
 
     useEffect(() => {
@@ -126,6 +126,7 @@ function Test() {
     // }, [settings.visible, settings])
 
     useEffect(() => {
+
         if (game.isRunning) {
             // console.log(game.isRunning)
 
@@ -141,6 +142,7 @@ function Test() {
 
             //figure out what test it is, use timer down vs timer up
         }
+
         if (game.isFinished) {
             // console.log(currentTestWPM)
             setGame({
@@ -151,7 +153,7 @@ function Test() {
                     10,
             });
         }
-    }, [game.isRunning, game.isFinished, game.timer.isActive]);
+    }, [game.isRunning, game.isFinished, game.timer]); // HERE IS THE ISSUE, FIND A WAY TO MAKE THIS WORK WITHOUT HAVING 'GAME' AS A DEPENDENCY
 
     useEffect(() => {
         if (isTextFinished || timeLeft == 0) {
@@ -263,6 +265,7 @@ function Test() {
                                     setIsTextFinished(false);
                                 }}
                                 onTextFinished={() => {
+                                    
                                     setIsTextFinished(true);
                                 }}
                                 onFocus={() => {
@@ -293,6 +296,7 @@ function Test() {
             <EndTest
                 correctLetters={correctLetters}
                 incorrectLetters={incorrectLetters}
+                game={game}
             />
         </>
     );

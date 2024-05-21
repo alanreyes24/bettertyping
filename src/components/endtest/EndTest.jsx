@@ -1,65 +1,123 @@
 // EndTest.jsx
 
-import React, { useState } from "react";
-import { Line } from 'react-chartjs-2';
+import React, { useEffect, useState } from "react";
+import { Scatter } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
+const LineChart = ({correctLetters, incorrectLetters, game}) => {
 
-const LineChart = (correctLetters, incorrectLetters) => {
+  const [testCorrectChartData, setTestCorrectChartData] = useState([]);
+  const [testErrorChartData, setTestErrorChartData] = useState([]);
 
-    const [testCorrectChartData, setTestCorrectChartData] = useState(correctLetters);
-    const [testErrorChartData, setTestErrorChartData] = useState(correctLetters);
+  let correctSecondCount = 0;
+  let incorrectSecondCount = 0;
 
+  function updateChart() {
+    for (let key in correctLetters) {
+      if (correctLetters.hasOwnProperty(key)) {
+          correctSecondCount++;
+      }
+    }
 
-    
-    const data = {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-        datasets: [
-          {
-            label: 'correct',
-            data: testCorrectChartData,
-            backgroundColor: 'rgba(75,192,192,0.2)',
-            borderColor: 'rgba(75,192,192,1)',
-            pointBackgroundColor: 'rgba(75,192,192,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(75,192,192,1)',
-          },
-          {
-            label: 'errors',
-            data: testErrorChartData,
-            backgroundColor: 'rgba(75,192,192,0.2)',
-            borderColor: 'rgba(75,192,192,1)',
-            pointBackgroundColor: 'rgba(75,192,192,1)',
-            pointBorderColor: '#fff',
-            pointHoverBackgroundColor: '#fff',
-            pointHoverBorderColor: 'rgba(75,192,192,1)',
-          }
-        ],
-    };
-    
-    const options = {
-        responsive: true,
-        plugins: {
-          legend: {
-            position: 'top',
-          },
-          title: {
-            display: true,
-            text: '',
-          },
-        },
-        maintainAspectRatio: false,
-    };
+    for (let key in incorrectLetters) {
+      if (incorrectLetters.hasOwnProperty(key)) {
+          incorrectSecondCount++;
+      }
+    }
 
-    return (
-        <div style={{ width: '100%', height: '50vh' }}>
-            <Line data={data} options={options} />
-        </div>
-    );
-};
+    for (let i=0; i < correctSecondCount; i++) {
+      let amountOfLetters = correctLetters[i].length;
 
-// Move the export statement to the top level of the file
+      let cords = {x: i, y: amountOfLetters};
+
+      let array = testCorrectChartData;
+      array.push(cords);
+      
+      setTestCorrectChartData(array)
+      console.log(testCorrectChartData)
+    }
+
+    for (let i=0; i < incorrectSecondCount; i++) {
+      let amountOfLetters = incorrectLetters[i].length;
+
+      let cords = {x: i, y: amountOfLetters};
+      let array = testCorrectChartData;
+      array.push(cords);
+
+      setTestErrorChartData(array)
+    }
+  }
+
+  useEffect(() => {
+    if (game.isFinished) { 
+      updateChart();
+      console.log("updateChart() is being ran")
+    } 
+  },[game.isRunning])
+
+  useEffect(() => {
+    console.log(game);
+  },[game])
+
+  const data = {
+    datasets: [
+      {
+        label: 'correct',
+        data: testCorrectChartData,
+        backgroundColor: 'rgba(75,192,192,0.2)',
+        showLine: true, // This will connect the points with a line
+        fill: true, // This will make the area under the line transparent
+        borderColor: 'rgba(75,192,192,1)',
+        pointBackgroundColor: 'rgba(75,192,192,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(75,192,192,1)',
+      },
+      {
+        label: 'errors',
+        data: testErrorChartData,
+        // showLine: true, // This will connect the points with a line
+        // fill: true, // This will make the area under the line transparent
+        backgroundColor: 'rgba(255,0,0,0.2)',
+        borderColor: 'rgba(255,0,0,1)',
+        pointBackgroundColor: 'rgba(255,0,0,1)',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: 'rgba(255,0,0,1)',
+      }
+    ],
+  };
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+      },
+      title: {
+        display: true,
+        text: '',
+      },
+    },
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: 'linear',
+      },
+      y: {
+        type: 'linear',
+      },
+    },
+  };
+
+  return (
+    <div style={{ width: '100%', height: '50vh' }}>
+      <Scatter data={data} options={options} />
+    </div>
+  );
+
+}; // Corrected closing brace for the component function
+
 export default LineChart;
