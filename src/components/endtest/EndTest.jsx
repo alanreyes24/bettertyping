@@ -43,7 +43,8 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
       let amountOfLetters = incorrectLetters[i].length;
 
       let cords = {x: i, y: amountOfLetters};
-      let array = testCorrectChartData;
+      let array = testErrorChartData;
+      ;
       array.push(cords);
 
       setTestErrorChartData(array)
@@ -69,6 +70,7 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
         backgroundColor: 'rgba(75,192,192,0.2)',
         showLine: true, // This will connect the points with a line
         fill: true, // This will make the area under the line transparent
+        borderWidth: 1, 
         borderColor: 'rgba(75,192,192,1)',
         pointBackgroundColor: 'rgba(75,192,192,1)',
         pointBorderColor: '#fff',
@@ -78,8 +80,9 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
       {
         label: 'errors',
         data: testErrorChartData,
-        // showLine: true, // This will connect the points with a line
-        // fill: true, // This will make the area under the line transparent
+        showLine: true, // This will connect the points with a line
+        fill: true, // This will make the area under the line transparent
+        borderWidth: 1,
         backgroundColor: 'rgba(255,0,0,0.2)',
         borderColor: 'rgba(255,0,0,1)',
         pointBackgroundColor: 'rgba(255,0,0,1)',
