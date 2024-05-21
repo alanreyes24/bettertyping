@@ -15,8 +15,8 @@ function Test() {
     const [isTimerZero, setIsTimerZero] = useState(false); // changed "isTimerZero" to be "isTimerZero"
     const [isTextFinished, setIsTextFinished] = useState(false); // this was named correctly good job
 
-    const [correctLetters, setCorrectLetters] = useState([]); // changed from "correctLetters" to "correctLetters"
-    const [incorrectLetters, setIncorrectLetters] = useState([]);
+    const [correctLetters, setCorrectLetters] = useState({}); // changed from "correctLetters" to "correctLetters"
+    const [incorrectLetters, setIncorrectLetters] = useState({});
 
     const [numOfCorrectWords, setNumOfCorrectWords] = useState(0); // changed from "correctWords" to "numOfCorrectWords"
 
@@ -57,9 +57,9 @@ function Test() {
         // console.log(game);
         console.log("correctLetters:")
         console.log(correctLetters)
-        // console.log("incorrectLetters:")
-        // console.log(incorrectLetters)
-    }, [game]);
+        console.log("incorrectLetters:")
+        console.log(incorrectLetters)
+    }, [game.correctLetters]);
 
     useEffect(() => {
         setGame({
@@ -269,7 +269,7 @@ function Test() {
                                     setHideSettings(true);
                                 }}
                                 onFocusLost={() => {
-                                    setRenderTextArea(false);
+                                    // setRenderTextArea(false);
                                     resetTest();
                                     setHideSettings(false);
                                 }}
