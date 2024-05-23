@@ -2,9 +2,10 @@
 
 import React, { useEffect, useState } from "react";
 import { Scatter } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Filler, Tooltip, Legend } from 'chart.js';
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+// Register all necessary plugins including Filler
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Title, Tooltip, Legend);
 
 const LineChart = ({correctLetters, incorrectLetters, game}) => {
 
@@ -110,11 +111,10 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
   };
 
   return (
-    <div style={{display: game.isFinished ? "flex":"none" , width: '100%', height: '50vh' }}>
+    <div style={{display: game.isFinished? "flex":"none", width: '100%', height: '50vh' }}>
       <Scatter data={data} options={options} />
     </div>
   );
-
-};
+}
 
 export default LineChart;
