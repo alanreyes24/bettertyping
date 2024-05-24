@@ -1,14 +1,32 @@
 // EndTest.jsx
 
 import React, { useEffect, useState } from "react";
-import { Scatter } from 'react-chartjs-2';
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Filler, Tooltip, Legend } from 'chart.js';
+import { Scatter } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Filler,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
 // Register all necessary plugins including Filler
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Title,
+  Tooltip,
+  Legend
+);
 
-const LineChart = ({correctLetters, incorrectLetters, game}) => {
-
+const LineChart = ({ correctLetters, incorrectLetters, game }) => {
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
   const [testErrorChartData, setTestErrorChartData] = useState([]);
 
@@ -18,73 +36,73 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
   function updateChart() {
     for (let key in correctLetters) {
       if (correctLetters.hasOwnProperty(key)) {
-          correctSecondCount++;
+        correctSecondCount++;
       }
     }
 
     for (let key in incorrectLetters) {
       if (incorrectLetters.hasOwnProperty(key)) {
-          incorrectSecondCount++;
+        incorrectSecondCount++;
       }
     }
 
-    for (let i=0; i < correctSecondCount; i++) {
+    for (let i = 0; i < correctSecondCount; i++) {
       let amountOfLetters = correctLetters[i].length;
 
-      let cords = {x: i, y: amountOfLetters};
+      let cords = { x: i, y: amountOfLetters };
 
       let array = testCorrectChartData;
       array.push(cords);
-      
-      setTestCorrectChartData(array)
+
+      setTestCorrectChartData(array);
     }
 
-    for (let i=0; i < incorrectSecondCount; i++) {
+    for (let i = 0; i < incorrectSecondCount; i++) {
       let amountOfLetters = incorrectLetters[i].length;
 
-      let cords = {x: i, y: amountOfLetters};
+      let cords = { x: i, y: amountOfLetters };
       let array = testErrorChartData;
-      ;
+
       array.push(cords);
 
-      setTestErrorChartData(array)
+      setTestErrorChartData(array);
     }
   }
 
   useEffect(() => {
-    if (game.isFinished) { 
+    if (game.isFinished) {
       updateChart();
-    } 
-  },[game.isRunning])
+    }
+  }, [game]);
 
   const data = {
     datasets: [
       {
-        label: 'correct',
+        label: "correct",
         data: testCorrectChartData,
-        backgroundColor: 'rgba(75,192,192,0.2)',
+        backgroundColor: "rgba(75,192,192,0.2)",
         showLine: true, // This will connect the points with a line
         fill: true, // This will make the area under the line transparent
-        borderWidth: 1, 
-        borderColor: 'rgba(75,192,192,1)',
-        pointBackgroundColor: 'rgba(75,192,192,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(75,192,192,1)',
+        borderWidth: 1,
+        borderColor: "rgba(75,192,192,1)",
+        pointBackgroundColor: "rgba(75,192,192,1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(75,192,192,1)",
       },
       {
-        label: 'errors',
+        label: "errors",
         data: testErrorChartData,
         showLine: true, // This will connect the points with a line
         fill: true, // This will make the area under the line transparent
         borderWidth: 1,
-        backgroundColor: 'rgba(255,0,0,0.2)',
-        borderColor: 'rgba(255,0,0,1)',
-        pointBackgroundColor: 'rgba(255,0,0,1)',
-        pointBorderColor: '#fff',
-        pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: 'rgba(255,0,0,1)',
-      }
+        backgroundColor: "rgba(255,0,0,0.2)",
+        borderColor: "rgba(255,0,0,1)",
+        pointBackgroundColor: "rgba(255,0,0,1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(255,0,0,1)",
+      },
     ],
   };
 
@@ -92,29 +110,34 @@ const LineChart = ({correctLetters, incorrectLetters, game}) => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'top',
+        position: "top",
       },
       title: {
         display: true,
-        text: '',
+        text: "",
       },
     },
     maintainAspectRatio: false,
     scales: {
       x: {
-        type: 'linear',
+        type: "linear",
       },
       y: {
-        type: 'linear',
+        type: "linear",
       },
     },
   };
 
   return (
-    <div style={{display: game.isFinished? "flex":"none", width: '100%', height: '50vh' }}>
+    <div
+      style={{
+        display: game.isFinished ? "flex" : "none",
+        width: "100%",
+        height: "50vh",
+      }}>
       <Scatter data={data} options={options} />
     </div>
   );
-}
+};
 
 export default LineChart;
