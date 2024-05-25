@@ -8,18 +8,20 @@ function TextArea({
   passCorrectLetters,
   passIncorrectLetters,
   passCorrectWords,
+  onTextLoaded,
   onTextStarted,
   onFocus,
   onFocusLost,
+  test,
   settings,
-  game,
 }) {
-  const [wordList, setWordList] = useState({});
+  const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
 
-  const [correctLetters, setCorrectLetters] = useState({});
+  const [correctLetters, setCorrectLetters] = useState();
   const [incorrectLetters, setIncorrectLetters] = useState();
 
+  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   const [currentCorrectLetterArray, setCurrentCorrectLetterArray] = useState(
     []
   );
@@ -34,19 +36,17 @@ function TextArea({
 
   const [textTyped, setTextTyped] = useState("");
 
-  const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
-
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
   useEffect(() => {
-    if (shouldUpdateCursor && !game.isRunning) {
+    if (shouldUpdateCursor && test.state == 0) {
       document.getElementById("cursor").classList.add("cursorBlink");
     } else document.getElementById("cursor").classList.remove("cursorBlink");
-  }, [shouldUpdateCursor, game.isRunning]);
+  }, [shouldUpdateCursor, test.state]);
 
   //////// LETTER STATE HANDLING
   useEffect(() => {
-    if (game.isRunning) {
+    if (test.state == 1) {
       setTimeout(() => {
         setCurrentLetterArrayIndexValue(currentLetterArrayIndexValue + 1);
       }, 1000);
@@ -59,31 +59,54 @@ function TextArea({
         [currentLetterArrayIndexValue]: currentCorrectLetterArray,
       });
     }
-  }, [game.isRunning, currentCorrectLetterArray, currentIncorrectLetterArray]);
+  }, [test.state, currentCorrectLetterArray, currentIncorrectLetterArray]);
 
   useEffect(() => {
-    if (game.isRunning) {
+    if (test.state == 1) {
       setCurrentIncorrectLetterArray([]);
       setCurrentCorrectLetterArray([]);
     }
-  }, [currentLetterArrayIndexValue]);
+  }, [test.state, currentLetterArrayIndexValue]);
 
   useEffect(() => {
-    passCorrectLetters(correctLetters);
+    if (
+      test.state == 1 &&
+      JSON.stringify(test.words.correctLetters) !=
+        JSON.stringify(correctLetters)
+    ) {
+      passCorrectLetters(correctLetters);
+    }
   }, [correctLetters, passCorrectLetters]);
 
   useEffect(() => {
-    passIncorrectLetters(incorrectLetters);
+    if (
+      test.state == 1 &&
+      JSON.stringify(test.words.correctLetters) !=
+        JSON.stringify(correctLetters)
+    ) {
+      passIncorrectLetters(incorrectLetters);
+    }
   }, [incorrectLetters, passIncorrectLetters]);
-  //////// LETTER STATE HANDLING
+  ////////
 
+  //////// UTIL FUNCTIONS
   const focusInput = () => {
     document.getElementById("input").focus();
     onFocus();
     setShouldUpdateCursor(true);
-    setWordsLoaded(true);
+    // setWordsLoaded(true);
   };
 
+  const getOffset = (element) => {
+    const rect = element.getBoundingClientRect();
+    return {
+      left: rect.left + window.scrollX,
+      top: rect.top + window.scrollY,
+    };
+  };
+  ////////
+
+  //////// WORD FUNCITONS
   const wordMap = (amount) => {
     return new Promise((resolve) => {
       resolve(
@@ -98,67 +121,16 @@ function TextArea({
     });
   };
 
-  //extends the word list by amount
-  function extendWordList(amount) {
-    //define temporary array of new words
-    let wordArr = Array(amount)
-      .fill(false)
-      .map((_, i) => (
-        //key has + wordlist.length because react elements must have unique keys
-        <div key={i + wordList.length} className='word'>
-          <Word key={i + wordList.length} />
-        </div>
-      ));
-    //define temp array of old words
-    let arr = [...wordList];
-    //for all new words, add to old words
-    for (let i = 0; i < wordArr.length; i++) {
-      arr.push(wordArr[i]);
-    }
-    setWordsLoaded(true);
-    //set new word list
-    setWordList(arr);
-    console.log(wordList);
-  }
-
   async function populateWordList(amount) {
     const result = await wordMap(amount);
     setWordsLoaded(true);
     setWordList(result);
+    onTextLoaded();
   }
-
-  const getOffset = (element) => {
-    const rect = element.getBoundingClientRect();
-    return {
-      left: rect.left + window.scrollX,
-      top: rect.top + window.scrollY,
-    };
-  };
-
-  //how many words to load before test starts
-  useEffect(() => {
-    if (settings.type == "words") {
-      populateWordList(settings.count);
-    } else {
-      populateWordList(50);
-    }
-  }, [settings.type, settings.count]);
-
-  //check if total typed words
-  useEffect(() => {
-    if (settings.type != "words") {
-      if (totalCorrectWords == wordList.length - 15) {
-        setWordsLoaded(false);
-        extendWordList(30);
-      }
-    }
-  }, [totalCorrectWords]);
+  ////////
 
   //////// HANDLE USER INPUT
   const handleUserInput = (event) => {
-    onTextStarted();
-    setShouldUpdateCursor(true);
-
     let input = event.key;
 
     let lastLetter =
@@ -171,10 +143,6 @@ function TextArea({
     if (input !== "Backspace") {
       setTextTyped(textTyped + input);
 
-      if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
-        setDeleteLines(deleteLines + 1);
-      }
-
       if (input == currentLetter.textContent) {
         if (currentLetter.textContent != " ") {
           setCurrentLetterIndex(currentLetterIndex + 1);
@@ -186,11 +154,12 @@ function TextArea({
             currentLetter.textContent,
           ]);
 
-          passCorrectLetters(correctLetters);
+          //   passCorrectLetters(correctLetters);
         } else if (currentLetter.textContent == " ") {
           setTextTyped("");
           setTotalCorrectWords(totalCorrectWords + 1);
-          passCorrectWords(totalCorrectWords);
+
+          //   passCorrectWords(totalCorrectWords);
         }
 
         currentLetter.classList.remove("incorrect");
@@ -211,14 +180,11 @@ function TextArea({
         setCurrentLetterIndex(currentLetterIndex + 1);
       }
 
-      if (document.getElementsByClassName("letter").length == 1) {
-        let currentLetter = document.getElementsByClassName("letter")[0];
-        currentLetter.classList.remove("next");
-        currentLetter.classList.remove("letter");
-
-        setTotalCorrectWords(totalCorrectWords + 1);
-        passCorrectWords(totalCorrectWords);
-        setShouldUpdateCursor(false);
+      //CHECKING IF LAST LETTER
+      if (
+        document.getElementsByClassName("letter").length ==
+        currentLetterIndex + 2
+      ) {
         onTextFinished();
       }
     } else if (input === "Backspace" && lastLetter != undefined) {
@@ -230,6 +196,64 @@ function TextArea({
     }
   };
 
+  //// PRE TEST WORD LOADING
+  useEffect(() => {
+    //if the test has not been started yet, (state 0) load the initial words
+    if (test.state <= 0) {
+      if (test.settings.type == "words") {
+        populateWordList(test.settings.count);
+      } else {
+        populateWordList(50);
+      }
+    }
+  }, [test.settings.type, test.settings.count, test.state]);
+
+  ////LINE SHIFTING
+
+  useEffect(() => {
+    if (test.state == 1) {
+      let currentLetter =
+        document.getElementsByClassName("letter")[currentLetterIndex - 1];
+      let nextLetter =
+        document.getElementsByClassName("letter")[currentLetterIndex];
+
+      if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
+        setDeleteLines((d) => d + 1);
+      }
+    }
+  }, [currentLetterIndex, test.state]);
+
+  //extends the word list by amount
+  //TODO: someday make this extend only to size of box, no need for super long list that isnt even shown
+  function extendWordList(amount) {
+    //define temporary array of new words
+    let wordArr = Array(amount)
+      .fill(false)
+      .map((_, i) => (
+        //key has + wordlist.length because react elements must have unique keys
+        <div key={i + wordList.length} className='word'>
+          <Word key={i + wordList.length} />
+        </div>
+      ));
+    //define temp array of old words
+    let arr = [...wordList];
+    //for all new words, add to old words
+    for (let i = 0; i < wordArr.length; i++) {
+      arr.push(wordArr[i]);
+    }
+    //set new word list
+    setWordList(arr);
+  }
+  //if test is running
+  if (test.state == 1) {
+    // if not a words test, extend word list when run out of words!
+    if (test.settings.type != "words") {
+      if (totalCorrectWords >= wordList.length - 30) {
+        extendWordList(50);
+      }
+    }
+  }
+
   return (
     <>
       <Cursor
@@ -240,8 +264,6 @@ function TextArea({
         onBlur={() => {
           setShouldUpdateCursor(false);
           onFocusLost();
-          //   setWordsLoaded(false);
-          //   populateWordList(settings.count);
         }}
         id='input'
         autoComplete='off'
@@ -253,10 +275,12 @@ function TextArea({
         data-enable-grammarly='false'
         list='autocompleteOff'
         onKeyDown={(event) => {
-          if (
-            document.getElementsByClassName("letter").length > 1 &&
-            !game.isFinished
-          ) {
+          //if test isnt started yet, tell test we have started the text input!
+          if (test.state == 0) {
+            onTextStarted();
+            setShouldUpdateCursor(true);
+            handleUserInput(event);
+          } else if (test.state == 1) {
             handleUserInput(event);
           }
         }}
@@ -276,7 +300,7 @@ function TextArea({
           style={{
             marginTop: deleteLines > 1 ? (deleteLines - 1) * -2 + "rem" : 0,
           }}>
-          {wordsLoaded == true ? <> {wordList} </> : <></>}
+          {wordsLoaded ? wordList : <></>}
         </div>
       </div>
     </>

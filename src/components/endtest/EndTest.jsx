@@ -26,9 +26,12 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = ({ correctLetters, incorrectLetters, game }) => {
+const LineChart = ({ test }) => {
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
   const [testErrorChartData, setTestErrorChartData] = useState([]);
+
+  let correctLetters = test.words.correctLetters;
+  let incorrectLetters = test.words.incorrectLetters;
 
   let correctSecondCount = 0;
   let incorrectSecondCount = 0;
@@ -70,10 +73,10 @@ const LineChart = ({ correctLetters, incorrectLetters, game }) => {
   }
 
   useEffect(() => {
-    if (game.isFinished) {
+    if (test.finished) {
       updateChart();
     }
-  }, [game]);
+  }, [test]);
 
   const data = {
     datasets: [
@@ -131,7 +134,7 @@ const LineChart = ({ correctLetters, incorrectLetters, game }) => {
   return (
     <div
       style={{
-        display: game.isFinished ? "flex" : "none",
+        display: test.finished ? "flex" : "none",
         width: "100%",
         height: "50vh",
       }}>
