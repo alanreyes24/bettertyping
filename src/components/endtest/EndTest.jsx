@@ -26,9 +26,12 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = ({ correctLetters, incorrectLetters, test }) => {
+const LineChart = ({ test }) => {
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
   const [testErrorChartData, setTestErrorChartData] = useState([]);
+
+  let correctLetters = test.words.correctLetters;
+  let incorrectLetters = test.words.incorrectLetters;
 
   let correctSecondCount = 0;
   let incorrectSecondCount = 0;
@@ -70,7 +73,7 @@ const LineChart = ({ correctLetters, incorrectLetters, test }) => {
   }
 
   useEffect(() => {
-    if (test.isFinished) {
+    if (test.finished) {
       updateChart();
     }
   }, [test]);
@@ -131,7 +134,7 @@ const LineChart = ({ correctLetters, incorrectLetters, test }) => {
   return (
     <div
       style={{
-        display: test.isFinished ? "flex" : "none",
+        display: test.finished ? "flex" : "none",
         width: "100%",
         height: "50vh",
       }}>

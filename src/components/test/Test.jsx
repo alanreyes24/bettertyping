@@ -5,29 +5,31 @@ import Settings from "../settings/Settings";
 import EndTest from "../endtest/EndTest";
 
 const Test = () => {
-  const [hideSettings, setHideSettings] = useState();
+  const [hideSettings, setHideSettings] = useState(false);
 
   // sets default of test object to this state
   const [test, setTest] = useState({
     //eventually have unique IDs for tests for links/db
     testID: 0,
-    // 0 unstarted, 1 running, 2 paused, 3 finished
-    state: 0,
+    // -1 loading, 0 unstarted, 1 running, 2 paused, 3 finished
+    state: -1,
+    finished: false,
     //words object
     words: {
       WPM: 0,
       attemptedWords: 0,
-      letters: {
-        correctLetters: [],
-        incorrectLetters: [],
-      },
+      //may possibly make this object?
+      //   letters: {
+      correctLetters: [],
+      incorrectLetters: [],
+      //   },
     },
     //settings object
     settings: {
       type: "time",
       length: 300,
       count: 50,
-      visible: false,
+      //   visible: false,
     },
     //timer object
     timer: {
@@ -37,29 +39,32 @@ const Test = () => {
     },
   });
 
-  const [settings, setSettings] = useState({
+  let settings = {
     type: "time",
     length: 300,
     count: 50,
     visible: false,
-  });
+  };
+
+  // HANDLE END OF TEST
+  if (
+    test.state <= 1 &&
+    test.timer.timeLeft == 0 &&
+    test.settings.type == "time"
+  ) {
+    setTest((prevTest) => ({
+      ...prevTest,
+      state: 3,
+    }));
+  }
+
+  // FINISH TEST
+  if (test.state == 3 && test.finished == false) {
+    setTest((t) => ({ ...t, finished: true }));
+    console.log("TEST FINISH");
+  }
 
   useEffect(() => {
-    //HANDLE SETTINGS
-    // if test.state < 1 (anything but not started yet) stop from changing settings
-    if (test.state < 1) {
-      if (test.settings != settings) {
-        setTest((prevTest) => ({
-          ...prevTest,
-          timer: {
-            ...prevTest.timer,
-            timeLeft: settings.length,
-          },
-          settings: settings,
-        }));
-      }
-    }
-
     //HANDLE TIMER
     // TODO: PAUSE FUNCTIONALITY
     if (test.state == 1) {
@@ -87,6 +92,7 @@ const Test = () => {
                 timer: {
                   ...prevTest.timer,
                   timeLeft: prevTest.timer.timeLeft + 1,
+                  timerGoesUp: true,
                 },
               };
             }
@@ -94,125 +100,9 @@ const Test = () => {
         }, 100);
       }
     }
+  }, [test.settings.type, test.timer.timeLeft, test.state]);
 
-    // HANDLE END OF TEST
-    if (
-      test.state <= 1 &&
-      test.timer.timeLeft == 0 &&
-      test.settings.type == "time"
-    ) {
-      setTest((prevTest) => ({
-        ...prevTest,
-        state: 3,
-      }));
-    }
-
-    if (test.state == 3) {
-      console.log("test is finished");
-    }
-  }, [
-    test.state,
-    test.timer.timeLeft,
-    test.settings.type,
-    test.settings,
-    settings,
-  ]);
-
-  console.log(test);
-
-  //////// GAME OBJECT STATE UPDATER
-  //   useEffect(() => {
-  //     setGame((prevGame) => ({
-  //       // whenever one of the dependencies changes it sets the game object to these values ( whatever the variables are set to, nothing special i think )
-  //       isRunning: isTimerActive,
-  //       isFinished: isGameFinished, // i'm not sure if this is the right way to do this but its the only way i could make it work
-  //       WPM: 0, // should we be setting this to 0...?
-  //       correctWords: numOfCorrectWords,
-  //       correctLetters: correctLetters,
-  //       incorrectLetters: incorrectLetters,
-  //       settings: settings,
-  //       timer: timer,
-  //     }));
-  //   }, [
-  //     timer,
-  //     currentTestWPM,
-  //     isTimerActive,
-  //     numOfCorrectWords,
-  //     correctLetters,
-  //     incorrectLetters,
-  //     settings,
-  //     isGameFinished,
-  //   ]);
-
-  //////// GAME LOGIC HANDLING
-  //   useEffect(() => {
-  //     // every time the game object is updated
-  //     if (game.isRunning) {
-  //       if (!game.timer.isActive && game.timer.timeLeft == 0) {
-  //         setIsGameFinished(true);
-
-  //         setGame((prevGame) => ({
-  //           ...prevGame,
-  //           isFinished: isGameFinished,
-  //           isRunning: isTimerActive,
-  //         }));
-  //       }
-  //     }
-  //   }, [game]);
-
-  //   useEffect(() => {
-  //     if (isTextFinished || timeLeft == 0) {
-  //       // checks every time isTextFinished and game.timer.TimeLeft is changed
-  //       //   stopTest();
-  //       setGame((prevGame) => ({
-  //         ...prevGame,
-  //         isFinished: true,
-  //       }));
-  //     }
-  //   }, [isTextFinished, game.timer.timeLeft]);
-
-  //   useEffect(() => {
-  //     if (!renderTextArea) {
-  //       setRenderTextArea(true);
-  //     }
-  //   }, [renderTextArea]);
-
-  // COMMENT OUT FOR NOW, COMMENT IN WHEN NEEDED FOR TESTING, TODO: CLEAN UP ALL OF THIS
-  //   const startTest = () => {}; // why is this unused?
-
-  //   const resetTest = () => {
-  //     setIsTimerActive(false);
-  //     setIsTextFinished(false);
-  //     setCurrentTestWPM(0);
-  //     setCorrectLetters([]);
-  //     setIncorrectLetters([]);
-  //     setNumOfCorrectWords(0);
-  //     setGame((prevGame) => ({
-  //       ...prevGame,
-  //       isRunning: false,
-  //       isFinished: false,
-  //       WPM: 0,
-  //       correctWords: 0,
-  //       correctLetters: [],
-  //       incorrectLetters: [],
-  //       settings: settings,
-  //     }));
-  //   };
-
-  //   const stopTest = () => {
-  //     setIsTimerActive(false);
-  //     setGame((prevGame) => ({
-  //       ...prevGame,
-  //       isRunning: false,
-  //       isFinished: true,
-  //       WPM: 0,
-  //       correctWords: numOfCorrectWords,
-  //       correctLetters: correctLetters,
-  //       incorrectLetters: incorrectLetters,
-  //       settings: settings,
-  //     }));
-  //     console.log(game);
-  //   };
+  //   console.log(test);
 
   //   useEffect(() => {
   //     // for the wpm timer
@@ -238,7 +128,24 @@ const Test = () => {
             }}></div>
         ) : (
           <>
-            <Settings hideModal={hideSettings} passSettings={setSettings} />
+            <Settings
+              hideModal={hideSettings}
+              test={test}
+              passSettings={(newSettings) => {
+                if (
+                  JSON.stringify(newSettings) != JSON.stringify(test.settings)
+                ) {
+                  setTest((prevTest) => ({
+                    ...prevTest,
+                    timer: {
+                      ...prevTest.timer,
+                      timeLeft: newSettings.length,
+                    },
+                    settings: newSettings,
+                  }));
+                }
+              }}
+            />
           </>
         )}
       </div>
@@ -255,9 +162,31 @@ const Test = () => {
         <TextArea
           test={test}
           settings={settings}
-          //   passCorrectLetters={setCorrectLetters}
-          //   passIncorrectLetters={setIncorrectLetters}
-          //   passCorrectWords={setNumOfCorrectWords}
+          passCorrectLetters={(l) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              words: {
+                ...prevTest.words,
+                correctLetters: l,
+              },
+            }));
+          }}
+          passIncorrectLetters={(l) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              words: {
+                ...prevTest.words,
+                incorrectLetters: l,
+              },
+            }));
+          }}
+          // passCorrectWords={setNumOfCorrectWords}
+          onTextLoaded={() => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              state: 0,
+            }));
+          }}
           onTextStarted={() => {
             setTest((prevTest) => ({
               ...prevTest,
