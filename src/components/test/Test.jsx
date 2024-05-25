@@ -233,6 +233,7 @@ const Test = () => {
         }}>
         <TextArea
           test={test}
+          settings={settings}
           //   passCorrectLetters={setCorrectLetters}
           //   passIncorrectLetters={setIncorrectLetters}
           //   passCorrectWords={setNumOfCorrectWords}

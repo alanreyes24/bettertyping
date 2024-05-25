@@ -12,6 +12,7 @@ function TextArea({
   onFocus,
   onFocusLost,
   test,
+  settings,
 }) {
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
@@ -97,13 +98,6 @@ function TextArea({
   };
 
   //how many words to load before test starts
-  //   useEffect(() => {
-  //     if (settings.type == "words") {
-  //       populateWordList(settings.count);
-  //     } else {
-  //       populateWordList(50);
-  //     }
-  //   }, [settings.type, settings.count]);
 
   //////// WORD FUNCITONS
 
@@ -219,14 +213,15 @@ function TextArea({
   };
 
   //// START NEW EVERYTHING HERE :)
-  useEffect(() => {
-    if (test.state == 0) {
-      populateWordList(test.settings.count);
-    }
-  }, [test.settings.count, test.state]);
 
   useEffect(() => {
     //if the test has not been started yet, (state 0) load the initial words
+
+    if (test.settings.type == "words") {
+      populateWordList(test.settings.count);
+    } else {
+      populateWordList(50);
+    }
 
     //if test is running
     if (test.state == 1) {
@@ -237,7 +232,7 @@ function TextArea({
         }
       }
     }
-  }, [test.state, totalCorrectWords, test.settings]);
+  }, [test.settings.count, test.settings.type, test.state, totalCorrectWords]);
 
   return (
     <>
