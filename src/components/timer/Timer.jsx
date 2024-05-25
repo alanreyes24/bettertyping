@@ -11,8 +11,8 @@ function Timer({ test }) {
         fontWeight: "700",
       }}>
       {test.timer.timeLeft != undefined
-        ? (test.timer.timeLeft / 10).toFixed(1)
-        : (0).toFixed(1)}
+        ? (test.timer.timeLeft / 10).toFixed(0)
+        : (0).toFixed(0)}
     </div>
   );
 }

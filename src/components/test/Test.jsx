@@ -45,21 +45,25 @@ const Test = () => {
   });
 
   useEffect(() => {
-    //HANDLE SETTINGS and defaults
-    if (test.settings != settings) {
-      setTest((prevTest) => ({
-        ...prevTest,
-        timer: {
-          ...prevTest.timer,
-          timeLeft: settings.length,
-        },
-        settings: settings,
-      }));
+    //HANDLE SETTINGS
+    // if test.state < 1 (anything but not started yet) stop from changing settings
+    if (test.state < 1) {
+      if (test.settings != settings) {
+        setTest((prevTest) => ({
+          ...prevTest,
+          timer: {
+            ...prevTest.timer,
+            timeLeft: settings.length,
+          },
+          settings: settings,
+        }));
+      }
     }
 
     //HANDLE TIMER
     // TODO: PAUSE FUNCTIONALITY
     if (test.state == 1) {
+      setHideSettings(true);
       if (test.settings.type == "time" && test.timer.timeLeft > 0) {
         setTimeout(() => {
           setTest((prevTest) => {
@@ -101,11 +105,10 @@ const Test = () => {
         ...prevTest,
         state: 3,
       }));
-    } else if (test.state <= 1 && test.settings.type == "words") {
-      setTest((prevTest) => ({
-        ...prevTest,
-        state: 3,
-      }));
+    }
+
+    if (test.state == 3) {
+      console.log("test is finished");
     }
   }, [
     test.state,
@@ -219,7 +222,25 @@ const Test = () => {
   return (
     <>
       <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
-        <Settings hideModal={hideSettings} passSettings={setSettings} />
+        {hideSettings ? (
+          <div
+            style={{
+              display: "flex",
+              flex: 1,
+              alignSelf: "center",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: "15px",
+              padding: "1rem",
+              width: "20rem",
+              minHeight: "1rem",
+              maxHeight: "1rem",
+            }}></div>
+        ) : (
+          <>
+            <Settings hideModal={hideSettings} passSettings={setSettings} />
+          </>
+        )}
       </div>
       <div style={{ justifyContent: "center", alignSelf: "center" }}>
         <Timer test={test} />

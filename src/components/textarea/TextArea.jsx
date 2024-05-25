@@ -220,14 +220,15 @@ function TextArea({
     if (test.settings.type == "words") {
       populateWordList(test.settings.count);
     } else {
-      populateWordList(50);
+      populateWordList(5);
     }
 
     //if test is running
     if (test.state == 1) {
       // if not a words test, extend word list when run out of words!
       if (test.settings.type != "words") {
-        if (totalCorrectWords == wordList.length - 30) {
+        if (totalCorrectWords == wordList.length - 1) {
+          console.log("extendo!");
           extendWordList(30);
         }
       }
