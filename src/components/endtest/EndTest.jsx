@@ -87,21 +87,21 @@ const LineChart = ({ test }) => {
       {
         label: "correct",
         data: testCorrectChartData,
-        backgroundColor: "rgba(75,192,192,0.2)",
-        showLine: true, // This will connect the points with a line
-        fill: true, // This will make the area under the line transparent
+        backgroundColor: "rgba(0,0,139,0.2)",
+        showLine: true,
+        fill: true,
         borderWidth: 1,
-        borderColor: "rgba(75,192,192,1)",
-        pointBackgroundColor: "rgba(75,192,192,1)",
+        borderColor: "rgba(0,0,139,1)",
+        pointBackgroundColor: "rgba(0,0,139,1)",
         pointBorderColor: "#fff",
         pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(75,192,192,1)",
+        pointHoverBorderColor: "rgba(0,0,139,1)",
       },
       {
         label: "errors",
         data: testErrorChartData,
-        showLine: true, // This will connect the points with a line
-        fill: true, // This will make the area under the line transparent
+        showLine: true,
+        fill: true,
         borderWidth: 1,
         backgroundColor: "rgba(255,0,0,0.2)",
         borderColor: "rgba(255,0,0,1)",
@@ -128,11 +128,12 @@ const LineChart = ({ test }) => {
     scales: {
       x: {
         type: "linear",
-        max: timerLength - 2,
+        ticks: {
+          stepSize: 1, // Ensure every data point is displayed on the x-axis
+        },
       },
       y: {
         type: "linear",
-        max: timerLength - 2,
       },
     },
   };
@@ -140,9 +141,9 @@ const LineChart = ({ test }) => {
   return (
     <div
       style={{
-        display: test.finished ? "flex" : "none",
-        width: "100%",
-        height: "50vh",
+        display: test.finished? "flex" : "none",
+        width: "70%",
+        height: "35vh",
       }}>
       <Scatter data={data} options={options} />
     </div>

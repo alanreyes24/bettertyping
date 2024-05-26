@@ -255,11 +255,14 @@ const Test = () => {
           onFocusLost={() => {}}
         />
       </div>
-      <EndTest
-        // correctLetters={correctLetters}
-        // incorrectLetters={incorrectLetters}
-        test={test}
-      />
+      <div style={{
+  display: "flex",
+  flexDirection: "column", // Align children vertically
+  alignItems: "center", // Center horizontally
+  justifyContent: "center", // Center vertically
+}}>
+  <EndTest test={test} />
+</div>
     </>
   );
 };
