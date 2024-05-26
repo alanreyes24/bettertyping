@@ -27,6 +27,9 @@ ChartJS.register(
 );
 
 const LineChart = ({ test }) => {
+
+  let timerLength = test.timer.length / 10;
+
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
   const [testErrorChartData, setTestErrorChartData] = useState([]);
 
@@ -75,6 +78,7 @@ const LineChart = ({ test }) => {
   useEffect(() => {
     if (test.finished) {
       updateChart();
+      console.log(timerLength)
     }
   }, [test]);
 
@@ -124,9 +128,11 @@ const LineChart = ({ test }) => {
     scales: {
       x: {
         type: "linear",
+        max: timerLength - 2,
       },
       y: {
         type: "linear",
+        max: timerLength - 2,
       },
     },
   };
