@@ -16,7 +16,7 @@ const Test = () => {
     finished: false,
     //words object
     words: {
-      WPM: 0,
+      wordList: [],
       attemptedWords: 0,
       //may possibly make this object?
       //   letters: {
@@ -37,16 +37,15 @@ const Test = () => {
       isActive: false,
       timerGoesUp: false,
     },
+    results: {
+      //   correctOnlyWPM: 0,
+      //   rawWPM: 0,
+      //   trueWPM: 0,
+      //   accuracy: 0,
+    },
   });
 
-  let settings = {
-    type: "time",
-    length: 300,
-    count: 50,
-    visible: false,
-  };
-
-  // HANDLE END OF TEST
+  // END OF TEST
   if (
     test.state <= 1 &&
     test.timer.timeLeft == 0 &&
@@ -59,9 +58,54 @@ const Test = () => {
   }
 
   // FINISH TEST
-  if (test.state == 3 && test.finished == false) {
+  if (test.state == 3 && !test.finished) {
     setTest((t) => ({ ...t, finished: true }));
     console.log("TEST FINISH");
+  }
+
+  // RESULTS
+  // if test is over and results are empty, put results
+  if (test.finished && Object.keys(test.results).length === 0) {
+    //this will only work on time tests
+    let totalCorrect = 0;
+    let totalIncorrect = 0;
+
+    for (const [key, value] of Object.entries(test.words.correctLetters)) {
+      totalCorrect += value.length;
+    }
+
+    for (const [key, value] of Object.entries(test.words.incorrectLetters)) {
+      totalIncorrect += value.length;
+    }
+
+    let correctOnlyWPM =
+      (600 * (totalCorrect / 5)) / (test.settings.length - test.timer.timeLeft);
+
+    let trueWPM =
+      (600 * ((totalCorrect - totalIncorrect) / 5)) /
+      (test.settings.length - test.timer.timeLeft);
+
+    let rawWPM =
+      (600 * ((totalCorrect + totalIncorrect) / 5)) /
+      (test.settings.length - test.timer.timeLeft);
+
+    console.log("correct only WPM: " + correctOnlyWPM);
+    console.log("true WPM: " + trueWPM);
+    console.log("raw WPM: " + rawWPM);
+
+    let accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
+    console.log(accuracy);
+
+    setTest((prevTest) => ({
+      ...prevTest,
+      results: {
+        ...prevTest.results,
+        trueWPM: trueWPM,
+        correctOnlyWPM: correctOnlyWPM,
+        rawWPM: rawWPM,
+        accuracy: accuracy,
+      },
+    }));
   }
 
   useEffect(() => {
@@ -161,7 +205,15 @@ const Test = () => {
         }}>
         <TextArea
           test={test}
-          settings={settings}
+          //   settings={settings}
+          passWords={(w) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              words: {
+                wordList: w,
+              },
+            }));
+          }}
           passCorrectLetters={(l) => {
             setTest((prevTest) => ({
               ...prevTest,

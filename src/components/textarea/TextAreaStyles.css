@@ -2,8 +2,8 @@
   display: inline-flex;
   flex-direction: row;
   align-self: center;
-  min-height: 2rem;
-  max-height: 2rem;
+  min-height: 2.5rem;
+  max-height: 2.5rem;
   /* background-color: #40404050; */
 }
 
@@ -11,7 +11,7 @@
   overflow: hidden;
   min-width: 50vw;
   max-width: 80vw;
-  height: 6rem;
+  height: 7.5rem;
 }
 
 .type__box {

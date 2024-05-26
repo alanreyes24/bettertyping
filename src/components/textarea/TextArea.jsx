@@ -7,13 +7,12 @@ function TextArea({
   onTextFinished,
   passCorrectLetters,
   passIncorrectLetters,
-  passCorrectWords,
+  passWords,
   onTextLoaded,
   onTextStarted,
   onFocus,
   onFocusLost,
   test,
-  settings,
 }) {
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
@@ -217,11 +216,21 @@ function TextArea({
       let nextLetter =
         document.getElementsByClassName("letter")[currentLetterIndex];
 
-      if (getOffset(nextLetter).top != getOffset(currentLetter).top) {
-        setDeleteLines((d) => d + 1);
+      if (currentLetter != undefined && nextLetter != undefined) {
+        if (getOffset(nextLetter).top > getOffset(currentLetter).top) {
+          setDeleteLines((d) => d + 1);
+        } else if (getOffset(nextLetter).top < getOffset(currentLetter).top) {
+          setDeleteLines((d) => d - 1);
+        }
       }
     }
   }, [currentLetterIndex, test.state]);
+
+  useEffect(() => {
+    if (test.finished && test.words.wordList.length == 0) {
+      passWords(wordList);
+    }
+  }, [test.finished]);
 
   //extends the word list by amount
   //TODO: someday make this extend only to size of box, no need for super long list that isnt even shown
@@ -276,11 +285,17 @@ function TextArea({
         list='autocompleteOff'
         onKeyDown={(event) => {
           //if test isnt started yet, tell test we have started the text input!
-          if (test.state == 0) {
+          if (
+            test.state == 0 &&
+            document.getElementsByClassName("letter").length != undefined
+          ) {
             onTextStarted();
             setShouldUpdateCursor(true);
             handleUserInput(event);
-          } else if (test.state == 1) {
+          } else if (
+            test.state == 1 &&
+            document.getElementsByClassName("letter").length != undefined
+          ) {
             handleUserInput(event);
           }
         }}
@@ -298,7 +313,7 @@ function TextArea({
           }}
           className='type__box'
           style={{
-            marginTop: deleteLines > 1 ? (deleteLines - 1) * -2 + "rem" : 0,
+            marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
           }}>
           {wordsLoaded ? wordList : <></>}
         </div>
