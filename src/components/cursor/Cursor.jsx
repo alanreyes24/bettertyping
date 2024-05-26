@@ -21,7 +21,7 @@ function Cursor({ shouldUpdate, currentLetter }) {
             let letterY = getOffset(currentLetter).top;
 
             document.getElementById("cursor").style.position = "absolute";
-            document.getElementById("cursor").style.top = letterY + "px";
+            document.getElementById("cursor").style.top = letterY + 8 + "px";
             document.getElementById("cursor").style.left = letterX - 8 + "px";
         } else {
             document.getElementById("cursor").style.opacity = 0;
