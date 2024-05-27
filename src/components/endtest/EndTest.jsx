@@ -199,15 +199,15 @@ const LineChart = ({ test }) => {
       {
         label: "true wpm",
         data: trueWPMArray,
-        backgroundColor: "rgba(0,0,139,0.2)",
+        backgroundColor: "rgba(255, 255, 255, 0.2)", // Changed to white
         showLine: true,
         fill: true,
         borderWidth: 1,
-        borderColor: "rgba(0,0,139,1)",
-        pointBackgroundColor: "rgba(0,0,139,1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(0,0,139,1)",
+        borderColor: "rgba(255, 255, 255, 1)", // Changed to white
+        pointBackgroundColor: "rgba(255, 255, 255, 1)", // Changed to white
+        pointBorderColor: "#000", // Changed to black
+        pointHoverBackgroundColor: "#000", // Changed to black
+        pointHoverBorderColor: "rgba(255, 255, 255, 1)", // Changed to white
       },
       {
         label: "raw wpm",
@@ -215,12 +215,12 @@ const LineChart = ({ test }) => {
         showLine: true,
         fill: true,
         borderWidth: 1,
-        backgroundColor: "rgba(255,0,0,0.2)",
-        borderColor: "rgba(255,0,0,1)",
-        pointBackgroundColor: "rgba(255,0,0,1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(255,0,0,1)",
+        backgroundColor: "rgba(0, 0, 0, 0.2)", // Changed to black
+        borderColor: "rgba(0, 0, 0, 1)", // Changed to black
+        pointBackgroundColor: "rgba(0, 0, 0, 1)", // Changed to black
+        pointBorderColor: "#fff", // Kept as white for contrast
+        pointHoverBackgroundColor: "#fff", // Kept as white for contrast
+        pointHoverBorderColor: "rgba(0, 0, 0, 1)", // Changed to black
       },
     ],
   };
