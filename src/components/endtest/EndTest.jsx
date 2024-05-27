@@ -28,6 +28,74 @@ ChartJS.register(
 
 const LineChart = ({ test }) => {
 
+  const [trueWPMArray, setTrueWPMArray] = useState([]);
+  const [rawWPMArray, setRawWPMArray] = useState([]);
+
+
+
+// / / / / // / / / // / / / / // / / / / / 
+
+
+  const calculateWPMs = (type) => {
+
+    if (test.state == 1) {
+
+      let totalCorrect = 0;
+      let totalIncorrect = 0;
+
+      for (const [key, value] of Object.entries(test.words.correctLetters)) {
+        totalCorrect += value.length;
+      }
+
+      for (const [key, value] of Object.entries(test.words.incorrectLetters)) {
+        totalIncorrect += value.length;
+      }
+
+      let trueWPM = (600 * ((totalCorrect - totalIncorrect) / 5)) / (test.settings.length - test.timer.timeLeft);
+      let rawWPM = (600 * ((totalCorrect + totalIncorrect) / 5)) / (test.settings.length - test.timer.timeLeft);
+
+      if(type == 'trueWPM' && !isNaN(trueWPM)) {
+        return trueWPM.toFixed(2);
+      } else if (type == 'rawWPM' && !isNaN(rawWPM)) {
+        return rawWPM.toFixed(2);
+      } else {
+        return 0; // uhhhh
+      }
+
+    }
+  };
+
+  useEffect(() => {
+
+    if (test.state == 1 && !test.finished) {
+    
+      setTimeout(() => {
+        
+        setTrueWPMArray((prevArray) => ([
+          ...prevArray,
+          calculateWPMs('trueWPM'),
+        ]))
+        setRawWPMArray((prevArray) => ([
+          ...prevArray,
+          calculateWPMs('rawWPM'),
+        ]))
+      }, 1000);
+  
+        console.log(trueWPMArray);
+        console.log(rawWPMArray);
+
+    }
+  
+  },[test.state, trueWPMArray]) 
+
+
+
+
+
+
+
+
+
   let timerLength = test.timer.length / 10;
 
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
@@ -86,7 +154,7 @@ const LineChart = ({ test }) => {
     datasets: [
       {
         label: "correct",
-        data: testCorrectChartData,
+        data: trueWPMArray,
         backgroundColor: "rgba(0,0,139,0.2)",
         showLine: true,
         fill: true,
@@ -99,7 +167,7 @@ const LineChart = ({ test }) => {
       },
       {
         label: "errors",
-        data: testErrorChartData,
+        data: rawWPMArray,
         showLine: true,
         fill: true,
         borderWidth: 1,

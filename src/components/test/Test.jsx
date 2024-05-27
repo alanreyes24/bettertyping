@@ -89,12 +89,11 @@ const Test = () => {
       (600 * ((totalCorrect + totalIncorrect) / 5)) /
       (test.settings.length - test.timer.timeLeft);
 
-    console.log("correct only WPM: " + correctOnlyWPM);
-    console.log("true WPM: " + trueWPM);
-    console.log("raw WPM: " + rawWPM);
+    // console.log("correct only WPM: " + correctOnlyWPM);
+    // console.log("true WPM: " + trueWPM);
+    // console.log("raw WPM: " + rawWPM);
 
     let accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
-    console.log(accuracy);
 
     setTest((prevTest) => ({
       ...prevTest,

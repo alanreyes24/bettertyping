@@ -37,6 +37,12 @@ function TextArea({
 
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
+
+
+
+
+
+
   useEffect(() => {
     if (shouldUpdateCursor && test.state == 0) {
       document.getElementById("cursor").classList.add("cursorBlink");
@@ -155,6 +161,10 @@ function TextArea({
 
           //   passCorrectLetters(correctLetters);
         } else if (currentLetter.textContent == " ") {
+          setCurrentCorrectLetterArray([
+            ...currentCorrectLetterArray,
+            currentLetter.textContent,
+          ]);
           setTextTyped("");
           setTotalCorrectWords(totalCorrectWords + 1);
 
