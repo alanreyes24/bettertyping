@@ -28,6 +28,8 @@ ChartJS.register(
 
 const LineChart = ({ test }) => {
 
+  const [switchChart, setSwitchChart] = useState(false);
+
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
@@ -87,6 +89,7 @@ const LineChart = ({ test }) => {
 
 
   useEffect(() => {
+    
     if (test.finished) {
 
       const convertedTrueWPMArray = trueWPMArray.map((item, index) => {
@@ -157,7 +160,6 @@ const LineChart = ({ test }) => {
   useEffect(() => {
     if (test.finished) {
       updateChart();
-      console.log(timerLength)
     }
   }, [test]);
 
@@ -165,7 +167,7 @@ const LineChart = ({ test }) => {
     datasets: [
       {
         label: "correct",
-        data: trueWPMArray,
+        data: testCorrectChartData,
         backgroundColor: "rgba(0,0,139,0.2)",
         showLine: true,
         fill: true,
@@ -178,6 +180,37 @@ const LineChart = ({ test }) => {
       },
       {
         label: "errors",
+        data: testErrorChartData,
+        showLine: true,
+        fill: true,
+        borderWidth: 1,
+        backgroundColor: "rgba(255,0,0,0.2)",
+        borderColor: "rgba(255,0,0,1)",
+        pointBackgroundColor: "rgba(255,0,0,1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(255,0,0,1)",
+      },
+    ],
+  };
+
+  const wpmData = {
+    datasets: [
+      {
+        label: "true wpm",
+        data: trueWPMArray,
+        backgroundColor: "rgba(0,0,139,0.2)",
+        showLine: true,
+        fill: true,
+        borderWidth: 1,
+        borderColor: "rgba(0,0,139,1)",
+        pointBackgroundColor: "rgba(0,0,139,1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(0,0,139,1)",
+      },
+      {
+        label: "raw wpm",
         data: rawWPMArray,
         showLine: true,
         fill: true,
@@ -217,14 +250,25 @@ const LineChart = ({ test }) => {
     },
   };
 
+
   return (
     <div
       style={{
         display: test.finished? "flex" : "none",
         width: "70%",
         height: "35vh",
-      }}>
-      <Scatter data={data} options={options} />
+      }}
+    >
+      {switchChart? (
+        <>
+          <Scatter data={wpmData} options={options} />
+        </>
+      ) : (
+        <>
+          <Scatter data={data} options={options} />
+        </>
+      )}
+            <button onClick={() => setSwitchChart(!switchChart)}>Toggle Chart</button>
     </div>
   );
 };
