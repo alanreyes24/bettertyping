@@ -80,17 +80,28 @@ const LineChart = ({ test }) => {
           calculateWPMs('rawWPM'),
         ]))
       }, 1000);
-  
-        console.log(trueWPMArray);
-        console.log(rawWPMArray);
-
     }
   
   },[test.state, trueWPMArray]) 
 
 
 
+  useEffect(() => {
+    if (test.finished) {
 
+      const convertedTrueWPMArray = trueWPMArray.map((item, index) => {
+        return { x: index, y: parseFloat(item) };
+      });
+  
+      const convertedRawWPMArray = rawWPMArray.map((item, index) => {
+        return { x: index, y: parseFloat(item) };
+      });
+
+      setTrueWPMArray(convertedTrueWPMArray);
+      setRawWPMArray(convertedRawWPMArray);
+  
+    }
+  }, [test.finished]);
 
 
 
