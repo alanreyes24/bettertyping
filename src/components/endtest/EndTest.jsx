@@ -27,21 +27,15 @@ ChartJS.register(
 );
 
 const LineChart = ({ test }) => {
-
   const [switchChart, setSwitchChart] = useState(false);
 
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
-
-
-// / / / / // / / / // / / / / // / / / / / 
-
+  // / / / / // / / / // / / / / // / / / / /
 
   const calculateWPMs = (type) => {
-
     if (test.state == 1) {
-
       let totalCorrect = 0;
       let totalIncorrect = 0;
 
@@ -53,62 +47,49 @@ const LineChart = ({ test }) => {
         totalIncorrect += value.length;
       }
 
-      let trueWPM = (600 * ((totalCorrect - totalIncorrect) / 5)) / (test.settings.length - test.timer.timeLeft);
-      let rawWPM = (600 * ((totalCorrect + totalIncorrect) / 5)) / (test.settings.length - test.timer.timeLeft);
+      let trueWPM =
+        (600 * ((totalCorrect - totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+      let rawWPM =
+        (600 * ((totalCorrect + totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
 
-      if(type == 'trueWPM' && !isNaN(trueWPM)) {
+      if (type == "trueWPM" && !isNaN(trueWPM)) {
         return trueWPM.toFixed(2);
-      } else if (type == 'rawWPM' && !isNaN(rawWPM)) {
+      } else if (type == "rawWPM" && !isNaN(rawWPM)) {
         return rawWPM.toFixed(2);
       } else {
         return 0; // uhhhh
       }
-
     }
   };
 
   useEffect(() => {
-
     if (test.state == 1 && !test.finished) {
-    
       setTimeout(() => {
-        
-        setTrueWPMArray((prevArray) => ([
+        setTrueWPMArray((prevArray) => [
           ...prevArray,
-          calculateWPMs('trueWPM'),
-        ]))
-        setRawWPMArray((prevArray) => ([
-          ...prevArray,
-          calculateWPMs('rawWPM'),
-        ]))
+          calculateWPMs("trueWPM"),
+        ]);
+        setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
       }, 1000);
     }
-  
-  },[test.state, trueWPMArray]) 
-
-
+  }, [test.state, trueWPMArray]);
 
   useEffect(() => {
-    
     if (test.finished) {
-
       const convertedTrueWPMArray = trueWPMArray.map((item, index) => {
         return { x: index, y: parseFloat(item) };
       });
-  
+
       const convertedRawWPMArray = rawWPMArray.map((item, index) => {
         return { x: index, y: parseFloat(item) };
       });
 
       setTrueWPMArray(convertedTrueWPMArray);
       setRawWPMArray(convertedRawWPMArray);
-  
     }
   }, [test.finished]);
-
-
-
-
 
   let timerLength = test.timer.length / 10;
 
@@ -172,11 +153,13 @@ const LineChart = ({ test }) => {
         showLine: true,
         fill: true,
         borderWidth: 1,
-        borderColor: "rgba(0,0,139,1)",
-        pointBackgroundColor: "rgba(0,0,139,1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(0,0,139,1)",
+        pointStyle: false,
+
+        // borderColor: "rgba(0,0,139,1)",
+        // pointBackgroundColor: "rgba(0,0,139,1)",
+        // pointBorderColor: "#fff",
+        // pointHoverBackgroundColor: "#fff",
+        // pointHoverBorderColor: "rgba(0,0,139,1)",
       },
       {
         label: "errors",
@@ -184,6 +167,7 @@ const LineChart = ({ test }) => {
         showLine: true,
         fill: true,
         borderWidth: 1,
+        pointStyle: false,
         backgroundColor: "rgba(255,0,0,0.2)",
         borderColor: "rgba(255,0,0,1)",
         pointBackgroundColor: "rgba(255,0,0,1)",
@@ -198,10 +182,11 @@ const LineChart = ({ test }) => {
     datasets: [
       {
         label: "true wpm",
-        data: trueWPMArray,
+        data: trueWPMArray.slice(1, trueWPMArray.length),
+        cubicInterpolationMode: "monotone",
         backgroundColor: "rgba(255, 255, 255, 0.2)", // Changed to white
         showLine: true,
-        fill: true,
+        fill: false,
         borderWidth: 1,
         borderColor: "rgba(255, 255, 255, 1)", // Changed to white
         pointBackgroundColor: "rgba(255, 255, 255, 1)", // Changed to white
@@ -211,7 +196,8 @@ const LineChart = ({ test }) => {
       },
       {
         label: "raw wpm",
-        data: rawWPMArray,
+        data: rawWPMArray.slice(1, rawWPMArray.length),
+        cubicInterpolationMode: "monotone",
         showLine: true,
         fill: true,
         borderWidth: 1,
@@ -250,16 +236,15 @@ const LineChart = ({ test }) => {
     },
   };
 
-
   return (
     <div
       style={{
-        display: test.finished? "flex" : "none",
+        display: test.finished ? "flex" : "none",
         width: "70%",
         height: "35vh",
-      }}
-    >
-      {switchChart? (
+        background: "#09090920",
+      }}>
+      {!switchChart ? (
         <>
           <Scatter data={wpmData} options={options} />
         </>
@@ -268,7 +253,7 @@ const LineChart = ({ test }) => {
           <Scatter data={data} options={options} />
         </>
       )}
-            <button onClick={() => setSwitchChart(!switchChart)}>Toggle Chart</button>
+      <button onClick={() => setSwitchChart(!switchChart)}>Toggle Chart</button>
     </div>
   );
 };

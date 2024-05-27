@@ -152,6 +152,10 @@ const Test = () => {
   //     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft));
   //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
+  if (test.finished) {
+    console.log(test);
+  }
+
   return (
     <>
       <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
@@ -192,79 +196,83 @@ const Test = () => {
           </>
         )}
       </div>
-      <div style={{ justifyContent: "center", alignSelf: "center" }}>
-        <Timer test={test} />
-      </div>
+      <>
+        <div style={{ justifyContent: "center", alignSelf: "center" }}>
+          <Timer test={test} />
+        </div>
+        <div
+          style={{
+            display: "flex",
+            alignSelf: "center",
+            justifyContent: "center",
+            transition: "all.15s ease-out",
+          }}>
+          <TextArea
+            test={test}
+            //   settings={settings}
+            passWords={(w) => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  attemptedWords: 1,
+                  wordList: w,
+                },
+              }));
+            }}
+            passCorrectLetters={(l) => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  correctLetters: l,
+                },
+              }));
+            }}
+            passIncorrectLetters={(l) => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  incorrectLetters: l,
+                },
+              }));
+            }}
+            // passCorrectWords={setNumOfCorrectWords}
+            onTextLoaded={() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                state: 0,
+              }));
+            }}
+            onTextStarted={() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                state: 1,
+              }));
+            }}
+            onTextFinished={() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                state: 3,
+              }));
+            }}
+            onFocus={() => {}}
+            onFocusLost={() => {}}
+          />
+        </div>
+      </>
       <div
         style={{
           display: "flex",
-          alignSelf: "center",
-          justifyContent: "center",
-          transition: "all.15s ease-out",
+          flexDirection: "column", // Align children vertically
+          alignItems: "center", // Center horizontally
+          justifyContent: "center", // Center vertically
         }}>
-        <TextArea
-          test={test}
-          //   settings={settings}
-          passWords={(w) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              words: {
-                wordList: w,
-              },
-            }));
-          }}
-          passCorrectLetters={(l) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              words: {
-                ...prevTest.words,
-                correctLetters: l,
-              },
-            }));
-          }}
-          passIncorrectLetters={(l) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              words: {
-                ...prevTest.words,
-                incorrectLetters: l,
-              },
-            }));
-          }}
-          // passCorrectWords={setNumOfCorrectWords}
-          onTextLoaded={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 0,
-            }));
-          }}
-          onTextStarted={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 1,
-            }));
-          }}
-          onTextFinished={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 3,
-            }));
-          }}
-          onFocus={() => {}}
-          onFocusLost={() => {}}
-        />
+        <EndTest test={test} />
       </div>
-      <div style={{
-  display: "flex",
-  flexDirection: "column", // Align children vertically
-  alignItems: "center", // Center horizontally
-  justifyContent: "center", // Center vertically
-}}>
-  <EndTest test={test} />
-</div>
     </>
   );
 };
 
 export default Test;
-22;

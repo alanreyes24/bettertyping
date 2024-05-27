@@ -37,12 +37,6 @@ function TextArea({
 
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
-
-
-
-
-
-
   useEffect(() => {
     if (shouldUpdateCursor && test.state == 0) {
       document.getElementById("cursor").classList.add("cursorBlink");
@@ -236,12 +230,6 @@ function TextArea({
     }
   }, [currentLetterIndex, test.state]);
 
-  useEffect(() => {
-    if (test.finished && test.words.wordList.length == 0) {
-      passWords(wordList);
-    }
-  }, [test.finished]);
-
   //extends the word list by amount
   //TODO: someday make this extend only to size of box, no need for super long list that isnt even shown
   function extendWordList(amount) {
@@ -271,6 +259,17 @@ function TextArea({
         extendWordList(50);
       }
     }
+  }
+
+  if (test.state == 3 && test.words.attemptedWords == 0) {
+    let arr = [];
+
+    for (let i = 0; i < totalCorrectWords; i++) {
+      arr.push(document.getElementsByClassName("word")[i].textContent);
+    }
+
+    passWords(arr);
+    console.log(arr);
   }
 
   return (
