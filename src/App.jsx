@@ -1,34 +1,22 @@
-import "./App.css";
-import Word from "./components/word/Word";
-import Timer from "./components/timer/Timer";
-import TextArea from "./components/textarea/TextArea";
-
-import { React, useState, useEffect } from "react";
-import Cursor from "./components/cursor/Cursor";
-import Settings from "./components/settings/Settings";
-import Header from "./components/header/Header";
-import Login from "./components/login/Login";
-import EndTest from "./components/endtest/EndTest";
-import Test from "./components/test/Test";
+// src/App.jsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import './App.css';
+import HomePage from './components/homepage/HomePage';
+import LeaderBoard from './components/leaderboard/LeaderBoard';
+import Navigation from './components/navigation/Navigation';
 
 function App() {
-
   return (
-    <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
-      <Header />
-      <Login />
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          flexDirection: "column",
-        }}
-      >
-
-        <Test />
-
+    <Router>
+      <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+        <Navigation />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/leaderboard" element={<LeaderBoard />} />
+        </Routes>
       </div>
-    </div>
+    </Router>
   );
 }
 
