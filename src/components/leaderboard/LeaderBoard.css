@@ -1,78 +1,81 @@
 .leaderboard {
-    background-color: rgb(44, 58, 96);  /* Same background as the header */
-    padding: 20px;
-    color: white;  /* Text color for better contrast */
-  }
-  
-  .leaderboard h1 {
-    text-transform: capitalize;
-    font-size: 2em;
-    margin-bottom: 20px;
-  }
-  
-  .leaderboard-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .leaderboard-item {
-    background-color: rgba(255, 255, 255, 0.1);  /* Slightly different color for the items */
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    font-size: 1.2em;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: rgb(44, 58, 96);
+  /* background-color: rgb(44, 58, 140); */
+  padding: 2rem;
+  color: white; /* Text color for better contrast */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.leaderboard h1 {
+  text-transform: capitalize;
+  font-size: 2em;
+  margin-bottom: 20px;
+}
+
+.leaderboard-list {
+  list-style: none;
+  padding: 0;
+}
+
+.leaderboard-item {
+  display: flex;
+  background-color: rgba(
+    255,
+    255,
+    255,
+    0.1
+  ); /* Slightly different color for the items */
+  padding: 0.75rem;
+  margin-bottom: 0.75rem;
+  border-radius: 0.4rem;
+  font-size: 1.2em;
+  width: 30rem;
 }
 
 .logo {
-    font-size: 24px;
-    font-weight: bold;
+  font-size: 24px;
+  font-weight: bold;
 }
 
 .logo a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 .nav-container {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 nav {
-    margin-right: 20px;
+  margin-right: 20px;
 }
 
 .nav-list {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-list li {
-    margin: 0 10px;
+  margin: 0 10px;
 }
 
 .nav-list a {
-    text-decoration: none;
-    color: white;
+  text-decoration: none;
+  color: white;
 }
 
 .login-container {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .login-container a {
-    text-decoration: none;
-    cursor: pointer;
-    color: white;
+  text-decoration: none;
+  cursor: pointer;
+  color: white;
 }

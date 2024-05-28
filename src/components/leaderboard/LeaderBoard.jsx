@@ -3,24 +3,47 @@ import Header from "../header/Header";
 import "./LeaderBoard.css";
 
 const mockData = [
-  { name: "Alan", wpm: 63.7 },
-  { name: "Beth", wpm: 59.4 },
-  { name: "Cathy", wpm: 57.2 },
-  { name: "David", wpm: 55.3 },
-  { name: "Eve", wpm: 52.6 },
+  { name: "alan", color: "#ff1919", wpm: 146.9 },
+  { name: "typemaster101", wpm: 134.1 },
+  { name: "plant", color: "#ff1919", wpm: 133.3 },
+  { name: "jen", wpm: 129.5 },
+  { name: "TYPEGOD", wpm: 125.2 },
 ];
-
 function LeaderBoard() {
   return (
     <>
       <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
         <Header />
         <div className='leaderboard'>
-          <h1>leaderboard</h1>
+          <div
+            style={{
+              fontSize: "3rem",
+              fontWeight: "800",
+              textAlign: "center",
+            }}>
+            leaderboard
+          </div>
           <ul className='leaderboard-list'>
             {mockData.map((entry, index) => (
               <li key={index} className='leaderboard-item'>
-                {entry.name} - WPM: {entry.wpm}
+                <div
+                  style={{
+                    display: "flex",
+                    flex: 1,
+                    textAlign: "center",
+                    // alignSelf: "center",
+                    // justifyContent: "center",
+                  }}>
+                  {index + 1}:
+                  <div
+                    style={{
+                      color: entry.color,
+                      marginLeft: "0.25rem",
+                    }}>
+                    {entry.name}
+                  </div>
+                </div>
+                <div style={{ textAlign: "center" }}>WPM: {entry.wpm}</div>
               </li>
             ))}
           </ul>
