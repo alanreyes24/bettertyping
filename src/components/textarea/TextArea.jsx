@@ -37,6 +37,25 @@ function TextArea({
 
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
+  const [eventLog, setEventLog] = useState([]);
+  const [startTime, setStartTime] = useState(0);
+
+  // EXAMPLE EVENTS FOR THE EVENT LOG
+  // {
+  //   timestamp: 0,
+  //   type: "intended",
+  //   letter: "t",
+  // },
+  //       {
+  //   timestamp: 100,
+  //   type: "typed",
+  //   letter: "t",
+  // },
+  //       {
+  //   timestamp: 140,
+  //   type: "backspace",
+  // }
+
   useEffect(() => {
     if (shouldUpdateCursor && test.state == 0) {
       document.getElementById("cursor").classList.add("cursorBlink");
@@ -81,8 +100,8 @@ function TextArea({
   useEffect(() => {
     if (
       test.state == 1 &&
-      JSON.stringify(test.words.correctLetters) !=
-        JSON.stringify(correctLetters)
+      JSON.stringify(test.words.incorrectLetters) !=
+        JSON.stringify(incorrectLetters)
     ) {
       passIncorrectLetters(incorrectLetters);
     }
@@ -140,11 +159,28 @@ function TextArea({
     let nextLetter =
       document.getElementsByClassName("letter")[currentLetterIndex + 1];
 
+    const timestamp = Date.now() - startTime;
+
+    if (!startTime) {
+      setStartTime(Date.now());
+    }
+
+    // LOG THE INTENEDED
+    setEventLog((prevLog) => [
+      ...prevLog,
+      {
+        timestamp: timestamp,
+        intended: currentLetter.textContent,
+        typed: input,
+      },
+    ]);
     if (input !== "Backspace") {
       setTextTyped(textTyped + input);
 
       if (input == currentLetter.textContent) {
         if (currentLetter.textContent != " ") {
+          console.log(eventLog);
+
           setCurrentLetterIndex(currentLetterIndex + 1);
           setTotalCorrectLetters(totalCorrectLetters + 1);
 
