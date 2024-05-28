@@ -1,21 +1,34 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
+import { Link } from 'react-router-dom';
 import Login from "../login/Login";
+import './Header.css';  // Import the CSS file
+
 function Header() {
+  const [showLogin, setShowLogin] = useState(false);
 
-    const [showLogin, setShowLogin] = useState(false);
-
-    return (
-        <div style={{ boxSizing: 'border-box', display: 'flex', flex: 1, flexDirection: 'row', justifyContent: 'space-between', padding: '1rem', width: '100vw', alignItems: 'center' }}>
-
-            <div style={{ fontWeight: 700, fontSize: "2rem" }}>
-                <a>bettertyping</a>
-            </div>
-            <div>
-                <a onClick={() => {setShowLogin(!showLogin)}}>login</a>
-                <Login loginVisible={showLogin}/>
-            </div>
+  return (
+    <div className="header">
+      <div className="logo">
+        <Link to="/">bettertyping</Link>
+      </div>
+      <div className="nav-container">
+        <nav>
+          <ul className="nav-list">
+            <li>
+              <Link to="/">home</Link>
+            </li>
+            <li>
+              <Link to="/leaderboard">leaderboard</Link>
+            </li>
+          </ul>
+        </nav>
+        <div className="login-container">
+          <a onClick={() => setShowLogin(!showLogin)}>login</a>
+          <Login loginVisible={showLogin} />
         </div>
-    )
+      </div>
+    </div>
+  );
 }
 
-export default Header
+export default Header;

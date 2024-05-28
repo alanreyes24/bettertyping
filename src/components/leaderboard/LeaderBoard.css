@@ -1,0 +1,78 @@
+.leaderboard {
+    background-color: rgb(44, 58, 96);  /* Same background as the header */
+    padding: 20px;
+    color: white;  /* Text color for better contrast */
+  }
+  
+  .leaderboard h1 {
+    text-transform: capitalize;
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .leaderboard-list {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .leaderboard-item {
+    background-color: rgba(255, 255, 255, 0.1);  /* Slightly different color for the items */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    font-size: 1.2em;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: rgb(44, 58, 96);
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.logo a {
+    text-decoration: none;
+    color: white;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+}
+
+nav {
+    margin-right: 20px;
+}
+
+.nav-list {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-list li {
+    margin: 0 10px;
+}
+
+.nav-list a {
+    text-decoration: none;
+    color: white;
+}
+
+.login-container {
+    display: flex;
+    align-items: center;
+}
+
+.login-container a {
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+}

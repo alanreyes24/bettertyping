@@ -64,7 +64,6 @@ function TextArea({
 
   //////// LETTER STATE HANDLING
   useEffect(() => {
-    console.log(correctLetters)
     if (test.state == 1) {
       setTimeout(() => {
         setCurrentLetterArrayIndexValue(currentLetterArrayIndexValue + 1);
