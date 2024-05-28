@@ -14,19 +14,21 @@
   margin-bottom: 20px;
 }
 
+.leaderboard-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
 .leaderboard-list {
   list-style: none;
-  padding: 0;
+  padding: 10px;
 }
 
 .leaderboard-item {
   display: flex;
-  background-color: rgba(
-    255,
-    255,
-    255,
-    0.1
-  ); /* Slightly different color for the items */
+  background-color: rgba(255, 255, 255, 0.1); 
   padding: 0.75rem;
   margin-bottom: 0.75rem;
   border-radius: 0.4rem;
@@ -78,4 +80,17 @@ nav {
   text-decoration: none;
   cursor: pointer;
   color: white;
+}
+
+@media (orientation: portrait) {
+  .leaderboard-container {
+    flex-direction: column;
+
+  }
+
+  .leaderboard-list {
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+  }
 }
