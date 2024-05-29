@@ -54,12 +54,19 @@ const LineChart = ({ test }) => {
         (600 * ((totalCorrect + totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
 
+      //words timer counts up instead of down, so just *-1 if words test!
       if (type == "trueWPM" && !isNaN(trueWPM)) {
-        return trueWPM.toFixed(2);
+        if (test.settings.type == "time") {
+          return trueWPM.toFixed(2);
+        } else {
+          return trueWPM.toFixed(2) * -1;
+        }
       } else if (type == "rawWPM" && !isNaN(rawWPM)) {
-        return rawWPM.toFixed(2);
-      } else {
-        return 0; // uhhhh
+        if (test.settings.type == "time") {
+          return rawWPM.toFixed(2);
+        } else {
+          return rawWPM.toFixed(2) * -1;
+        }
       }
     }
   };
