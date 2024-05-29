@@ -9,7 +9,7 @@ function Header() {
   return (
     <div className="header">
       <div className="logo">
-        <Link to="/">bettertyping</Link>
+        <Link to="/">type.ac</Link>
       </div>
       <div className="nav-container">
         <nav>
@@ -19,6 +19,9 @@ function Header() {
             </li>
             <li>
               <Link to="/leaderboard">leaderboard</Link>
+            </li>
+            <li>
+              <Link to="/analysis">analysis</Link>
             </li>
           </ul>
         </nav>

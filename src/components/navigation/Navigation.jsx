@@ -12,6 +12,9 @@ function Navigation() {
         <li>
           <Link to="/leaderboard">LeaderBoard</Link>
         </li>
+        <li>
+          <Link to="/analysis">Analysis</Link>
+        </li>
       </ul>
     </nav>
   );
