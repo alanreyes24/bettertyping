@@ -89,6 +89,12 @@ const Test = () => {
       (600 * ((totalCorrect + totalIncorrect) / 5)) /
       (test.settings.length - test.timer.timeLeft);
 
+    if (test.settings.type == "words") {
+      rawWPM *= -1;
+      trueWPM *= -1;
+      correctOnlyWPM *= -1;
+    }
+
     // console.log("correct only WPM: " + correctOnlyWPM);
     // console.log("true WPM: " + trueWPM);
     // console.log("raw WPM: " + rawWPM);
