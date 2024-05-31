@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import Login from "../login/Login";
-import './Header.css';  // Import the CSS file
+import './Header.css';
 
 function Header() {
   const [showLogin, setShowLogin] = useState(false);
+  const location = useLocation();
 
   return (
     <div className="header">
@@ -15,13 +16,13 @@ function Header() {
         <nav>
           <ul className="nav-list">
             <li>
-              <Link to="/">home</Link>
+              <Link to="/" className={location.pathname === "/"? "active" : ""}>home</Link>
             </li>
             <li>
-              <Link to="/leaderboard">leaderboard</Link>
+              <Link to="/leaderboard" className={location.pathname === "/leaderboard"? "active" : ""}>leaderboard</Link>
             </li>
             <li>
-              <Link to="/analysis">analysis</Link>
+              <Link to="/analysis" className={location.pathname === "/analysis"? "active" : ""}>analysis</Link>
             </li>
           </ul>
         </nav>

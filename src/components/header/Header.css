@@ -51,3 +51,7 @@ nav {
     cursor: pointer;
     color: white;
 }
+
+.nav-list .active {
+    text-decoration: underline;
+}
