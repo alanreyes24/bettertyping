@@ -15,9 +15,8 @@ function Login({ loginVisible }) {
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/login", { username, password });
+            const response = await axios.post("http://localhost:3090/auth/login", { username, password });
             console.log("User logged in successfully:", response.data);
-            // Store the token in local storage or state
             localStorage.setItem("auth-token", response.data.token);
         } catch (error) {
             console.error("Error logging in:", error.response.data);
@@ -27,7 +26,7 @@ function Login({ loginVisible }) {
     const handleRegister = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post("/signup", { username, password });
+            const response = await axios.post("http://localhost:3090/auth/signup", { username, password });
             console.log("User registered successfully:", response.data);
             setShowRegister(false);
         } catch (error) {
