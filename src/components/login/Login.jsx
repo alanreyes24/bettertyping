@@ -12,6 +12,23 @@ function Login({ loginVisible }) {
         setLoginVisible(loginVisible);
     }, [loginVisible]);
 
+    async function getProfile() {
+        const token = localStorage.getItem('auth-token');
+        
+        try {
+          const response = await axios.get('http://localhost:3090/auth/profile', {
+            headers: {
+              'auth-token': token 
+            }
+          });
+      
+          console.log('Profile data:', response.data);
+        } catch (error) {
+          console.error('Failed to fetch profile:', error.response.data);
+        }
+      }
+      
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -37,6 +54,7 @@ function Login({ loginVisible }) {
     return (
         <div className={`login-container ${showLogin ? "show" : "hide"}`}>
             <div className="login-box">
+                <button onClick={() => getProfile()}>click for profile here </button>
                 <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
                     <input
                         className="login-input"
