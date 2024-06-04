@@ -1,5 +1,5 @@
 import React from "react";
-import Header from "../header/Header";
+import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
 
 const mockData = [
@@ -15,37 +15,34 @@ function LeaderBoard() {
     <>
       <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
         <Header />
-        <div className="leaderboard">
+        <div className='leaderboard'>
           <div
             style={{
               fontSize: "3rem",
               fontWeight: "800",
               textAlign: "center",
-            }}
-          >
+            }}>
             leaderboard
           </div>
-          <div className="leaderboard-container">
+          <div className='leaderboard-container'>
             {Array(3)
               .fill(null)
               .map((_, colIndex) => (
-                <ul key={colIndex} className="leaderboard-list">
+                <ul key={colIndex} className='leaderboard-list'>
                   {mockData.map((entry, index) => (
-                    <li key={index} className="leaderboard-item">
+                    <li key={index} className='leaderboard-item'>
                       <div
                         style={{
                           display: "flex",
                           flex: 1,
                           textAlign: "center",
-                        }}
-                      >
+                        }}>
                         {index + 1}:
                         <div
                           style={{
                             color: entry.color,
                             marginLeft: "0.25rem",
-                          }}
-                        >
+                          }}>
                           {entry.name}
                         </div>
                       </div>
