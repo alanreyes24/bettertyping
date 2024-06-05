@@ -3,13 +3,48 @@ import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
 import EndTest from "../endtest/EndTest";
+import axios from "axios";
+import { useAuth } from "../../../../../AuthContext";
+
 
 const Test = () => {
+
+  
+  const [userID, setUserID] = useState('');
+
+
+  async function getProfile() {
+    const token = localStorage.getItem('auth-token');
+    
+    try {
+      const response = await axios.get('http://localhost:3090/auth/profile', {
+        headers: {
+          'auth-token': token 
+        }
+      });
+
+      const fetchedUserID = response.data._id;
+      setUserID(fetchedUserID);
+
+      setTest((prevTest) => ({
+        ...prevTest,
+        userID: fetchedUserID,
+      }));
+
+      console.log(fetchedUserID);
+      console.log("getProfile is running");
+    } catch (error) {
+      console.error('Failed to fetch profile:', error.response.data);
+    }
+  }
+
+
   const [hideSettings, setHideSettings] = useState(false);
 
   // sets default of test object to this state
   const [test, setTest] = useState({
     //eventually have unique IDs for tests for links/db
+    userID: 0, // gets set to the User's ID later on
     testID: 0,
     // -1 loading, 0 unstarted, 1 running, 2 paused, 3 finished
     state: -1,
@@ -159,8 +194,27 @@ const Test = () => {
   //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
   if (test.finished) {
+
+    // for some reason test.finished flickers between true and false like 2-3 times
+
     console.log(test);
+  
+    
   }
+
+  useEffect(() => {
+
+    console.log("useeffect is running");
+
+    if (test.state === 3) {
+
+      console.log("part where getProfile is is running")
+      getProfile() // I THINK this should go here
+
+
+    }
+
+  },[test.state])
 
   return (
     <>

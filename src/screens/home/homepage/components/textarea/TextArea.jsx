@@ -40,6 +40,7 @@ function TextArea({
   const [eventLog, setEventLog] = useState([]);
   const [startTime, setStartTime] = useState(0);
 
+
   // EXAMPLE EVENTS FOR THE EVENT LOG
   // {
   //   timestamp: 0,
@@ -298,6 +299,8 @@ function TextArea({
   }
 
   if (test.state == 3 && test.words.attemptedWords == 0) {
+
+
     let arr = [];
 
     for (let i = 0; i < totalCorrectWords; i++) {

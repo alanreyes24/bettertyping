@@ -1,19 +1,15 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from '../../AuthContext';
-
 import "./Login.css";
 
 function Login({ loginVisible }) {
-    
     const [showLogin, setLoginVisible] = useState(loginVisible);
     const [showRegister, setShowRegister] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [usernameDB, setUsernameDBState] = useState(""); // database that is retrieved from the database
+    const [usernameDB, setUsernameDBState] = useState(""); // database that is retrieved from the database , should change to 'fetchedUsername' or something
     const [showUserLoggedIn, setShowUserLoggedIn] = useState(false); // show 'hey, <username>'
-
-
     const [error, setError] = useState("");
 
     const { setUsernameDB } = useAuth();
@@ -32,7 +28,6 @@ function Login({ loginVisible }) {
             }
           });
       
-          console.log('Profile data:', response.data);
 
           setUsernameDB(response.data.username);
           setUsernameDBState(response.data.username); // Update local state
@@ -46,7 +41,6 @@ function Login({ loginVisible }) {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:3090/auth/login", { username, password });
-            console.log("User logged in successfully:", response.data);
             localStorage.setItem("auth-token", response.data.token);
             getProfile();
         } catch (error) {
@@ -59,7 +53,6 @@ function Login({ loginVisible }) {
         e.preventDefault();
         try {
             const response = await axios.post("http://localhost:3090/auth/signup", { username, password });
-            console.log("User registered successfully:", response.data);
             setShowRegister(false);
         } catch (error) {
             setError(error)
@@ -87,9 +80,9 @@ function Login({ loginVisible }) {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                            {error && (
-                                <div style={{ color: 'red' }}>{error.response.data}</div>
-                            )}
+                        {error && (
+                            <div style={{ color: 'red' }}>{error.response.data}</div>
+                        )}
                         <button className="login-button" type="submit">
                             {showRegister ? "Register" : "Login"}
                         </button>
@@ -106,7 +99,6 @@ function Login({ loginVisible }) {
             </div>
         ) : null
     );
-    
 }
 
 export default Login;

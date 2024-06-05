@@ -1,5 +1,7 @@
 // src/contexts/AuthContext.js
 
+// i just realized I don't think we actually need this file or contexts
+
 import React, { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext();
