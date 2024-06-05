@@ -9,7 +9,6 @@ function Login({ loginVisible }) {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [usernameDB, setUsernameDBState] = useState(""); // database that is retrieved from the database , should change to 'fetchedUsername' or something
-    const [showUserLoggedIn, setShowUserLoggedIn] = useState(false); // show 'hey, <username>'
     const [error, setError] = useState("");
 
     const { setUsernameDB } = useAuth();
@@ -43,6 +42,7 @@ function Login({ loginVisible }) {
             const response = await axios.post("http://localhost:3090/auth/login", { username, password });
             localStorage.setItem("auth-token", response.data.token);
             getProfile();
+            setLoginVisible(false);
         } catch (error) {
             setError(error)
             console.error("Error logging in:", error.response.data);
@@ -54,6 +54,7 @@ function Login({ loginVisible }) {
         try {
             const response = await axios.post("http://localhost:3090/auth/signup", { username, password });
             setShowRegister(false);
+
         } catch (error) {
             setError(error)
             console.error("Error registering:", error.response.data);
