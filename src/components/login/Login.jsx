@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useAuth } from '../../AuthContext';
+
 import "./Login.css";
 
 function Login({ loginVisible }) {
@@ -7,19 +9,16 @@ function Login({ loginVisible }) {
     const [showRegister, setShowRegister] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [usernameDB, setUsernameDB] = useState(""); // database that is retrieved from the database
+    const [usernameDB, setUsernameDBState] = useState(""); // database that is retrieved from the database
     const [showUserLoggedIn, setShowUserLoggedIn] = useState(false); // show 'hey, <username>'
- 
+
+    const { setUsernameDB } = useAuth();
+
     useEffect(() => {
         setLoginVisible(loginVisible);
     }, [loginVisible]);
 
-    useEffect(() => {
-
-    })
-
     async function getProfile() {
-
         const token = localStorage.getItem('auth-token');
         
         try {
@@ -32,12 +31,12 @@ function Login({ loginVisible }) {
           console.log('Profile data:', response.data);
 
           setUsernameDB(response.data.username);
+          setUsernameDBState(response.data.username); // Update local state
 
         } catch (error) {
           console.error('Failed to fetch profile:', error.response.data);
         }
-      }
-      
+    }
 
     const handleLogin = async (e) => {
         e.preventDefault();
@@ -45,7 +44,7 @@ function Login({ loginVisible }) {
             const response = await axios.post("http://localhost:3090/auth/login", { username, password });
             console.log("User logged in successfully:", response.data);
             localStorage.setItem("auth-token", response.data.token);
-            getProfile()
+            getProfile();
         } catch (error) {
             console.error("Error logging in:", error.response.data);
         }
@@ -65,9 +64,9 @@ function Login({ loginVisible }) {
     return (
         <div className={`login-container ${showLogin ? "show" : "hide"}`}>
             <div className="login-box">
-            <div> hey, {usernameDB} </div>
-            <button onClick={() => getProfile()}>Get Profile</button>                
-            <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
+                <div> hey, {usernameDB} </div>
+                <button onClick={() => getProfile()}>Get Profile</button>
+                <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
                     <input
                         className="login-input"
                         placeholder="username"

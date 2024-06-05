@@ -1,14 +1,19 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Login from "../login/Login";
+import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
 function Header() {
+
+  const { usernameDB } = useAuth(); // Access the usernameDB state // ADDED
+
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
 
   return (
     <div className='header'>
+      <div> hey {usernameDB} </div>
       <div className='logo'>
         <Link to='/'>type.ac</Link>
       </div>
