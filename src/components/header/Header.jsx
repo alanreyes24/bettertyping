@@ -13,10 +13,11 @@ function Header() {
 
   return (
     <div className='header'>
-      <div> hey {usernameDB} </div>
       <div className='logo'>
         <Link to='/'>type.ac</Link>
       </div>
+      <div> welcome, {usernameDB} </div>
+
       <div className='nav-container'>
         <nav>
           <ul className='nav-list'>
@@ -43,12 +44,12 @@ function Header() {
                 analysis
               </Link>
             </li>
+            <li>
+              <a onClick={() => setShowLogin(!showLogin)}> login </a>
+              <Login loginVisible={showLogin} />
+            </li>
           </ul>
         </nav>
-        <div className='login-container'>
-          <a onClick={() => setShowLogin(!showLogin)}>login</a>
-          <Login loginVisible={showLogin} />
-        </div>
       </div>
     </div>
   );

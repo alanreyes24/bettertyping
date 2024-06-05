@@ -5,6 +5,7 @@ import { useAuth } from '../../AuthContext';
 import "./Login.css";
 
 function Login({ loginVisible }) {
+    
     const [showLogin, setLoginVisible] = useState(loginVisible);
     const [showRegister, setShowRegister] = useState(false);
     const [username, setUsername] = useState("");
@@ -62,39 +63,39 @@ function Login({ loginVisible }) {
     };
 
     return (
-        <div className={`login-container ${showLogin ? "show" : "hide"}`}>
-            <div className="login-box">
-                <div> hey, {usernameDB} </div>
-                <button onClick={() => getProfile()}>Get Profile</button>
-                <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
-                    <input
-                        className="login-input"
-                        placeholder="username"
-                        type="text"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                    />
-                    <input
-                        className="login-input"
-                        placeholder="password"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button className="login-button" type="submit">
-                        {showRegister ? "Register" : "Login"}
-                    </button>
-                    <div className="toggle-link-container">
-                        <a
-                            className="toggle-link"
-                            onClick={() => setShowRegister(!showRegister)}
-                        >
-                            {showRegister ? "Already have an account? Login" : "Don't have an account? Register"}
-                        </a>
-                    </div>
-                </form>
+        showLogin ? (
+            <div className="login-container show">
+                <div className="login-box">
+                    <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
+                        <input
+                            className="login-input"
+                            placeholder="username"
+                            type="text"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                        />
+                        <input
+                            className="login-input"
+                            placeholder="password"
+                            type="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <button className="login-button" type="submit">
+                            {showRegister ? "Register" : "Login"}
+                        </button>
+                        <div className="toggle-link-container">
+                            <a
+                                className="toggle-link"
+                                onClick={() => setShowRegister(!showRegister)}
+                            >
+                                {showRegister ? "Already have an account? Login" : "Don't have an account? Register"}
+                            </a>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+        ) : null
     );
 }
 
