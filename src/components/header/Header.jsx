@@ -17,7 +17,6 @@ function Header() {
         <Link to='/'>type.ac</Link>
       </div>
       <div> welcome, {usernameDB} </div>
-
       <div className='nav-container'>
         <nav>
           <ul className='nav-list'>

@@ -13,6 +13,9 @@ function Login({ loginVisible }) {
     const [usernameDB, setUsernameDBState] = useState(""); // database that is retrieved from the database
     const [showUserLoggedIn, setShowUserLoggedIn] = useState(false); // show 'hey, <username>'
 
+
+    const [error, setError] = useState("");
+
     const { setUsernameDB } = useAuth();
 
     useEffect(() => {
@@ -47,6 +50,7 @@ function Login({ loginVisible }) {
             localStorage.setItem("auth-token", response.data.token);
             getProfile();
         } catch (error) {
+            setError(error)
             console.error("Error logging in:", error.response.data);
         }
     };
@@ -58,6 +62,7 @@ function Login({ loginVisible }) {
             console.log("User registered successfully:", response.data);
             setShowRegister(false);
         } catch (error) {
+            setError(error)
             console.error("Error registering:", error.response.data);
         }
     };
@@ -65,6 +70,7 @@ function Login({ loginVisible }) {
     return (
         showLogin ? (
             <div className="login-container show">
+                <button onClick={() => console.log(error)}> test show error </button>
                 <div className="login-box">
                     <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
                         <input
@@ -81,6 +87,9 @@ function Login({ loginVisible }) {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
+                            {error && (
+                                <div style={{ color: 'red' }}>{error.response.data}</div>
+                            )}
                         <button className="login-button" type="submit">
                             {showRegister ? "Register" : "Login"}
                         </button>
@@ -97,6 +106,7 @@ function Login({ loginVisible }) {
             </div>
         ) : null
     );
+    
 }
 
 export default Login;
