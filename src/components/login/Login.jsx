@@ -7,12 +7,19 @@ function Login({ loginVisible }) {
     const [showRegister, setShowRegister] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-
+    const [usernameDB, setUsernameDB] = useState(""); // database that is retrieved from the database
+    const [showUserLoggedIn, setShowUserLoggedIn] = useState(false); // show 'hey, <username>'
+ 
     useEffect(() => {
         setLoginVisible(loginVisible);
     }, [loginVisible]);
 
+    useEffect(() => {
+
+    })
+
     async function getProfile() {
+
         const token = localStorage.getItem('auth-token');
         
         try {
@@ -23,6 +30,9 @@ function Login({ loginVisible }) {
           });
       
           console.log('Profile data:', response.data);
+
+          setUsernameDB(response.data.username);
+
         } catch (error) {
           console.error('Failed to fetch profile:', error.response.data);
         }
@@ -35,6 +45,7 @@ function Login({ loginVisible }) {
             const response = await axios.post("http://localhost:3090/auth/login", { username, password });
             console.log("User logged in successfully:", response.data);
             localStorage.setItem("auth-token", response.data.token);
+            getProfile()
         } catch (error) {
             console.error("Error logging in:", error.response.data);
         }
@@ -54,8 +65,9 @@ function Login({ loginVisible }) {
     return (
         <div className={`login-container ${showLogin ? "show" : "hide"}`}>
             <div className="login-box">
-                <button onClick={() => getProfile()}>click for profile here </button>
-                <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
+            <div> hey, {usernameDB} </div>
+            <button onClick={() => getProfile()}>Get Profile</button>                
+            <form className="login-form" onSubmit={showRegister ? handleRegister : handleLogin}>
                     <input
                         className="login-input"
                         placeholder="username"
