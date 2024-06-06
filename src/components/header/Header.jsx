@@ -40,7 +40,9 @@ function Header() {
       <div className='logo'>
         <Link to='/'>type.ac</Link>
       </div>
-      <div> welcome, {fetchedUsername} </div>
+      {fetchedUsername && (
+        <div> welcome, {fetchedUsername} </div>
+      )}
       <div className='nav-container'>
         <nav>
           <ul className='nav-list'>
