@@ -5,6 +5,7 @@ import "./TextAreaStyles.css";
 
 function TextArea({
   onTextFinished,
+  passEventLog,
   passCorrectLetters,
   passIncorrectLetters,
   passWords,
@@ -39,7 +40,6 @@ function TextArea({
 
   const [eventLog, setEventLog] = useState([]);
   const [startTime, setStartTime] = useState(0);
-
 
   // EXAMPLE EVENTS FOR THE EVENT LOG
   // {
@@ -107,6 +107,17 @@ function TextArea({
     }
   }, [incorrectLetters, passIncorrectLetters]);
   ////////
+
+  //// EVENT LOG PASSING
+  useEffect(() => {
+    if (
+      test.state == 3 &&
+      test.finished &&
+      JSON.stringify(test.eventLog) != JSON.stringify(eventLog)
+    ) {
+      passEventLog(eventLog);
+    }
+  }, [eventLog, passEventLog]);
 
   //////// UTIL FUNCTIONS
   const focusInput = () => {
@@ -179,8 +190,6 @@ function TextArea({
 
       if (input == currentLetter.textContent) {
         if (currentLetter.textContent != " ") {
-          console.log(eventLog);
-
           setCurrentLetterIndex(currentLetterIndex + 1);
           setTotalCorrectLetters(totalCorrectLetters + 1);
 
@@ -299,15 +308,13 @@ function TextArea({
   }
 
   if (test.state == 3 && test.words.attemptedWords == 0) {
-
-
     let arr = [];
 
     for (let i = 0; i < totalCorrectWords; i++) {
       arr.push(document.getElementsByClassName("word")[i].textContent);
     }
 
-    console.log("hello guys")
+    console.log("hello guys");
     passWords(arr);
     console.log(arr);
   }

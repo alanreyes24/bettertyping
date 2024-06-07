@@ -6,22 +6,17 @@ import EndTest from "../endtest/EndTest";
 import axios from "axios";
 import { useAuth } from "../../../../../AuthContext";
 
-
 const Test = () => {
-
-  
-  const [userID, setUserID] = useState('');
-
+  const [userID, setUserID] = useState("");
 
   async function getProfile() {
+    const token = localStorage.getItem("auth-token");
 
-    const token = localStorage.getItem('auth-token');
-    
     try {
-      const response = await axios.get('http://localhost:3090/auth/profile', {
+      const response = await axios.get("http://localhost:3090/auth/profile", {
         headers: {
-          'auth-token': token 
-        }
+          "auth-token": token,
+        },
       });
 
       const fetchedUserID = response.data._id;
@@ -31,24 +26,23 @@ const Test = () => {
         ...prevTest,
         userID: fetchedUserID,
       }));
-
-
     } catch (error) {
-      console.error('Failed to fetch profile:', error.response.data);
+      console.error("Failed to fetch profile:", error.response.data);
     }
   }
 
   const sendTestToBackend = async () => {
     // e.preventDefault(); // not sure if i need this here uhhh
-    try {
 
-        const response = await axios.post("http://localhost:3090/test", test ); // not sure if i need curly brackets
-
-    } catch (error) {
-      console.log(error)
+    if (userID != 0) {
+      try {
+        const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
+      } catch (error) {
+        console.log(error);
         console.error("Error registering:", error.response.data);
+      }
     }
-};
+  };
 
   const [hideSettings, setHideSettings] = useState(false);
 
@@ -89,6 +83,9 @@ const Test = () => {
       //   trueWPM: 0,
       //   accuracy: 0,
     },
+    eventLog: [
+      //eventlog :)
+    ],
   });
 
   // END OF TEST
@@ -203,27 +200,15 @@ const Test = () => {
   //     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft));
   //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
-  if (test.finished) {
-
-    // for some reason test.finished flickers between true and false like 2-3 times
-    console.log("test object from Test.jsx: ")
-    console.log(test);
-  
-    
-  }
-
+  // TURNED OFF AUTOSENDING FOR NOW (EVENT LOG IS SLOW TO UPDATE, NEEDS TO BE FIXED (wait until final render))
   useEffect(() => {
+    getProfile(); // I THINK this should go here
+    console.log("loading profile");
 
-    getProfile() // I THINK this should go here
-
-    if (test.state === 3) {
-
-      sendTestToBackend(); // not sure if this is gonna work right but
-
-
-    }
-
-  },[test.state])
+    // if (test.state == 3 && test.finished && test.eventLog != {}) {
+    //   sendTestToBackend(); // not sure if this is gonna work right but
+    // }
+  }, []);
 
   return (
     <>
@@ -276,7 +261,7 @@ const Test = () => {
             justifyContent: "center",
             transition: "all.15s ease-out",
           }}>
-            <button onClick={sendTestToBackend}> sendTestToBackend </button>
+          <button onClick={sendTestToBackend}> sendTestToBackend </button>
           <TextArea
             test={test}
             //   settings={settings}
@@ -325,6 +310,12 @@ const Test = () => {
               setTest((prevTest) => ({
                 ...prevTest,
                 state: 3,
+              }));
+            }}
+            passEventLog={(e) => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                eventLog: e,
               }));
             }}
             onFocus={() => {}}
