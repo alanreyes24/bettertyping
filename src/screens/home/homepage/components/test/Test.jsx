@@ -14,6 +14,7 @@ const Test = () => {
 
 
   async function getProfile() {
+
     const token = localStorage.getItem('auth-token');
     
     try {
@@ -38,6 +39,18 @@ const Test = () => {
     }
   }
 
+  const sendTestToBackend = async (e) => {
+    // e.preventDefault(); // not sure if i need this here uhhh
+    try {
+
+      console.log("sendTestToBackend is runnning")
+        const response = await axios.post("http://localhost:3090/test", test ); // not sure if i need curly brackets
+
+    } catch (error) {
+      console.log(error)
+        console.error("Error registering:", error.response.data);
+    }
+};
 
   const [hideSettings, setHideSettings] = useState(false);
 
@@ -210,6 +223,7 @@ const Test = () => {
 
       console.log("part where getProfile is is running")
       getProfile() // I THINK this should go here
+      sendTestToBackend(); // not sure if this is gonna work right but
 
 
     }
@@ -267,6 +281,7 @@ const Test = () => {
             justifyContent: "center",
             transition: "all.15s ease-out",
           }}>
+            <button onClick={sendTestToBackend}> sendTestToBackend </button>
           <TextArea
             test={test}
             //   settings={settings}
