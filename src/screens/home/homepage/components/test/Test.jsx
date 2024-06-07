@@ -32,18 +32,16 @@ const Test = () => {
         userID: fetchedUserID,
       }));
 
-      console.log(fetchedUserID);
-      console.log("getProfile is running");
+
     } catch (error) {
       console.error('Failed to fetch profile:', error.response.data);
     }
   }
 
-  const sendTestToBackend = async (e) => {
+  const sendTestToBackend = async () => {
     // e.preventDefault(); // not sure if i need this here uhhh
     try {
 
-      console.log("sendTestToBackend is runnning")
         const response = await axios.post("http://localhost:3090/test", test ); // not sure if i need curly brackets
 
     } catch (error) {
@@ -108,7 +106,6 @@ const Test = () => {
   // FINISH TEST
   if (test.state == 3 && !test.finished) {
     setTest((t) => ({ ...t, finished: true }));
-    console.log("TEST FINISH");
   }
 
   // RESULTS
@@ -209,7 +206,7 @@ const Test = () => {
   if (test.finished) {
 
     // for some reason test.finished flickers between true and false like 2-3 times
-
+    console.log("test object from Test.jsx: ")
     console.log(test);
   
     
@@ -217,12 +214,10 @@ const Test = () => {
 
   useEffect(() => {
 
-    console.log("useeffect is running");
+    getProfile() // I THINK this should go here
 
     if (test.state === 3) {
 
-      console.log("part where getProfile is is running")
-      getProfile() // I THINK this should go here
       sendTestToBackend(); // not sure if this is gonna work right but
 
 
