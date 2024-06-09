@@ -1,17 +1,18 @@
 // src/components/homepage/HomePage.jsx
-import React from "react";
+import React, { useEffect } from "react";
 import Header from "../../../components/header/Header";
 import Login from "../../../components/login/Login";
 import Test from "./components/test/Test";
+import axios from "axios";
+import { useState } from "react";
 
-function HomePage() {
+function HomePage({ user }) {
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <Header />
-      <Login />
       <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
-        <Test />
+        <Test user={user} />
       </div>
+      <div></div>
     </div>
   );
 }

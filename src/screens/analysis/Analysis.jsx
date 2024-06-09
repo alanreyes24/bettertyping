@@ -6,12 +6,16 @@ import "./Analysis.css";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 function Analysis() {
   const [analysisJson, setAnalysisJson] = useState({});
 
+  const [test, setTest] = useState(null);
+
   // Access your API key (see "Set up your API key" above)
-  const genAI = new GoogleGenerativeAI("API_KEY");
+  const genAI = new GoogleGenerativeAI("API KEY");
 
   async function run() {
     // The Gemini 1.5 models are versatile and work with both text-only and multimodal prompts
@@ -35,21 +39,45 @@ function Analysis() {
       history: [],
     });
 
-    // THIS IS THE PROMPT HERE, EVENTUALLY SEND THE TEST JSON (it makes a fake one for now)
+    // const prompt = "Write a story about a magic backpack.";
+
     const result = await chatSession.sendMessage(
       "make a fake json analysis object, and return it as a string (not as a json object, omit the ```json```, simply just {} and quotes ), and have the user make a couple of errors (5 total)"
     );
     setAnalysisJson(result.response.text());
   }
+  const { id } = useParams();
+
+  async function getTest() {
+    try {
+      const response = await axios.get("http://localhost:3090/test/" + id);
+      console.log(response.data);
+      setTest(response.data);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error.response.data);
+      setTest(error);
+    }
+  }
 
   useEffect(() => {
-    console.log(analysisJson);
+    // console.log(analysisJson);
+    // console.log(id);
+
+    if (test == null) {
+      getTest();
+    }
   });
+
+  const getErrors = (test) => {
+    let errors = 0;
+    Object.keys(test.words.incorrectLetters).forEach(function (key) {
+      errors += test.words.incorrectLetters[key].length;
+    });
+    return errors;
+  };
 
   return (
     <>
-      <Header />
-      {/* <EndTest test={test} /> */}
       <div
         style={{
           justifyContent: "center",
@@ -72,37 +100,46 @@ function Analysis() {
           }}>
           analysis
         </div>
-        <div style={{ display: "flex" }}>
-          <div style={{}}>
-            <div style={{ margin: "10px", color: "#818181" }}> 129.89 raw</div>
-            <div
-              style={{
-                margin: "10px",
-                fontWeight: "bold",
-                fontSize: "calc(40px + 0.5vw)",
+        {test == null ? (
+          <>LOADING...</>
+        ) : (
+          <>
+            {/* <EndTest test={test} /> */}
+
+            <div style={{ display: "flex" }}>
+              <div style={{}}>
+                <div style={{ margin: "10px", color: "#818181" }}>
+                  {test.results.rawWPM.toFixed(2)} raw
+                </div>
+                <div
+                  style={{
+                    margin: "10px",
+                    fontWeight: "bold",
+                    fontSize: "calc(40px + 0.5vw)",
+                  }}>
+                  {test.results.trueWPM.toFixed(2)} wpm
+                </div>
+              </div>
+              <div>
+                <div style={{ margin: "10px", color: "#818181" }}>
+                  {test.results.accuracy.toFixed(2)}% accuracy
+                </div>
+                <div style={{ margin: "10px", color: "#818181" }}>
+                  {getErrors(test)} errors
+                </div>
+              </div>
+            </div>
+            {/* <a
+              onClick={() => {
+                run();
               }}>
-              {" "}
-              125.27 wpm
-            </div>
-          </div>
-          <div>
-            <div style={{ margin: "10px", color: "#818181" }}>
-              {" "}
-              92.75% accuracy
-            </div>
-            <div style={{ margin: "10px", color: "#818181" }}> 15 errors</div>
-          </div>
-        </div>
-        <div style={{ height: "40%", width: "40%", backgroundColor: "grey" }}>
-          graph
-        </div>
-        <a
-          onClick={() => {
-            run();
-          }}>
-          run analysis
-        </a>
-        <div style={{ fontSize: "10px" }}>{JSON.stringify(analysisJson)}</div>
+              run analysis
+            </a>
+            <div style={{ fontSize: "10px" }}>
+              {JSON.stringify(analysisJson)}
+            </div> */}
+          </>
+        )}
       </div>
     </>
   );

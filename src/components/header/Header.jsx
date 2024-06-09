@@ -5,44 +5,19 @@ import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
-function Header() {
-
+function Header({ username, passLogout }) {
   // const { usernameDB } = useAuth(); // Access the usernameDB state // ADDED realized i kinda don't need this
-
-  async function getProfile() {
-    const token = localStorage.getItem('auth-token');
-    
-    try {
-      const response = await axios.get('http://localhost:3090/auth/profile', {
-        headers: {
-          'auth-token': token 
-        }
-      });
-
-      setFetchedUsername(response.data.username);
-    
-
-    } catch (error) {
-      console.error('Failed to fetch profile:', error.response.data);
-    }
-  }
 
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
-  const [fetchedUsername, setFetchedUsername] = useState('');
 
-
-  useEffect(() => {
-    getProfile();
-  }, [showLogin])
   return (
     <div className='header'>
       <div className='logo'>
         <Link to='/'>type.ac</Link>
       </div>
-      {fetchedUsername && (
-        <div> welcome, {fetchedUsername} </div>
-      )}
+
+      {username && <div> welcome, {username} </div>}
       <div className='nav-container'>
         <nav>
           <ul className='nav-list'>
@@ -70,8 +45,21 @@ function Header() {
               </Link>
             </li>
             <li>
-              <a onClick={() => setShowLogin(!showLogin)}> login </a>
-              <Login loginVisible={showLogin} />
+              {username == "guest" || username == undefined ? (
+                <>
+                  <a onClick={() => setShowLogin(!showLogin)}>login</a>
+                  <Login loginVisible={showLogin} />
+                </>
+              ) : (
+                <>
+                  <a
+                    onClick={() => {
+                      passLogout();
+                    }}>
+                    logout
+                  </a>
+                </>
+              )}
             </li>
           </ul>
         </nav>

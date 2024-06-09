@@ -28,7 +28,7 @@
 
 .leaderboard-item {
   display: flex;
-  background-color: rgba(255, 255, 255, 0.1); 
+  background-color: rgba(255, 255, 255, 0.1);
   padding: 0.75rem;
   margin-bottom: 0.75rem;
   border-radius: 0.4rem;
@@ -49,10 +49,6 @@
 .nav-container {
   display: flex;
   align-items: center;
-}
-
-nav {
-  margin-right: 20px;
 }
 
 .nav-list {
@@ -85,7 +81,6 @@ nav {
 @media (orientation: portrait) {
   .leaderboard-container {
     flex-direction: column;
-
   }
 
   .leaderboard-list {

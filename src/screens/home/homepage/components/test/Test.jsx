@@ -4,39 +4,32 @@ import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
 import EndTest from "../endtest/EndTest";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import { useAuth } from "../../../../../AuthContext";
 
-const Test = () => {
-  const [userID, setUserID] = useState("");
-
-  async function getProfile() {
-    const token = localStorage.getItem("auth-token");
-
-    try {
-      const response = await axios.get("http://localhost:3090/auth/profile", {
-        headers: {
-          "auth-token": token,
-        },
-      });
-
-      const fetchedUserID = response.data._id;
-      setUserID(fetchedUserID);
-
-      setTest((prevTest) => ({
-        ...prevTest,
-        userID: fetchedUserID,
-      }));
-    } catch (error) {
-      console.error("Failed to fetch profile:", error.response.data);
-    }
-  }
-
+const Test = ({ user }) => {
   const sendTestToBackend = async () => {
     // e.preventDefault(); // not sure if i need this here uhhh
+    //
+    if (user.username != "guest" || user.username != undefined) {
+      if (test.userID == "") {
+        setTest((prevTest) => ({
+          ...prevTest,
+          userID: user._id,
+        }));
+      }
 
-    if (userID != 0) {
       try {
         const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
+
+        console.log(response);
+
+        // TODO: AFTER TEST SENT, NAVIGATE TO RESULT SCREEN
+
+        // window.location.href = `${
+        //   window.location.href + `test/${response.data._id}`
+        // }`;
       } catch (error) {
         console.log(error);
         console.error("Error registering:", error.response.data);
@@ -49,7 +42,7 @@ const Test = () => {
   // sets default of test object to this state
   const [test, setTest] = useState({
     //eventually have unique IDs for tests for links/db
-    userID: 0, // gets set to the User's ID later on
+    userID: "", // gets set to the User's ID later on
     testID: 0,
     // -1 loading, 0 unstarted, 1 running, 2 paused, 3 finished
     state: -1,
@@ -86,6 +79,7 @@ const Test = () => {
     eventLog: [
       //eventlog :)
     ],
+    timestamp: 0,
   });
 
   // END OF TEST
@@ -200,15 +194,11 @@ const Test = () => {
   //     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft));
   //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
-  // TURNED OFF AUTOSENDING FOR NOW (EVENT LOG IS SLOW TO UPDATE, NEEDS TO BE FIXED (wait until final render))
   useEffect(() => {
-    getProfile(); // I THINK this should go here
-    console.log("loading profile");
-
-    // if (test.state == 3 && test.finished && test.eventLog != {}) {
-    //   sendTestToBackend(); // not sure if this is gonna work right but
-    // }
-  }, []);
+    if (test.state == 3 && test.finished && test.eventLog.length != 0) {
+      sendTestToBackend(); // not sure if this is gonna work right but
+    }
+  }, [test.eventLog]);
 
   return (
     <>
@@ -261,7 +251,6 @@ const Test = () => {
             justifyContent: "center",
             transition: "all.15s ease-out",
           }}>
-          <button onClick={sendTestToBackend}> sendTestToBackend </button>
           <TextArea
             test={test}
             //   settings={settings}
@@ -315,6 +304,7 @@ const Test = () => {
             passEventLog={(e) => {
               setTest((prevTest) => ({
                 ...prevTest,
+                timestamp: e[0].timestamp,
                 eventLog: e,
               }));
             }}
@@ -330,7 +320,7 @@ const Test = () => {
           alignItems: "center", // Center horizontally
           justifyContent: "center", // Center vertically
         }}>
-        <EndTest test={test} />
+        <EndTest user={user} test={test} />
       </div>
     </>
   );

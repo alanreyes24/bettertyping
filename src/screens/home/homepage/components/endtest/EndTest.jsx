@@ -26,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = ({ test }) => {
+const LineChart = ({ test, isAnalysis }) => {
   const [switchChart, setSwitchChart] = useState(false);
 
   const [trueWPMArray, setTrueWPMArray] = useState([]);
@@ -97,8 +97,6 @@ const LineChart = ({ test }) => {
       setRawWPMArray(convertedRawWPMArray);
     }
   }, [test.finished]);
-
-  let timerLength = test.timer.length / 10;
 
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
   const [testErrorChartData, setTestErrorChartData] = useState([]);
@@ -219,6 +217,7 @@ const LineChart = ({ test }) => {
   };
 
   const options = {
+    animtion: false,
     responsive: true,
     plugins: {
       legend: {
@@ -244,24 +243,35 @@ const LineChart = ({ test }) => {
   };
 
   return (
-    <div
-      style={{
-        display: test.finished ? "flex" : "none",
-        width: "70%",
-        height: "35vh",
-        background: "#09090920",
-      }}>
-      {!switchChart ? (
+    <>
+      {isAnalysis ? (
         <>
           <Scatter data={wpmData} options={options} />
         </>
       ) : (
-        <>
-          <Scatter data={data} options={options} />
-        </>
+        <></>
       )}
-      <button onClick={() => setSwitchChart(!switchChart)}>Toggle Chart</button>
-    </div>
+      <div
+        style={{
+          display: test.finished ? "flex" : "none",
+          width: "70%",
+          height: "35vh",
+          background: "#09090920",
+        }}>
+        {!switchChart ? (
+          <>
+            <Scatter data={wpmData} options={options} />
+          </>
+        ) : (
+          <>
+            <Scatter data={data} options={options} />
+          </>
+        )}
+        {/* <button onClick={() => setSwitchChart(!switchChart)}>
+          Toggle Chart
+        </button> */}
+      </div>
+    </>
   );
 };
 
