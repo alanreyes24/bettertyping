@@ -67,11 +67,14 @@ function LeaderBoard() {
                         style={{
                           marginLeft: "0.25rem",
                         }}>
-                        {test.userID}
+                        {test.username}
                       </div>
                     </div>
                     <div style={{ textAlign: "center" }}>
-                      WPM: {test.results.trueWPM}
+                      true WPM: {test.results.trueWPM}
+                      </div>
+                    <div style={{ textAlign: "center" }}>
+                      accuracy: {test.results.accuracy}
                     </div>
                   </li>
                 ))}

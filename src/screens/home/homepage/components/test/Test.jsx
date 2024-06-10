@@ -128,8 +128,7 @@ const Test = ({ user }) => {
     // console.log("true WPM: " + trueWPM);
     // console.log("raw WPM: " + rawWPM);
 
-    let accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
-
+    let accuracy = ((totalCorrect / (totalCorrect + totalIncorrect)) * 100).toFixed(2);
     setTest((prevTest) => ({
       ...prevTest,
       results: {
