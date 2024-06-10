@@ -12,9 +12,6 @@ const Test = ({ user }) => {
 
   const sendTestToBackend = async () => {
     // e.preventDefault(); // not sure if i need this here uhhh
-    //
-    if (user.username != "guest" && user.username != undefined) {
-
       try {
         const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
 
@@ -29,7 +26,7 @@ const Test = ({ user }) => {
         console.log(error);
         console.error("Error registering:", error.response.data);
       }
-    }
+    
   };
 
   const [hideSettings, setHideSettings] = useState(false);
@@ -38,6 +35,7 @@ const Test = ({ user }) => {
   const [test, setTest] = useState({
     //eventually have unique IDs for tests for links/db
     userID: "", // gets set to the User's ID later on
+    username: "aaaa",
     testID: 0,
     // -1 loading, 0 unstarted, 1 running, 2 paused, 3 finished
     state: -1,
@@ -144,20 +142,28 @@ const Test = ({ user }) => {
     }));
   }
 
+
+  useEffect(() => {
+    if (test.state == 1) {
+      let username = localStorage.getItem('username');
+      console.log(username);
+  
+      if (test.userID == "") {
+        setTest((prevTest) => ({
+         ...prevTest,
+          username: username,
+          userID: user._id,
+        }));
+      }
+    }
+  }, [test.state]);
+
   useEffect(() => {
     //HANDLE TIMER
     // TODO: PAUSE FUNCTIONALITY
     if (test.state == 1) {
+
       setHideSettings(true);
-
-      if (test.userID == "") {
-        setTest((prevTest) => ({
-          ...prevTest,
-          userID: user._id,
-        }));
-      }
-
-
 
       if (test.settings.type == "time" && test.timer.timeLeft > 0) {
         setTimeout(() => {

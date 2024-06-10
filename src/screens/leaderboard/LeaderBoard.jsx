@@ -1,4 +1,7 @@
-import React from "react";
+// LeaderBoard.jsx
+
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
 
@@ -10,52 +13,73 @@ const mockData = [
   { name: "TYPEGOD", wpm: 125.2 },
 ];
 
+
 function LeaderBoard() {
+
+  const [pulledTests, setPulledTests] = useState([]);
+
+  useEffect(() => {
+    retrieveNumberOfTests();
+  }, []); // Empty dependency array means this effect runs once on mount
+
+
+  async function retrieveNumberOfTests() {
+    try {
+      console.log("retrieveNumberOfTests is running . . .")
+      const response = await axios.get("http://localhost:3090/test/rankings");
+      setPulledTests(response.data);
+      console.log(pulledTests)
+    } catch (error) {
+      console.error("Error fetching rankings:", error.response);
+    }
+  }
+
+
+
+
+
   return (
-    <>
-      <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-        <div className='leaderboard'>
-          <div
-            style={{
-              fontSize: "3rem",
-              fontWeight: "800",
-              textAlign: "center",
-            }}>
-            leaderboard
-          </div>
-          <div className='leaderboard-container'>
-            {Array(3)
-              .fill(null)
-              .map((_, colIndex) => (
-                <ul key={colIndex} className='leaderboard-list'>
-                  {mockData.map((entry, index) => (
-                    <li key={index} className='leaderboard-item'>
+    <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+      <div className='leaderboard'>
+        <div
+          style={{
+            fontSize: "3rem",
+            fontWeight: "800",
+            textAlign: "center",
+          }}>
+          Leaderboard
+        </div>
+        <div className='leaderboard-container'> 
+          {Array(1)
+            .fill(null)
+            .map((_, colIndex) => (
+              <ul key={colIndex} className='leaderboard-list'>
+                {pulledTests.map((test, index) => (
+                  <li key={index} className='leaderboard-item'>
+                    <div
+                      style={{
+                        display: "flex",
+                        flex: 1,
+                        textAlign: "center",
+                      }}>
+                      {index + 1}:
                       <div
                         style={{
-                          display: "flex",
-                          flex: 1,
-                          textAlign: "center",
+                          marginLeft: "0.25rem",
                         }}>
-                        {index + 1}:
-                        <div
-                          style={{
-                            color: entry.color,
-                            marginLeft: "0.25rem",
-                          }}>
-                          {entry.name}
-                        </div>
+                        {test.userID}
                       </div>
-                      <div style={{ textAlign: "center" }}>
-                        WPM: {entry.wpm}
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              ))}
-          </div>
+                    </div>
+                    <div style={{ textAlign: "center" }}>
+                      WPM: {test.results.trueWPM}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

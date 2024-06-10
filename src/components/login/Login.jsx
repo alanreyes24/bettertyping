@@ -26,8 +26,8 @@ function Login({ loginVisible, passLoggedIn }) {
           "auth-token": token,
         },
       });
-
-      setUsernameDB(response.data.username);
+      localStorage.setItem("username", response.data.username)
+      setUsernameDB(response.data.username); // using localStorage to update Header a better idea
       setUsernameDBState(response.data.username); // Update local state
     } catch (error) {
       console.error("Failed to fetch profile:", error.response.data);
