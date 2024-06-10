@@ -1,42 +1,37 @@
-// LeaderBoard.jsx
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
 
-const mockData = [
-  { name: "alan", color: "#ff1919", wpm: 146.9 },
-  { name: "typemaster101", wpm: 134.1 },
-  { name: "plant", color: "#ff1919", wpm: 133.3 },
-  { name: "jen", wpm: 129.5 },
-  { name: "TYPEGOD", wpm: 125.2 },
-];
-
-
 function LeaderBoard() {
 
-  const [pulledTests, setPulledTests] = useState([]);
+  const [pulledTests15, setPulledTests15] = useState([]);
+  const [pulledTests30, setPulledTests30] = useState([]);
+  const [pulledTests60, setPulledTests60] = useState([]);
 
   useEffect(() => {
-    retrieveNumberOfTests();
-  }, []); // Empty dependency array means this effect runs once on mount
+    retrieveTypeOfTests(15);
+    retrieveTypeOfTests(30);
+    retrieveTypeOfTests(60);
+  }, []);
 
-
-  async function retrieveNumberOfTests() {
+  async function retrieveTypeOfTests(duration) {
     try {
-      console.log("retrieveNumberOfTests is running . . .")
-      const response = await axios.get("http://localhost:3090/test/rankings");
-      setPulledTests(response.data);
-      console.log(pulledTests)
+      console.log(`retrieveTypeOfTests is running for ${duration} seconds`);
+      const response = await axios.get(`http://localhost:3090/test/rankings?duration=${duration}`);
+      
+      if (duration === 15) { setPulledTests15(response.data); }
+      if (duration === 30) { setPulledTests30(response.data); }
+      if (duration === 60) { setPulledTests60(response.data); }
+
+      console.log(pulledTests15);
+      console.log(pulledTests30);
+      console.log(pulledTests60);
+
     } catch (error) {
       console.error("Error fetching rankings:", error.response);
     }
   }
-
-
-
-
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
@@ -49,37 +44,86 @@ function LeaderBoard() {
           }}>
           Leaderboard
         </div>
+
         <div className='leaderboard-container'> 
-          {Array(1)
-            .fill(null)
-            .map((_, colIndex) => (
-              <ul key={colIndex} className='leaderboard-list'>
-                {pulledTests.map((test, index) => (
-                  <li key={index} className='leaderboard-item'>
-                    <div
-                      style={{
-                        display: "flex",
-                        flex: 1,
-                        textAlign: "center",
-                      }}>
-                      {index + 1}:
-                      <div
-                        style={{
-                          marginLeft: "0.25rem",
-                        }}>
-                        {test.username}
+          <div className='leaderboard-section'>
+            <h2>15 Seconds Tests</h2>
+            {Array(1)
+              .fill(null)
+              .map((_, colIndex) => (
+                <ul key={colIndex} className='leaderboard-list'>
+                  {pulledTests15.map((test, index) => (
+                    <li key={index} className='leaderboard-item'>
+                      <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
                       </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
                       </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
-                    </div>
-                  </li>
-                ))}
-              </ul>
-            ))}
+                      <div style={{ textAlign: "center" }}>
+                        accuracy: {test.results.accuracy}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+          </div>
+
+          <div className='leaderboard-section'>
+            <h2>30 Seconds Tests</h2>
+            {Array(1)
+              .fill(null)
+              .map((_, colIndex) => (
+                <ul key={colIndex} className='leaderboard-list'>
+                  {pulledTests30.map((test, index) => (
+                    <li key={index} className='leaderboard-item'>
+                      <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        accuracy: {test.results.accuracy}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+          </div>
+
+          <div className='leaderboard-section'>
+            <h2>60 Seconds Tests</h2>
+            {Array(1)
+              .fill(null)
+              .map((_, colIndex) => (
+                <ul key={colIndex} className='leaderboard-list'>
+                  {pulledTests60.map((test, index) => (
+                    <li key={index} className='leaderboard-item'>
+                      <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        accuracy: {test.results.accuracy}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ))}
+          </div>
+
         </div>
       </div>
     </div>
