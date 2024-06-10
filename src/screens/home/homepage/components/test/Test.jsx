@@ -9,16 +9,11 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../AuthContext";
 
 const Test = ({ user }) => {
+
   const sendTestToBackend = async () => {
     // e.preventDefault(); // not sure if i need this here uhhh
     //
-    if (user.username != "guest" || user.username != undefined) {
-      if (test.userID == "") {
-        setTest((prevTest) => ({
-          ...prevTest,
-          userID: user._id,
-        }));
-      }
+    if (user.username != "guest" && user.username != undefined) {
 
       try {
         const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
@@ -154,6 +149,16 @@ const Test = ({ user }) => {
     // TODO: PAUSE FUNCTIONALITY
     if (test.state == 1) {
       setHideSettings(true);
+
+      if (test.userID == "") {
+        setTest((prevTest) => ({
+          ...prevTest,
+          userID: user._id,
+        }));
+      }
+
+
+
       if (test.settings.type == "time" && test.timer.timeLeft > 0) {
         setTimeout(() => {
           setTest((prevTest) => {
@@ -196,7 +201,9 @@ const Test = ({ user }) => {
 
   useEffect(() => {
     if (test.state == 3 && test.finished && test.eventLog.length != 0) {
+
       sendTestToBackend(); // not sure if this is gonna work right but
+      console.log(test);
     }
   }, [test.eventLog]);
 
@@ -242,6 +249,7 @@ const Test = ({ user }) => {
       </div>
       <>
         <div style={{ justifyContent: "center", alignSelf: "center" }}>
+          <button onClick={sendTestToBackend}>sendTestToBackend</button>
           <Timer test={test} />
         </div>
         <div
