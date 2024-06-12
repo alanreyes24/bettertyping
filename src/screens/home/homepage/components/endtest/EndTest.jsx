@@ -26,7 +26,7 @@ ChartJS.register(
   Legend
 );
 
-const LineChart = ({ test, isAnalysis }) => {
+const LineChart = ({ test, setTest, isAnalysis }) => {
   const [switchChart, setSwitchChart] = useState(false);
 
   const [trueWPMArray, setTrueWPMArray] = useState([]);
@@ -83,20 +83,29 @@ const LineChart = ({ test, isAnalysis }) => {
     }
   }, [test.state, trueWPMArray]);
 
-  useEffect(() => {
-    if (test.finished) {
-      const convertedTrueWPMArray = trueWPMArray.map((item, index) => {
-        return { x: index, y: parseFloat(item) };
-      });
+  // Assuming test is passed as a prop and cannot be modified directly
+// Consider lifting the state up or managing these values differently if possible
 
-      const convertedRawWPMArray = rawWPMArray.map((item, index) => {
-        return { x: index, y: parseFloat(item) };
-      });
+useEffect(() => {
+  if (test.finished) {
+    const convertedTrueWPMArray = trueWPMArray.map((item, index) => ({ x: index, y: parseFloat(item) }));
+    const convertedRawWPMArray = rawWPMArray.map((item, index) => ({ x: index, y: parseFloat(item) }));
 
-      setTrueWPMArray(convertedTrueWPMArray);
-      setRawWPMArray(convertedRawWPMArray);
-    }
-  }, [test.finished]);
+    setTrueWPMArray(convertedTrueWPMArray);
+    setRawWPMArray(convertedRawWPMArray);
+
+    // Update the test object with the new arrays
+    setTest(prevTest => ({
+     ...prevTest,
+      words: {
+       ...prevTest.words,
+        trueWPMArray: convertedTrueWPMArray,
+        rawWPMArray: convertedRawWPMArray,
+      },
+    }));
+  }
+  console.log(test)
+}, [test.finished]); // Include dependencies correctly
 
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);
   const [testErrorChartData, setTestErrorChartData] = useState([]);
@@ -217,7 +226,7 @@ const LineChart = ({ test, isAnalysis }) => {
   };
 
   const options = {
-    animtion: false,
+    animation: false,
     responsive: true,
     plugins: {
       legend: {

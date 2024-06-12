@@ -15,7 +15,6 @@ const Test = ({ user }) => {
       try {
         const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
 
-        console.log(response);
 
         // TODO: AFTER TEST SENT, NAVIGATE TO RESULT SCREEN
 
@@ -40,6 +39,7 @@ const Test = ({ user }) => {
     // -1 loading, 0 unstarted, 1 running, 2 paused, 3 finished
     state: -1,
     finished: false,
+
     //words object
     words: {
       wordList: [],
@@ -48,6 +48,8 @@ const Test = ({ user }) => {
       //   letters: {
       correctLetters: [],
       incorrectLetters: [],
+      trueWPMArray: [],
+      rawWPMArray: [],
       //   },
     },
     //settings object
@@ -208,6 +210,7 @@ const Test = ({ user }) => {
     if (test.state == 3 && test.finished && test.eventLog.length != 0) {
 
       sendTestToBackend(); // not sure if this is gonna work right but
+      console.log("test: ")
       console.log(test);
     }
   }, [test.eventLog]);
@@ -333,7 +336,7 @@ const Test = ({ user }) => {
           alignItems: "center", // Center horizontally
           justifyContent: "center", // Center vertically
         }}>
-        <EndTest user={user} test={test} />
+        <EndTest user={user} test={test} setTest={setTest} />
       </div>
     </>
   );
