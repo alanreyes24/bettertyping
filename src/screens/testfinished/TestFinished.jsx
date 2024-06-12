@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import EndTest from "../home/homepage/components/endtest/EndTest";
 import axios from "axios";
-
 import { Scatter } from "react-chartjs-2";
-
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -28,99 +25,101 @@ ChartJS.register(
 );
 
 function TestFinished() {
+    const [mostRecentTest, setMostRecentTest] = useState(null);
+    const [trueWPMArray, setTrueWPMArray] = useState([]);
+    const [rawWPMArray, setRawWPMArray] = useState([]);
 
+    const retrieveMostRecentChartData = async () => {
+        const token = localStorage.getItem("auth-token");
+        const response = await axios.get("http://localhost:3090/test/chartData", {
+            headers: { "token": token },
+        });
+        setMostRecentTest(response.data);
+    };
 
+    useEffect(() => {
+        const fetchDataAndLog = async () => {
+            await retrieveMostRecentChartData();
+        };
 
-async function retrieveMostRecentChartData() {
+        fetchDataAndLog();
+    }, []);
 
-    const token = localStorage.getItem("auth-token");
-    console.log(token)
+    useEffect(() => {
+        if (mostRecentTest) {
+            setTrueWPMArray(mostRecentTest.words.trueWPMArray);
+            setRawWPMArray(mostRecentTest.words.rawWPMArray);
+        }
+    }, [mostRecentTest]);
 
-    const response = await axios.get("http://localhost:3090/test/chartData", {
-        headers: {
-            "token": token,
-          },
-    });
-
-    console.log(response)
-
-
-
-
-}
-
-
-    
-      const wpmData = {
+    const wpmData = {
         datasets: [
-          {
-            label: "true wpm",
-            // data: trueWPMArray.slice(1, trueWPMArray.length), // CHANGE 
-            cubicInterpolationMode: "monotone",
-            backgroundColor: "rgba(255, 255, 255, 0.2)", // Changed to white
-            showLine: true,
-            fill: false,
-            borderWidth: 1,
-            borderColor: "rgba(255, 255, 255, 1)", // Changed to white
-            pointBackgroundColor: "rgba(255, 255, 255, 1)", // Changed to white
-            pointBorderColor: "#000", // Changed to black
-            pointHoverBackgroundColor: "#000", // Changed to black
-            pointHoverBorderColor: "rgba(255, 255, 255, 1)", // Changed to white
-          },
-          {
-            label: "raw wpm",
-            // data: rawWPMArray.slice(1, rawWPMArray.length), // CHANGE 
-            cubicInterpolationMode: "monotone",
-            showLine: true,
-            fill: true,
-            borderWidth: 1,
-            backgroundColor: "rgba(0, 0, 0, 0.2)", // Changed to black
-            borderColor: "rgba(0, 0, 0, 1)", // Changed to black
-            pointBackgroundColor: "rgba(0, 0, 0, 1)", // Changed to black
-            pointBorderColor: "#fff", // Kept as white for contrast
-            pointHoverBackgroundColor: "#fff", // Kept as white for contrast
-            pointHoverBorderColor: "rgba(0, 0, 0, 1)", // Changed to black
-          },
+            {
+                label: "true wpm",
+                data: trueWPMArray,
+                cubicInterpolationMode: "monotone",
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+                showLine: true,
+                fill: false,
+                borderWidth: 1,
+                borderColor: "rgba(255, 255, 255, 1)",
+                pointBackgroundColor: "rgba(255, 255, 255, 1)",
+                pointBorderColor: "#000",
+                pointHoverBackgroundColor: "#000",
+                pointHoverBorderColor: "rgba(255, 255, 255, 1)",
+            },
+            {
+                label: "raw wpm",
+                data: rawWPMArray,
+                cubicInterpolationMode: "monotone",
+                showLine: true,
+                fill: true,
+                borderWidth: 1,
+                backgroundColor: "rgba(0, 0, 0, 0.2)",
+                borderColor: "rgba(0, 0, 0, 1)",
+                pointBackgroundColor: "rgba(0, 0, 0, 1)",
+                pointBorderColor: "#fff",
+                pointHoverBackgroundColor: "#fff",
+                pointHoverBorderColor: "rgba(0, 0, 0, 1)",
+            },
         ],
-      };
-    
-      const options = {
+    };
+
+    const options = {
         animation: false,
         responsive: true,
         plugins: {
-          legend: {
-            position: "top",
-          },
-          title: {
-            display: true,
-            text: "",
-          },
+            legend: {
+                position: "top",
+            },
+            title: {
+                display: true,
+                text: "",
+            },
         },
         maintainAspectRatio: false,
         scales: {
-          x: {
-            type: "linear",
-            ticks: {
-              stepSize: 1, // Ensure every data point is displayed on the x-axis
+            x: {
+                type: "linear",
+                ticks: {
+                    stepSize: 1,
+                },
             },
-          },
-          y: {
-            type: "linear",
-          },
+            y: {
+                type: "linear",
+            },
         },
-      };
+    };
 
-
-    return(
+    return (
         <>
-        
-        <div> Hello </div>
-        <button onClick={retrieveMostRecentChartData}> retrieveMostRecent Test </button>
-        
+            <div> Hello </div>
+            <button onClick={retrieveMostRecentChartData}>Retrieve Most Recent Test</button>
+            <div style={{ width: '1200px', height: '600px' }}>
+                <Scatter data={wpmData} options={options} />
+            </div>
         </>
-        
-    )
-    
+    );
 }
 
 export default TestFinished;
