@@ -1,5 +1,8 @@
 // EndTest.jsx
 
+// re-name this to chart or like calculate-chart eventually ???
+// refactoring work needed to be done here
+
 import React, { useEffect, useState } from "react";
 import { Scatter } from "react-chartjs-2";
 import {
@@ -14,7 +17,6 @@ import {
   Legend,
 } from "chart.js";
 
-// Register all necessary plugins including Filler
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -104,7 +106,6 @@ useEffect(() => {
       },
     }));
   }
-  console.log(test)
 }, [test.finished]); // Include dependencies correctly
 
   const [testCorrectChartData, setTestCorrectChartData] = useState([]);

@@ -5,10 +5,16 @@ import Settings from "../settings/Settings";
 import EndTest from "../endtest/EndTest";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
 import { useAuth } from "../../../../../AuthContext";
 
 const Test = ({ user }) => {
+
+
+  const navigate = useNavigate();
+
+  const handleEndTestRedirect = () => {
+    navigate('/test-finished');
+  };
 
   const sendTestToBackend = async () => {
     // e.preventDefault(); // not sure if i need this here uhhh
@@ -16,11 +22,16 @@ const Test = ({ user }) => {
         const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
 
 
-        // TODO: AFTER TEST SENT, NAVIGATE TO RESULT SCREEN
+        // TODO: AFTER TEST SENT, NAVIGATE TO RESULT SCREEN:
+        handleEndTestRedirect();
+
+
 
         // window.location.href = `${
         //   window.location.href + `test/${response.data._id}`
         // }`;
+
+        
       } catch (error) {
         console.log(error);
         console.error("Error registering:", error.response.data);
@@ -92,6 +103,10 @@ const Test = ({ user }) => {
   // FINISH TEST
   if (test.state == 3 && !test.finished) {
     setTest((t) => ({ ...t, finished: true }));
+    
+
+// call the function here
+
   }
 
   // RESULTS
@@ -213,7 +228,7 @@ const Test = ({ user }) => {
       console.log("test: ")
       console.log(test);
     }
-  }, [test.eventLog]);
+  }, [test.eventLog]); // why does this use test.eventLog
 
   return (
     <>

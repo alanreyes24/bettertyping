@@ -10,6 +10,8 @@ import Analysis from "./screens/analysis/Analysis";
 import TestPage from "./screens/test/TestPage";
 import axios from "axios";
 import Header from "./components/header/Header";
+import TestFinished from "./screens/testfinished/TestFinished"
+
 function App() {
   //TODO: move profile code here, so no need to login/fetch on each page individually, can pass as prop
 
@@ -58,6 +60,7 @@ function App() {
               <Route path='/leaderboard' element={<LeaderBoard />} />
               <Route path='/analysis/:id' element={<Analysis />} />
               <Route path='/test/:id' element={<TestPage />} />
+              <Route path='/test-finished' element={<TestFinished />} />
             </Routes>
           </div>
         </AuthProvider>
