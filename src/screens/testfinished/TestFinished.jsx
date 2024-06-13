@@ -40,12 +40,13 @@ function TestFinished() {
     useEffect(() => {
         const fetchDataAndLog = async () => {
             await retrieveMostRecentChartData();
+            console.log(mostRecentTest)
         };
 
         fetchDataAndLog();
     }, []);
 
-    useEffect(() => {
+    useEffect(() => { // not really necessary but good to have just in case
         if (mostRecentTest) {
             setTrueWPMArray(mostRecentTest.words.trueWPMArray);
             setRawWPMArray(mostRecentTest.words.rawWPMArray);
@@ -113,8 +114,10 @@ function TestFinished() {
 
     return (
         <>
-            <div> Hello </div>
-            <button onClick={retrieveMostRecentChartData}>Retrieve Most Recent Test</button>
+ 
+            <div>{mostRecentTest?.username}</div>        
+            <div>{mostRecentTest?.results.rawWPM}</div>
+            <div>{mostRecentTest?.results.trueWPM}</div>
             <div style={{ width: '95vw', height: '50vh' }}>
                 <Scatter data={wpmData} options={options} />
             </div>
