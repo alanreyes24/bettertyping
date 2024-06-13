@@ -254,33 +254,7 @@ useEffect(() => {
 
   return (
     <>
-      {isAnalysis ? (
-        <>
-          <Scatter data={wpmData} options={options} />
-        </>
-      ) : (
-        <></>
-      )}
-      <div
-        style={{
-          display: test.finished ? "flex" : "none",
-          width: "70%",
-          height: "35vh",
-          background: "#09090920",
-        }}>
-        {!switchChart ? (
-          <>
-            <Scatter data={wpmData} options={options} />
-          </>
-        ) : (
-          <>
-            <Scatter data={data} options={options} />
-          </>
-        )}
-        {/* <button onClick={() => setSwitchChart(!switchChart)}>
-          Toggle Chart
-        </button> */}
-      </div>
+      
     </>
   );
 };

@@ -115,7 +115,7 @@ function TestFinished() {
         <>
             <div> Hello </div>
             <button onClick={retrieveMostRecentChartData}>Retrieve Most Recent Test</button>
-            <div style={{ width: '1200px', height: '600px' }}>
+            <div style={{ width: '95vw', height: '50vh' }}>
                 <Scatter data={wpmData} options={options} />
             </div>
         </>
