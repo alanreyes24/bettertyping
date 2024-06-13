@@ -6,20 +6,27 @@ import "./LeaderBoard.css";
 function LeaderBoard() {
 
   const [displayTimedTests, setDisplayTimedTests] = useState(false);
+
   const [pulledTests15, setPulledTests15] = useState([]);
   const [pulledTests30, setPulledTests30] = useState([]);
   const [pulledTests60, setPulledTests60] = useState([]);
 
+  const [pulledTestsWord25, setPulledTestsWords25] = useState([]);
+  const [pulledTestsWord50, setPulledTestsWords50] = useState([]);
+  const [pulledTestsWord100, setPulledTestsWords100] = useState([]);
+
+
   useEffect(() => {
-    retrieveTypeOfTests(15);
-    retrieveTypeOfTests(30);
-    retrieveTypeOfTests(60);
+    retrieveTimeTestRankings(15);
+    retrieveTimeTestRankings(30);
+    retrieveTimeTestRankings(60);
+    retrieveWordTestRankings('words')
   }, []);
 
-  async function retrieveTypeOfTests(duration) {
+  async function retrieveTimeTestRankings(duration) {
     try {
-      console.log(`retrieveTypeOfTests is running for ${duration} seconds`);
-      const response = await axios.get(`http://localhost:3090/test/rankings?duration=${duration}`);
+      console.log(`retrieveTimeTestRankings is running for ${duration} seconds`);
+      const response = await axios.get(`http://localhost:3090/test/timeRankings?duration=${duration}`);
       
       if (duration === 15) { setPulledTests15(response.data); }
       if (duration === 30) { setPulledTests30(response.data); }
@@ -33,6 +40,36 @@ function LeaderBoard() {
       console.error("Error fetching rankings:", error.response);
     }
   }
+
+  async function retrieveWordTestRankings(type) {
+
+    const response = await axios.get(`http://localhost:3090/test/wordRankings?type=${type}`);
+
+    let allWordTests = response.data;
+
+    console.log(allWordTests)
+
+    for (let i = 0; i < allWordTests.length; i++) {
+
+      if (allWordTests[i].settings.count == 25) {
+        setPulledTestsWords25(prevState => [...prevState, allWordTests[i]]);
+      } else if ( allWordTests[i].settings.count == 50) {
+        setPulledTestsWords50(prevState => [...prevState, allWordTests[i]]);
+      } else if ( allWordTests[i].settings.count == 100) {
+        setPulledTestsWords100(prevTest => [...prevTest, allWordTests[i]]);
+      } else {
+        console.log("Something is wrong with what the settings.count was set to")
+      }
+
+
+    }
+
+  }
+
+
+
+
+
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
@@ -121,7 +158,7 @@ function LeaderBoard() {
           <div className='leaderboard-section'>
             <h2>25 Word Tests</h2>
                 <ul className='leaderboard-list'>
-                  {pulledTests15.map((test, index) => (
+                  {pulledTestsWord25.map((test, index) => (
                     <li key={index} className='leaderboard-item'>
                       <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                         {index + 1}:
@@ -146,7 +183,7 @@ function LeaderBoard() {
               .fill(null)
               .map((_, colIndex) => (
                 <ul key={colIndex} className='leaderboard-list'>
-                  {pulledTests30.map((test, index) => (
+                  {pulledTestsWord50.map((test, index) => (
                     <li key={index} className='leaderboard-item'>
                       <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                         {index + 1}:
@@ -172,7 +209,7 @@ function LeaderBoard() {
               .fill(null)
               .map((_, colIndex) => (
                 <ul key={colIndex} className='leaderboard-list'>
-                  {pulledTests60.map((test, index) => (
+                  {pulledTestsWord100.map((test, index) => (
                     <li key={index} className='leaderboard-item'>
                       <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                         {index + 1}:

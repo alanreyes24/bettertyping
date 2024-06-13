@@ -66,7 +66,7 @@ const Test = ({ user }) => {
     //settings object
     settings: {
       type: "time",
-      length: 300,
+      length: 4040,
       count: 50,
       //   visible: false,
     },
