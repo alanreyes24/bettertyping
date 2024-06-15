@@ -5,19 +5,34 @@ import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
-function Header({ username, passLogout }) {
-  // const { usernameDB } = useAuth(); // Access the usernameDB state // ADDED realized i kinda don't need this
+function Header({ username, passLoggedIn, passLogout }) {
 
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
 
+  const [appUsername, setAppUsername] = useState(username);
+
+  useEffect(() => {
+    setAppUsername(username);
+    console.log("header username", username)
+  },[username])
+
+
+
   return (
+    
     <div className='header'>
       <div className='logo'>
         <Link to='/'>type.ac</Link>
       </div>
 
-      {username && <div> welcome, {username} </div>}
+
+    {appUsername == 'guest'? (
+      <div> guest mode </div>
+    ): appUsername? (
+      <div> welcome, {appUsername} </div>
+    ) : null}
+
       <div className='nav-container'>
         <nav>
           <ul className='nav-list'>
@@ -45,15 +60,19 @@ function Header({ username, passLogout }) {
               </Link>
             </li>
             <li>
-              {username == "guest" || username == undefined ? (
+              {appUsername == "guest" || appUsername == undefined ? (
                 <>
                   <a onClick={() => setShowLogin(!showLogin)}>login</a>
-                  <Login loginVisible={showLogin} />
+                  <Login loginVisible={showLogin} passLoggedIn={(username) => {
+                      setAppUsername(username)
+                      passLoggedIn(username)
+                  }} />
                 </>
               ) : (
                 <>
                   <a
                     onClick={() => {
+                      setShowLogin(!showLogin) // not sure this is the super nice way to do this but
                       passLogout();
                     }}>
                     logout

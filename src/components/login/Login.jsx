@@ -11,24 +11,25 @@ function Login({ loginVisible, passLoggedIn }) {
   const [usernameDB, setUsernameDBState] = useState(""); // database that is retrieved from the database , should change to 'fetchedUsername' or something
   const [error, setError] = useState("");
 
-  const { setUsernameDB } = useAuth();
 
   useEffect(() => {
     setLoginVisible(loginVisible);
   }, [loginVisible]);
 
   async function getProfile() {
+    
     const token = localStorage.getItem("auth-token");
-
+    
     try {
       const response = await axios.get("http://localhost:3090/auth/profile", {
         headers: {
           "auth-token": token,
         },
       });
+      
       localStorage.setItem("username", response.data.username)
-      setUsernameDB(response.data.username); // using localStorage to update Header a better idea
-      setUsernameDBState(response.data.username); // Update local state
+      setUsernameDBState(response.data.username); 
+
     } catch (error) {
       console.error("Failed to fetch profile:", error.response.data);
     }
@@ -41,10 +42,12 @@ function Login({ loginVisible, passLoggedIn }) {
         username,
         password,
       });
+
       localStorage.setItem("auth-token", response.data.token);
       getProfile();
       setLoginVisible(false);
-      passLoggedIn();
+      passLoggedIn(username); // reason code causes an issue
+
     } catch (error) {
       setError(error);
       console.error("Error logging in:", error.response);

@@ -13,13 +13,12 @@ import Header from "./components/header/Header";
 import TestFinished from "./screens/testfinished/TestFinished"
 
 function App() {
-  //TODO: move profile code here, so no need to login/fetch on each page individually, can pass as prop
 
-  const [user, setUser] = useState("");
+  const [username, setUsername] = useState('');
 
   async function getProfile() {
     const token = localStorage.getItem("auth-token");
-
+  
     if (token != null) {
       try {
         const response = await axios.get("http://localhost:3090/auth/profile", {
@@ -27,36 +26,43 @@ function App() {
             "auth-token": token,
           },
         });
-
-        setUser(response.data);
+  
+        // Assuming the response.data contains the user object
+        setUsername(response.data.username);
       } catch (error) {
         console.error("Failed to fetch profile:", error.response.data);
       }
     } else {
-      setUser("guest");
+      setUsername('guest');
     }
   }
+  
 
   useEffect(() => {
     getProfile();
   }, []);
 
+  useEffect(() => {
+      console.log("recognized that got changed")
+      console.log("app username: ", username)
+  }, [username]);
+
   return (
     <>
       <Router>
         <AuthProvider>
-          {/* Wrap your routes with AuthProvider */}
           <div>
             <Header
-              passLogout={() => {
-                setUser("guest");
+              passLogout={() => { // need to flesh this out more
+                setUsername("guest");
                 localStorage.clear("auth-token");
               }}
-              username={user.username}
+              username={username}
+              passLoggedIn={(username) => setUsername(username)}
             />
 
             <Routes>
-              <Route path='/' element={<HomePage user={user} />} />
+              <Route path='/' element={<HomePage user={username} />} />
               <Route path='/leaderboard' element={<LeaderBoard />} />
               <Route path='/analysis/:id' element={<Analysis />} />
               <Route path='/test/:id' element={<TestPage />} />
