@@ -28,8 +28,7 @@ function Header({ username, passLoggedIn, passLogout }) {
 
 
     {appUsername == 'guest'? (
-      <div> guest mode </div>
-    ): appUsername? (
+      <div style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', fontWeight: 'bold' }}> guest mode </div>    ): appUsername? (
       <div> welcome, {appUsername} </div>
     ) : null}
 
