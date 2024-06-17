@@ -5,7 +5,7 @@ import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
-function Header({ username, passLoggedIn, passLogout }) {
+function Header({ username, passLoggedIn, passLogout, passUser }) {
 
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
@@ -62,7 +62,12 @@ function Header({ username, passLoggedIn, passLogout }) {
               {appUsername == "guest" || appUsername == undefined ? (
                 <>
                   <a onClick={() => setShowLogin(!showLogin)}>login</a>
-                  <Login loginVisible={showLogin} passLoggedIn={(username) => {
+                  <Login loginVisible={showLogin} 
+
+                  passUserObject={(user) => {
+                    passUser(user)
+                  }} 
+                  passLoggedIn={(username) => {
                       setAppUsername(username)
                       passLoggedIn(username)
                   }} />

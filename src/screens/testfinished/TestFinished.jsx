@@ -30,9 +30,8 @@ function TestFinished() {
     const [rawWPMArray, setRawWPMArray] = useState([]);
 
     const retrieveMostRecentChartData = async () => {
-        const token = localStorage.getItem("auth-token");
         const response = await axios.get("http://localhost:3090/test/chartData", {
-            headers: { "token": token },
+            withCredentials: true,
         });
         setMostRecentTest(response.data);
     };

@@ -35,7 +35,7 @@ function Login({ loginVisible, passLoggedIn }) {
       console.log("Cookies should be set in the response. Check the Application tab in Developer Tools.");
 
       setLoginVisible(false);
-      passLoggedIn(username);
+      passLoggedIn(response.data.username);
 
     } catch (error) {
       setError(error);

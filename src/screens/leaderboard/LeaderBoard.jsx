@@ -17,16 +17,15 @@ function LeaderBoard() {
 
 
   useEffect(() => {
-    retrieveTimeTestRankings(15);
-    retrieveTimeTestRankings(30);
-    retrieveTimeTestRankings(60);
-    retrieveWordTestRankings('words')
+    retrieveTimeTestRankings(15, 'all-time');
+    // retrieveTimeTestRankings(30);
+    // retrieveTimeTestRankings(60);
+    // retrieveWordTestRankings('words')
   }, []);
 
-  async function retrieveTimeTestRankings(duration) {
+  async function retrieveTimeTestRankings(duration, timeFrame ) {
     try {
-      console.log(`retrieveTimeTestRankings is running for ${duration} seconds`);
-      const response = await axios.get(`http://localhost:3090/test/timeRankings?duration=${duration}`);
+      const response = await axios.get(`http://localhost:3090/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`);
       
       if (duration === 15) { setPulledTests15(response.data); }
       if (duration === 30) { setPulledTests30(response.data); }
@@ -65,9 +64,6 @@ function LeaderBoard() {
     }
 
   }
-
-
-
 
 
 
@@ -229,10 +225,6 @@ function LeaderBoard() {
               ))}
           </div>
         </div>
-
-
-
-
       </div>
     </div>
 

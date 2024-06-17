@@ -16,8 +16,6 @@ function App() {
     username: ''
   });
 
-  const [username, setUsername] = useState('guest');
-
   const updateUserFromLocalStorage = () => {
     const updatedUser = {
       _id: localStorage.getItem('userID') || '',
@@ -46,10 +44,6 @@ function App() {
     updateUserFromLocalStorage();
   }, []);
 
-  useEffect(() => {
-    console.log("useEffect user:", user);
-  }, [user]);
-
   const handleUsernameChange = (newUsername) => {
     setUsername(newUsername);
     localStorage.setItem('username', newUsername);
@@ -57,7 +51,10 @@ function App() {
   };
 
   const handleLogout = () => {
-    setUsername("guest");
+    setUser((prevUser) => ({
+      ...prevUser,
+      username: 'guest'
+    }))
     localStorage.setItem('username', 'guest');
     localStorage.setItem('userID', '')
     updateUserFromLocalStorage();
@@ -71,7 +68,7 @@ function App() {
             <Header
               passLoggedIn={handleUsernameChange}
               passLogout={handleLogout}
-              username={username}
+              username={user.username}
             />
 
             <Routes>
