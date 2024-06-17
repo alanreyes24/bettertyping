@@ -11,6 +11,7 @@ import Header from "./components/header/Header";
 import TestFinished from "./screens/testfinished/TestFinished";
 
 function App() {
+
   const [user, setUser] = useState({
     _id: '',
     username: ''
@@ -18,11 +19,23 @@ function App() {
 
   const [username, setUsername] = useState('guest');
 
+  async function getProfile() {
+    try {
+      const response = await axios.get("http://localhost:3090/auth/profile", {
+        withCredentials: true, // This ensures cookies are included in requests
+      });
+
+      console.log(response.data)
+      setUsername(response.data.username);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error.response.data);
+      setUsername('guest');
+    }
+  }
 
   useEffect(() => {
-    console.log("recognized that username got changed");
-    console.log("app username: ", username);
-  }, [username]);
+    getProfile();
+  }, []);
 
   return (
     <>
@@ -30,13 +43,14 @@ function App() {
         <AuthProvider>
           <div>
             <Header
+              passLoggedIn={(username) => {
+                setUsername(username);
+              }}
               passLogout={() => {
                 setUsername("guest");
               }}
               username={username}
-              passLoggedIn={(username) => {
-                setUsername(username);
-              }}
+              
             />
 
             <Routes>
