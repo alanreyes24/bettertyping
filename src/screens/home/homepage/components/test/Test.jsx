@@ -161,8 +161,9 @@ const Test = ({ user }) => {
 
   useEffect(() => {
     if (test.state == 1) {
+      
       let username = localStorage.getItem('username');
-      console.log(username);
+      console.log("user: ", user)
   
       if (test.userID == "") {
         setTest((prevTest) => ({
