@@ -29,7 +29,7 @@ function Login({ loginVisible, passLoggedIn }) {
 
       console.log("handleLogin response:", response.data);
 
-      localStorage.setItem("userID", response.data.userId);
+      localStorage.setItem("userID", response.data.userID);
       localStorage.setItem("username", response.data.username);
 
       console.log("Cookies should be set in the response. Check the Application tab in Developer Tools.");

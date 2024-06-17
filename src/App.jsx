@@ -6,7 +6,6 @@ import HomePage from "./screens/home/homepage/HomePage";
 import LeaderBoard from "./screens/leaderboard/LeaderBoard";
 import Analysis from "./screens/analysis/Analysis";
 import TestPage from "./screens/test/TestPage";
-import axios from "axios";
 import Header from "./components/header/Header";
 import TestFinished from "./screens/testfinished/TestFinished";
 
@@ -19,23 +18,50 @@ function App() {
 
   const [username, setUsername] = useState('guest');
 
-  async function getProfile() {
-    try {
-      const response = await axios.get("http://localhost:3090/auth/profile", {
-        withCredentials: true, // This ensures cookies are included in requests
-      });
-
-      console.log(response.data)
-      setUsername(response.data.username);
-    } catch (error) {
-      console.error("Failed to fetch profile:", error.response.data);
-      setUsername('guest');
-    }
-  }
+  const updateUserFromLocalStorage = () => {
+    const updatedUser = {
+      _id: localStorage.getItem('userID') || '',
+      username: localStorage.getItem('username') || 'guest',
+    };
+    setUser(updatedUser);
+  };
 
   useEffect(() => {
-    getProfile();
+    const handleStorageChange = (event) => {
+      if (event.key === 'userID' || event.key === 'username') {
+        updateUserFromLocalStorage();
+      }
+    };
+
+    // Adding event listener for storage changes
+    window.addEventListener('storage', handleStorageChange);
+
+    // Clean up the event listener on component unmount
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
   }, []);
+
+  useEffect(() => {
+    updateUserFromLocalStorage();
+  }, []);
+
+  useEffect(() => {
+    console.log("useEffect user:", user);
+  }, [user]);
+
+  const handleUsernameChange = (newUsername) => {
+    setUsername(newUsername);
+    localStorage.setItem('username', newUsername);
+    updateUserFromLocalStorage();
+  };
+
+  const handleLogout = () => {
+    setUsername("guest");
+    localStorage.setItem('username', 'guest');
+    localStorage.setItem('userID', '')
+    updateUserFromLocalStorage();
+  };
 
   return (
     <>
@@ -43,14 +69,9 @@ function App() {
         <AuthProvider>
           <div>
             <Header
-              passLoggedIn={(username) => {
-                setUsername(username);
-              }}
-              passLogout={() => {
-                setUsername("guest");
-              }}
+              passLoggedIn={handleUsernameChange}
+              passLogout={handleLogout}
               username={username}
-              
             />
 
             <Routes>
