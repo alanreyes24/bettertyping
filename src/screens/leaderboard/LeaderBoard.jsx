@@ -17,9 +17,15 @@ function LeaderBoard() {
   const [pulledTests30Daily, setPulledTests30Daily] = useState([]);
   const [pulledTests60Daily, setPulledTests60Daily] = useState([]);
 
-  const [pulledTestsWord25, setPulledTestsWords25] = useState([]);
-  const [pulledTestsWord50, setPulledTestsWords50] = useState([]);
-  const [pulledTestsWord100, setPulledTestsWords100] = useState([]);
+  // all-time word tests
+  const [pulledTestsWord25AllTime, setPulledTestsWords25AllTime] = useState([]);
+  const [pulledTestsWord50AllTime, setPulledTestsWords50AllTime] = useState([]);
+  const [pulledTestsWord100AllTime, setPulledTestsWords100AllTime] = useState([]);
+
+  // daily word tests
+  const [pulledTestsWord25Daily, setPulledTestsWords25Daily] = useState([]);
+  const [pulledTestsWord50Daily, setPulledTestsWords50Daily] = useState([]);
+  const [pulledTestsWord100Daily, setPulledTestsWords100Daily] = useState([]);
 
   useEffect(() => {
     retrieveTimeTestRankings(15, 'daily');
@@ -29,13 +35,19 @@ function LeaderBoard() {
     retrieveTimeTestRankings(15, 'all-time');
     retrieveTimeTestRankings(30, 'all-time');
     retrieveTimeTestRankings(60, 'all-time');
-    // retrieveWordTestRankings('words')
+
+    retrieveWordTestRankings(25, 'daily');
+    retrieveWordTestRankings(50, 'daily');
+    retrieveWordTestRankings(100, 'daily');
+
+    retrieveWordTestRankings(25, 'all-time');
+    retrieveWordTestRankings(50, 'all-time');
+    retrieveWordTestRankings(100, 'all-time');
   }, []);
 
   async function retrieveTimeTestRankings(duration, timeFrame) {
     try {
       const response = await axios.get(`http://localhost:3090/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`);
-
       if (timeFrame === 'all-time') {
         if (duration === 15) { setPulledTests15AllTime(response.data); }
         if (duration === 30) { setPulledTests30AllTime(response.data); }
@@ -50,20 +62,20 @@ function LeaderBoard() {
     }
   }
 
-  async function retrieveWordTestRankings(type) {
-    const response = await axios.get(`http://localhost:3090/test/wordRankings?type=${type}`);
-    let allWordTests = response.data;
-
-    for (let i = 0; i < allWordTests.length; i++) {
-      if (allWordTests[i].settings.count === 25) {
-        setPulledTestsWords25(prevState => [...prevState, allWordTests[i]]);
-      } else if (allWordTests[i].settings.count === 50) {
-        setPulledTestsWords50(prevState => [...prevState, allWordTests[i]]);
-      } else if (allWordTests[i].settings.count === 100) {
-        setPulledTestsWords100(prevState => [...prevState, allWordTests[i]]);
-      } else {
-        console.log("Something is wrong with what the settings.count was set to");
+  async function retrieveWordTestRankings(count, timeFrame) {
+    try {
+      const response = await axios.get(`http://localhost:3090/test/wordRankings?count=${count}&timeFrame=${timeFrame}`);
+      if (timeFrame === 'all-time') {
+        if (count === 25) { setPulledTestsWords25AllTime(response.data); }
+        if (count === 50) { setPulledTestsWords50AllTime(response.data); }
+        if (count === 100) { setPulledTestsWords100AllTime(response.data); }
+      } else if (timeFrame === 'daily') {
+        if (count === 25) { setPulledTestsWords25Daily(response.data); }
+        if (count === 50) { setPulledTestsWords50Daily(response.data); }
+        if (count === 100) { setPulledTestsWords100Daily(response.data); }
       }
+    } catch (error) {
+      console.error("Error fetching rankings:", error.response);
     }
   }
 
@@ -71,10 +83,21 @@ function LeaderBoard() {
   const currentTests30 = displayAllTimeTests ? pulledTests30AllTime : pulledTests30Daily;
   const currentTests60 = displayAllTimeTests ? pulledTests60AllTime : pulledTests60Daily;
 
+  const currentTestsWord25 = displayAllTimeTests ? pulledTestsWord25AllTime : pulledTestsWord25Daily;
+  const currentTestsWord50 = displayAllTimeTests ? pulledTestsWord50AllTime : pulledTestsWord50Daily;
+  const currentTestsWord100 = displayAllTimeTests ? pulledTestsWord100AllTime : pulledTestsWord100Daily;
+
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
-      <button onClick={() => setDisplayTimedTests(!displayTimedTests)}> Switch to Word Tests </button>
-      <button onClick={() => setDisplayAllTimeTests(!displayAllTimeTests)}> Switch Between All-Time and Daily</button>
+      <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
+        Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
+      </button>
+      <button onClick={() => setDisplayAllTimeTests(!displayAllTimeTests)}>
+        Switch Between All-Time and Daily
+      </button>
+
+      <div>{displayAllTimeTests ? "all-time" : "daily"}</div>
+    
 
       <div className='leaderboard'>
         <div style={{ display: displayTimedTests ? "flex" : "none" }} className='leaderboard-container'>
@@ -85,9 +108,7 @@ function LeaderBoard() {
                 <li key={index} className='leaderboard-item'>
                   <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                     {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>
-                      {test.username}
-                    </div>
+                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     true WPM: {test.results.trueWPM}
@@ -107,9 +128,7 @@ function LeaderBoard() {
                 <li key={index} className='leaderboard-item'>
                   <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                     {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>
-                      {test.username}
-                    </div>
+                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     true WPM: {test.results.trueWPM}
@@ -129,9 +148,7 @@ function LeaderBoard() {
                 <li key={index} className='leaderboard-item'>
                   <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                     {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>
-                      {test.username}
-                    </div>
+                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     true WPM: {test.results.trueWPM}
@@ -149,13 +166,11 @@ function LeaderBoard() {
           <div className='leaderboard-section'>
             <h2>25 Word Tests</h2>
             <ul className='leaderboard-list'>
-              {pulledTestsWord25.map((test, index) => (
+              {currentTestsWord25.map((test, index) => (
                 <li key={index} className='leaderboard-item'>
                   <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                     {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>
-                      {test.username}
-                    </div>
+                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     true WPM: {test.results.trueWPM}
@@ -171,13 +186,11 @@ function LeaderBoard() {
           <div className='leaderboard-section'>
             <h2>50 Word Tests</h2>
             <ul className='leaderboard-list'>
-              {pulledTestsWord50.map((test, index) => (
+              {currentTestsWord50.map((test, index) => (
                 <li key={index} className='leaderboard-item'>
                   <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                     {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>
-                      {test.username}
-                    </div>
+                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     true WPM: {test.results.trueWPM}
@@ -193,13 +206,11 @@ function LeaderBoard() {
           <div className='leaderboard-section'>
             <h2>100 Word Tests</h2>
             <ul className='leaderboard-list'>
-              {pulledTestsWord100.map((test, index) => (
+              {currentTestsWord100.map((test, index) => (
                 <li key={index} className='leaderboard-item'>
                   <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
                     {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>
-                      {test.username}
-                    </div>
+                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
                   </div>
                   <div style={{ textAlign: "center" }}>
                     true WPM: {test.results.trueWPM}
