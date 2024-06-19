@@ -14,7 +14,7 @@ function Header({ username, passLoggedIn, passLogout, passUser }) {
 
   useEffect(() => {
     setAppUsername(username);
-    console.log("header username", username)
+    console.log("HEADER USERNAME: ", username)
   },[username])
 
 
@@ -67,9 +67,9 @@ function Header({ username, passLoggedIn, passLogout, passUser }) {
                   passUserObject={(user) => {
                     passUser(user)
                   }} 
-                  passLoggedIn={(username) => {
+                  passLoggedIn={(userID, username) => {
                       setAppUsername(username)
-                      passLoggedIn(username)
+                      passLoggedIn(userID, username)
                   }} />
                 </>
               ) : (

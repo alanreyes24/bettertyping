@@ -13,6 +13,7 @@ function Login({ loginVisible, passLoggedIn }) {
     setLoginVisible(loginVisible);
   }, [loginVisible]);
 
+  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -35,7 +36,7 @@ function Login({ loginVisible, passLoggedIn }) {
 
     } catch (error) {
       setError(error);
-    console.log(error)    
+      console.log(error)    
     }
   };
 

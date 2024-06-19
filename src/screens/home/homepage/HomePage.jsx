@@ -9,7 +9,7 @@ import { useState } from "react";
 function HomePage({ user }) {
 
   useEffect(() => {
-    console.log("HomePage user object: ", user)
+    console.log("HOMEPAGE USER: ", user)
   },[user])
 
   return (

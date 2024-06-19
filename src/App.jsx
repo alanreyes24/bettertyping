@@ -19,6 +19,7 @@ function App() {
 
   useEffect(() => {
     console.log("APP USER: ", user);
+    console.log("user.username: ", user.username)
   }, [user]);
 
   
@@ -44,6 +45,12 @@ function App() {
   
       if (error.response.data == "Token has expired.") { 
       
+        setUser({
+          _id: '',
+          username: 'guest'
+        });
+
+      } else if (error.response.data == "No token provided.") {
         setUser({
           _id: '',
           username: 'guest'
