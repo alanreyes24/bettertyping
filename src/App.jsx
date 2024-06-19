@@ -8,6 +8,7 @@ import LeaderBoard from "./screens/leaderboard/LeaderBoard";
 import Analysis from "./screens/analysis/Analysis";
 import TestPage from "./screens/test/TestPage";
 import Header from "./components/header/Header";
+import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
 
 function App() {
@@ -71,7 +72,7 @@ function App() {
     checkUserTokenValid()
   },[])
 
-  
+
   return (
     <>
       <Router>
@@ -87,6 +88,7 @@ function App() {
               <Route path='/' element={<HomePage user={user} />} />
               <Route path='/leaderboard' element={<LeaderBoard />} />
               <Route path='/analysis/:id' element={<Analysis />} />
+              <Route path='/history' element={<History />} />
               <Route path='/test/:id' element={<TestPage />} />
               <Route path='/test-finished' element={<TestFinished />} />
             </Routes>
