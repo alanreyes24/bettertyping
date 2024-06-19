@@ -27,6 +27,8 @@ function LeaderBoard() {
   const [pulledTestsWord50Daily, setPulledTestsWords50Daily] = useState([]);
   const [pulledTestsWord100Daily, setPulledTestsWords100Daily] = useState([]);
 
+  const [remainingTime, setRemainingTime] = useState("");
+
   useEffect(() => {
     retrieveTimeTestRankings(15, 'daily');
     retrieveTimeTestRankings(30, 'daily');
@@ -79,6 +81,23 @@ function LeaderBoard() {
     }
   }
 
+  const calculateTimeUntilMidnight = () => {
+    const now = new Date();
+    const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+    const diff = midnight - now;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    return `${hours}h ${minutes}m ${seconds}s`;
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRemainingTime(calculateTimeUntilMidnight());
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const currentTests15 = displayAllTimeTests ? pulledTests15AllTime : pulledTests15Daily;
   const currentTests30 = displayAllTimeTests ? pulledTests30AllTime : pulledTests30Daily;
   const currentTests60 = displayAllTimeTests ? pulledTests60AllTime : pulledTests60Daily;
@@ -89,6 +108,7 @@ function LeaderBoard() {
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+      <div> Time Until Reset: {remainingTime}</div>
       <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
         Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
       </button>
@@ -97,7 +117,6 @@ function LeaderBoard() {
       </button>
 
       <div>{displayAllTimeTests ? "all-time" : "daily"}</div>
-    
 
       <div className='leaderboard'>
         <div style={{ display: displayTimedTests ? "flex" : "none" }} className='leaderboard-container'>
