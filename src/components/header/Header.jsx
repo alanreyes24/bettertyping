@@ -17,7 +17,24 @@ function Header({ username, passLoggedIn, passLogout, passUser }) {
     console.log("HEADER USERNAME: ", username)
   },[username])
 
+  async function logUserOut() {
+    console.log("this is runningasidaoisdhaiosdh")
+    try {
 
+      const response = await axios.post('http://localhost:3090/auth/logout', {}, {
+        withCredentials: true,
+      });
+
+      console.log(response)
+
+    } catch (error) {
+
+      console.log(error)
+
+    }
+
+
+  }
 
   return (
     
@@ -77,6 +94,7 @@ function Header({ username, passLoggedIn, passLogout, passUser }) {
                   <a
                     onClick={() => {
                       setShowLogin(!showLogin) // not sure this is the super nice way to do this but
+                      logUserOut() // just added
                       passLogout();
                     }}>
                     logout
