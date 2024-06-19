@@ -8,10 +8,6 @@ import { useState } from "react";
 
 function HomePage({ user }) {
 
-  useEffect(() => {
-    console.log("HOMEPAGE USER: ", user)
-  },[user])
-
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>

@@ -51,7 +51,6 @@ function Analysis() {
   async function getTest() {
     try {
       const response = await axios.get("http://localhost:3090/test/" + id);
-      console.log(response.data);
       setTest(response.data);
     } catch (error) {
       console.error("Failed to fetch profile:", error.response.data);
@@ -60,9 +59,6 @@ function Analysis() {
   }
 
   useEffect(() => {
-    // console.log(analysisJson);
-    // console.log(id);
-
     if (test == null) {
       getTest();
     }

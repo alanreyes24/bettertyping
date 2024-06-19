@@ -15,7 +15,6 @@ function TestPage() {
   async function getTest() {
     try {
       const response = await axios.get("http://localhost:3090/test/" + id);
-      console.log(response.data);
       setTest(response.data);
     } catch (error) {
       console.error("Failed to fetch test:", error.response.data);

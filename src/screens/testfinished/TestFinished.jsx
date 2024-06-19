@@ -36,10 +36,10 @@ function TestFinished() {
         setMostRecentTest(response.data);
     };
 
+    
     useEffect(() => {
         const fetchDataAndLog = async () => {
             await retrieveMostRecentChartData();
-            console.log(mostRecentTest)
         };
 
         fetchDataAndLog();

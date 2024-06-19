@@ -17,14 +17,6 @@ function App() {
     username: ''
   });
 
-  useEffect(() => {
-    console.log("APP USER: ", user);
-    console.log("user.username: ", user.username)
-  }, [user]);
-
-  
-
-
   async function checkUserTokenValid() {
 
     try {
@@ -33,8 +25,6 @@ function App() {
         withCredentials: true
       })
   
-      console.log(response);
-
       setUser({
         _id: response.data._id,
         username: response.data.username
@@ -59,10 +49,6 @@ function App() {
     }
   }
 
-  useEffect(() => {
-    checkUserTokenValid()
-  },[])
-
   const handleUserChange = (passedUserID, passedUsername) => {
     let userID = passedUserID
     let username = passedUsername;
@@ -81,6 +67,11 @@ function App() {
  
   };
 
+  useEffect(() => {
+    checkUserTokenValid()
+  },[])
+
+  
   return (
     <>
       <Router>

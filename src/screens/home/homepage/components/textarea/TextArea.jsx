@@ -314,9 +314,7 @@ function TextArea({
       arr.push(document.getElementsByClassName("word")[i].textContent);
     }
 
-    console.log("hello guys");
     passWords(arr);
-    console.log(arr);
   }
 
   return (

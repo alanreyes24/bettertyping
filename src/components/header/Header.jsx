@@ -5,96 +5,75 @@ import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
-function Header({ username, passLoggedIn, passLogout, passUser }) {
+function Header({ username, passLoggedIn, passLogout }) {
 
   const [showLogin, setShowLogin] = useState(false);
   const location = useLocation();
 
   const [appUsername, setAppUsername] = useState(username);
 
+  // Update appUsername when username prop changes
   useEffect(() => {
     setAppUsername(username);
-    console.log("HEADER USERNAME: ", username)
-  },[username])
+  }, [username]);
 
   async function logUserOut() {
-    console.log("this is runningasidaoisdhaiosdh")
     try {
-
       const response = await axios.post('http://localhost:3090/auth/logout', {}, {
         withCredentials: true,
       });
-
-      console.log(response)
-
     } catch (error) {
-
-      console.log(error)
-
+      console.log(error);
     }
-
-
   }
 
   return (
-    
     <div className='header'>
       <div className='logo'>
         <Link to='/'>type.ac</Link>
       </div>
 
-
-    {appUsername == 'guest'? (
-      <div style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', fontWeight: 'bold' }}> guest mode </div>    ): appUsername? (
-      <div> welcome, {appUsername} </div>
-    ) : null}
+      {appUsername === 'guest' ? (
+        <div style={{ fontSize: 'clamp(1rem, 2vw, 1.5rem)', fontWeight: 'bold' }}>guest mode</div>
+      ) : appUsername ? (
+        <div>welcome, {appUsername}</div>
+      ) : null}
 
       <div className='nav-container'>
         <nav>
           <ul className='nav-list'>
             <li>
-              <Link
-                to='/'
-                className={location.pathname === "/" ? "active" : ""}>
+              <Link to='/' className={location.pathname === "/" ? "active" : ""}>
                 home
               </Link>
             </li>
             <li>
-              <Link
-                to='/leaderboard'
-                className={
-                  location.pathname === "/leaderboard" ? "active" : ""
-                }>
+              <Link to='/leaderboard' className={location.pathname === "/leaderboard" ? "active" : ""}>
                 leaderboard
               </Link>
             </li>
             <li>
-              <Link
-                to='/analysis'
-                className={location.pathname === "/analysis" ? "active" : ""}>
+              <Link to='/analysis' className={location.pathname === "/analysis" ? "active" : ""}>
                 analysis
               </Link>
             </li>
             <li>
-              {appUsername == "guest" || appUsername == undefined ? (
+              {appUsername === "guest" || appUsername === undefined ? (
                 <>
                   <a onClick={() => setShowLogin(!showLogin)}>login</a>
                   <Login loginVisible={showLogin} 
-
-                  passUserObject={(user) => {
-                    passUser(user)
-                  }} 
-                  passLoggedIn={(userID, username) => {
-                      setAppUsername(username)
-                      passLoggedIn(userID, username)
-                  }} />
+                    passLoggedIn={(userID, username) => {
+                      setAppUsername(username);
+                      passLoggedIn(userID, username);
+                    }} 
+                  />
                 </>
               ) : (
                 <>
                   <a
                     onClick={() => {
-                      setShowLogin(!showLogin) // not sure this is the super nice way to do this but
-                      logUserOut() // just added
+                      setShowLogin(!showLogin); // not sure this is the super nice way to do this but
+                      logUserOut(); 
                       passLogout();
                     }}>
                     logout

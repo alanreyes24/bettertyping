@@ -157,9 +157,6 @@ const Test = ({ user }) => {
   useEffect(() => {
     if (test.state == 1) {
       
-      
-      console.log("user: ", user)
-  
       if (test.userID == "") {
         setTest((prevTest) => ({
          ...prevTest,
@@ -218,13 +215,13 @@ const Test = ({ user }) => {
   //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
   useEffect(() => {
-    if (test.state == 3 && test.finished && test.eventLog.length != 0) {
 
+    if (test.state == 3 && test.finished && test.eventLog.length != 0 && user.username != "guest") {
+
+      console.log("this is running")
       sendTestToBackend(); // not sure if this is gonna work right but
-      console.log("test: ")
-      console.log(test);
     }
-  }, [test.eventLog]); // why does this use test.eventLog
+  }, [test.eventLog]); // why does this use test.eventLog // this CANNOT be efficient LMFAOOOOOO // i lowk can't figure out another way to get it to work
 
   return (
     <>
@@ -268,7 +265,6 @@ const Test = ({ user }) => {
       </div>
       <>
         <div style={{ justifyContent: "center", alignSelf: "center" }}>
-          <button onClick={sendTestToBackend}>sendTestToBackend</button>
           <Timer test={test} />
         </div>
         <div
