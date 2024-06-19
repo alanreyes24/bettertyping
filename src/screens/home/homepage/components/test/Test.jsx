@@ -217,8 +217,6 @@ const Test = ({ user }) => {
   useEffect(() => {
 
     if (test.state == 3 && test.finished && test.eventLog.length != 0 && user.username != "guest") {
-
-      console.log("this is running")
       sendTestToBackend(); // not sure if this is gonna work right but
     }
   }, [test.eventLog]); // why does this use test.eventLog // this CANNOT be efficient LMFAOOOOOO // i lowk can't figure out another way to get it to work
@@ -336,6 +334,9 @@ const Test = ({ user }) => {
           />
         </div>
       </>
+      {user.username === "guest"? (
+        <div style={{display: "flex"}}> in order to save your test you need to log-in</div>
+      ) : null}
       <div
         style={{
           display: "flex",
