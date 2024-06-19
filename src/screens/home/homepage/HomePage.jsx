@@ -10,7 +10,7 @@ function HomePage({ user }) {
 
   useEffect(() => {
     console.log("HomePage user object: ", user)
-  },[])
+  },[user])
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import axios from "axios"
 import { AuthProvider } from "./AuthContext"; // Adjust the import path as necessary
 import "./App.css";
 import HomePage from "./screens/home/homepage/HomePage";
@@ -16,48 +17,61 @@ function App() {
     username: ''
   });
 
-  const updateUserFromLocalStorage = () => {
-    const updatedUser = {
-      _id: localStorage.getItem('userID') || '',
-      username: localStorage.getItem('username') || 'guest',
-    };
-    setUser(updatedUser);
-  };
-
   useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === 'userID' || event.key === 'username') {
-        updateUserFromLocalStorage();
+    console.log("APP USER: ", user);
+  }, [user]);
+
+  
+
+
+  async function checkUserTokenValid() {
+
+    try {
+      
+      const response = await axios.get("http://localhost:3090/auth/tokenCheck", {
+        withCredentials: true
+      })
+  
+      console.log(response);
+
+      setUser({
+        _id: response.data._id,
+        username: response.data.username
+      })
+  
+    } catch (error) {
+      console.log(error.response.data) // make this later so that when jwt token expires it displays something unavoidable on the screen
+  
+      if (error.response.data == "Token has expired.") { 
+      
+        setUser({
+          _id: '',
+          username: 'guest'
+        });
       }
-    };
-
-    // Adding event listener for storage changes
-    window.addEventListener('storage', handleStorageChange);
-
-    // Clean up the event listener on component unmount
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+    }
+  }
 
   useEffect(() => {
-    updateUserFromLocalStorage();
-  }, []);
+    checkUserTokenValid()
+  },[])
 
-  const handleUsernameChange = (newUsername) => {
-    setUsername(newUsername);
-    localStorage.setItem('username', newUsername);
-    updateUserFromLocalStorage();
+  const handleUserChange = (passedUserID, passedUsername) => {
+    let userID = passedUserID
+    let username = passedUsername;
+    setUser({
+      _id: userID,
+      username: username
+    });
   };
 
   const handleLogout = () => {
     setUser((prevUser) => ({
       ...prevUser,
+      _id: " ",
       username: 'guest'
     }))
-    localStorage.setItem('username', 'guest');
-    localStorage.setItem('userID', '')
-    updateUserFromLocalStorage();
+ 
   };
 
   return (
@@ -66,7 +80,7 @@ function App() {
         <AuthProvider>
           <div>
             <Header
-              passLoggedIn={handleUsernameChange}
+              passLoggedIn={handleUserChange}
               passLogout={handleLogout}
               username={user.username}
             />

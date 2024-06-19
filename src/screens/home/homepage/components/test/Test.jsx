@@ -157,16 +157,14 @@ const Test = ({ user }) => {
   useEffect(() => {
     if (test.state == 1) {
       
-      let username = localStorage.getItem('username');
-      let userID = localStorage.getItem('userID')
-
+      
       console.log("user: ", user)
   
       if (test.userID == "") {
         setTest((prevTest) => ({
          ...prevTest,
-          username: username,
-          userID: userID
+          username: user.username,
+          userID: user._id
         }));
       }
     }

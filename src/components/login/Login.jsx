@@ -23,23 +23,19 @@ function Login({ loginVisible, passLoggedIn }) {
           password,
         },
         {
-          withCredentials: true, // Ensure cookies are included in the request
+          withCredentials: true, 
         }
       );
 
-      console.log("handleLogin response:", response.data);
+      let userID = response.data.userID;
+      let confirmedUsername = response.data.username;
 
-      localStorage.setItem("userID", response.data.userID);
-      localStorage.setItem("username", response.data.username);
-
-      console.log("Cookies should be set in the response. Check the Application tab in Developer Tools.");
-
+      await passLoggedIn(userID, confirmedUsername)
       setLoginVisible(false);
-      passLoggedIn(response.data.username);
 
     } catch (error) {
       setError(error);
-      console.error("Error logging in:", error.response);
+    console.log(error)    
     }
   };
 
@@ -82,7 +78,7 @@ function Login({ loginVisible, passLoggedIn }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {error && <div style={{ color: "red" }}>{error.response.data}</div>}
+          {/* {error && <div style={{ color: "red" }}>{error.response.data}</div>} */}
           <button className="login-button" type="submit">
             {showRegister ? "Register" : "Login"}
           </button>
