@@ -17,26 +17,21 @@ const Test = ({ user }) => {
   };
 
   const sendTestToBackend = async () => {
-    // e.preventDefault(); // not sure if i need this here uhhh
-      try {
-        const response = await axios.post("http://localhost:3090/test", test); // not sure if i need curly brackets
-
-
-        // TODO: AFTER TEST SENT, NAVIGATE TO RESULT SCREEN:
-        handleEndTestRedirect();
-
-
-
-        // window.location.href = `${
-        //   window.location.href + `test/${response.data._id}`
-        // }`;
-
-        
-      } catch (error) {
-        console.log(error);
-        console.error("Error registering:", error.response.data);
-      }
-    
+    try {
+      // Assuming 'test' is defined elsewhere in your component
+      await axios.post("http://localhost:3090/test", test, {
+        withCredentials: true,
+      });
+  
+      // Navigate to result screen after test sent
+      handleEndTestRedirect();
+  
+      // Uncomment and adjust the following lines if you need to manipulate the URL directly
+      // window.location.href = `${window.location.href}/test/${response.data._id}`;
+    } catch (error) {
+      console.log(error);
+      console.error("Error submitting test:", error.response?.data);
+    }
   };
 
   const [hideSettings, setHideSettings] = useState(false);
@@ -163,13 +158,15 @@ const Test = ({ user }) => {
     if (test.state == 1) {
       
       let username = localStorage.getItem('username');
+      let userID = localStorage.getItem('userID')
+
       console.log("user: ", user)
   
       if (test.userID == "") {
         setTest((prevTest) => ({
          ...prevTest,
           username: username,
-          userID: user._id,
+          userID: userID
         }));
       }
     }
