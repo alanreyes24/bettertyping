@@ -4,6 +4,9 @@ import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
 
 function LeaderBoard() {
+
+  const [loading, setLoading] = useState(true); // eventually change loading into a cool component that has a cool spiny wheel and such
+
   const [displayTimedTests, setDisplayTimedTests] = useState(true);
   const [displayAllTimeTests, setDisplayAllTimeTests] = useState(true);
 
@@ -76,10 +79,16 @@ function LeaderBoard() {
         if (count === 50) { setPulledTestsWords50Daily(response.data); }
         if (count === 100) { setPulledTestsWords100Daily(response.data); }
       }
+  
     } catch (error) {
       console.error("Error fetching rankings:", error.response);
+      console.log(error);
     }
   }
+
+  useEffect(() => { 
+    setLoading(false); // maybe i should just turn all the calls for the data into one big function then setLoading(false) at the end of that funciton
+  },[pulledTestsWord100AllTime])
 
   const calculateTimeUntilMidnight = () => {
     const now = new Date();
@@ -118,7 +127,11 @@ function LeaderBoard() {
 
       <div>{displayAllTimeTests ? "all-time" : "daily"}</div>
 
-      <div className='leaderboard'>
+
+{loading ? ("loading...") : (
+
+
+<div className='leaderboard'>
         <div style={{ display: displayTimedTests ? "flex" : "none" }} className='leaderboard-container'>
           <div className='leaderboard-section'>
             <h2>15 Seconds Tests</h2>
@@ -243,6 +256,13 @@ function LeaderBoard() {
           </div>
         </div>
       </div>
+
+
+
+
+
+)}
+      
     </div>
   );
 }

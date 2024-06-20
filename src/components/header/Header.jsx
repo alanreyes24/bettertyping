@@ -83,7 +83,7 @@ function Header({ username, passLoggedIn, passLogout }) {
           </button>
         )}
 
-        <Login 
+        <Login // i think i don't need the loginVisible part and can just make the component conditionally render
           loginVisible={showLogin}
           passLoggedIn={(userID, username) => {
             setAppUsername(username);
