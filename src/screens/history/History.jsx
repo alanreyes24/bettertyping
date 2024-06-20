@@ -1,58 +1,49 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import "./History.css";
 
-function History() {
+function History({ user }) {
+  const [allUserTests, setAllUserTests] = useState([]);
+  const [userHasTakenTests, setUserHasTakenTests] = useState(true); // in future make it so that the user can't even click to this page unless they've taken a test perhaps
 
-    const [allUserTests, setAllUserTests] = useState([]);
+  async function retrieveAllTestsByUser() {
+    try {
+      let response = await axios.get("http://localhost:3090/test/allByUser", {
+        withCredentials: true,
+      });
 
-    async function retrieveAllTestsByUser() {
+      setAllUserTests(response.data);
+    } catch (error) {
+      console.log(error);
 
-        try {
-
-            let response = await axios.get('http://localhost:3090/test/allByUser', {
-                withCredentials: true
-            });
-
-            setAllUserTests(response.data);
-
-
-        } catch (error) {
-            console.log(error)
-        }
-
-
+      if (error.response.data === "No tests found for this user.") {
+        setUserHasTakenTests(false);
+      }
     }
+  }
 
-    useEffect(() => {
-        retrieveAllTestsByUser();
-    })
+  useEffect(() => {
+    retrieveAllTestsByUser();
+  }, []);
 
+  return (
+    <>
+      {!userHasTakenTests ? (
+        <div> You need to take a test in order to use this page </div>
+      ) : null}
 
-
-    return(
-        <>
-            <div> Your History </div>
-
-            {allUserTests.map((test, index) => (
-                <div key={index} className='leaderboard-item'>
-                  <div style={{ display: "flex", flex: 1, textAlign: "center" }}>
-                    {index + 1}:
-                    <div style={{ marginLeft: "0.25rem" }}>{test.username}</div>
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    true WPM: {test.results.trueWPM}
-                  </div>
-                  <div style={{ textAlign: "center" }}>
-                    accuracy: {test.results.accuracy}
-                  </div>
-                </div>
-              ))}
-
-
-
-        </>
-    )
-
+      <div className="history-content">
+        {allUserTests.map((test, index) => (
+          <div key={index} className="card">
+            <div> type: {test.settings.type} </div>
+            <div> length: {test.settings.length / 10} </div>
+            <div> trueWPM: {test.results.trueWPM} </div>
+            <div> accuracy: {test.results.accuracy} </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
 }
 
 export default History;

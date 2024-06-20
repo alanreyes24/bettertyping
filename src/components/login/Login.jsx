@@ -13,7 +13,6 @@ function Login({ loginVisible, passLoggedIn }) {
     setLoginVisible(loginVisible);
   }, [loginVisible]);
 
-  
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
@@ -24,32 +23,28 @@ function Login({ loginVisible, passLoggedIn }) {
           password,
         },
         {
-          withCredentials: true, 
+          withCredentials: true,
         }
       );
 
       let userID = response.data.userID;
       let confirmedUsername = response.data.username;
 
-      await passLoggedIn(userID, confirmedUsername)
+      await passLoggedIn(userID, confirmedUsername);
       setLoginVisible(false);
-
     } catch (error) {
       setError(error);
-      console.log(error)    
+      console.log(error);
     }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3090/auth/signup",
-        {
-          username,
-          password,
-        }
-      );
+      const response = await axios.post("http://localhost:3090/auth/signup", {
+        username,
+        password,
+      });
       setShowRegister(false);
     } catch (error) {
       setError(error);
@@ -84,7 +79,10 @@ function Login({ loginVisible, passLoggedIn }) {
             {showRegister ? "Register" : "Login"}
           </button>
           <div className="toggle-link-container">
-            <a className="toggle-link" onClick={() => setShowRegister(!showRegister)}>
+            <a
+              className="toggle-link"
+              onClick={() => setShowRegister(!showRegister)}
+            >
               {showRegister
                 ? "Already have an account? Login"
                 : "Don't have an account? Register"}
