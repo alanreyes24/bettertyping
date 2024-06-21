@@ -1,13 +1,14 @@
-.history-content {
-  height: calc(100vh - 100px); /* Adjust this value to fit your header height */
-  overflow-y: auto;
-  margin: 20px; /* Optional: add margin to give some spacing */
+.history-container {
+  display: flex;
+  justify-content: space-between;
+  padding: 20px;
 }
 
-.card {
-  width: 600px;
-  height: 235px;
-  background: #212121;
+.test-display {
+  margin: 20px;
+  width: 90vh;
+  height: 83vh;
+  background: #1d1c1c;
   box-shadow: rgba(0, 0, 0, 0.4) 10px 20px 30px,
     rgba(0, 0, 0, 0.3) 10px 1px 53px 3px, rgba(1, 0, 0, 0.2) 0px -1px 3px inset;
   text-align: center;
@@ -22,14 +23,8 @@
   margin-bottom: 20px; /* Add space between cards */
 }
 
-.card:hover {
-  transform: scale(1.021);
-}
-
-.card:active {
-  transform: scale(0.95) rotateZ(1.1deg);
-}
 .history-content {
+  flex: 3;
   height: calc(100vh - 100px); /* Adjust this value to fit your header height */
   overflow-y: auto;
   margin: 20px; /* Optional: add margin to give some spacing */
@@ -38,13 +33,13 @@
 .card {
   width: 600px;
   height: 235px;
-  background: #212121;
+  background: #1d1c1c;
   box-shadow: rgba(0, 0, 0, 0.4) 10px 20px 30px,
     rgba(0, 0, 0, 0.3) 10px 1px 53px 3px, rgba(1, 0, 0, 0.2) 0px -1px 3px inset;
   text-align: center;
   cursor: pointer;
   transition: all 0.5s;
-  display: block;
+  display: flex;
   align-items: center;
   justify-content: center;
   user-select: none;

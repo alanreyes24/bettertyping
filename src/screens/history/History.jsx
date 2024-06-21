@@ -6,6 +6,8 @@ function History({ user }) {
   const [allUserTests, setAllUserTests] = useState([]);
   const [userHasTakenTests, setUserHasTakenTests] = useState(true); // in future make it so that the user can't even click to this page unless they've taken a test perhaps
 
+  const [currentlySelectedTest, setCurrentlySelectedTest] = useState(null); // i guess null works
+
   async function retrieveAllTestsByUser() {
     try {
       let response = await axios.get("http://localhost:3090/test/allByUser", {
@@ -13,6 +15,7 @@ function History({ user }) {
       });
 
       setAllUserTests(response.data);
+      setCurrentlySelectedTest(response.data[0]);
     } catch (error) {
       console.log(error);
 
@@ -32,15 +35,22 @@ function History({ user }) {
         <div> You need to take a test in order to use this page </div>
       ) : null}
 
-      <div className="history-content">
-        {allUserTests.map((test, index) => (
-          <div key={index} className="card">
-            <div> type: {test.settings.type} </div>
-            <div> length: {test.settings.length / 10} </div>
-            <div> trueWPM: {test.results.trueWPM} </div>
-            <div> accuracy: {test.results.accuracy} </div>
-          </div>
-        ))}
+      <div className="history-container">
+        <div className="test-display">
+          <div> trueWPM: {currentlySelectedTest.results.trueWPM} </div>
+          <div> test length: {currentlySelectedTest.settings.length / 10} </div>
+        </div>
+
+        <div className="history-content">
+          {allUserTests.map((test, index) => (
+            <div key={index} className="card">
+              <div> type: {test.settings.type} </div>
+              <div> length: {test.settings.length / 10} </div>
+              <div> trueWPM: {test.results.trueWPM} </div>
+              <div> accuracy: {test.results.accuracy} </div>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
