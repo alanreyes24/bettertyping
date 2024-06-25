@@ -82,7 +82,7 @@ function App() {
             <Routes>
               <Route path="/" element={<HomePage user={user} />} />
               <Route path="/leaderboard" element={<LeaderBoard />} />
-              <Route path="/analysis/:id" element={<Analysis />} />
+              <Route path="/analysis" element={<Analysis />} />
               <Route path="/history" element={<History user={user} />} />
               <Route path="/test/:id" element={<TestPage />} />
               <Route path="/test-finished" element={<TestFinished />} />

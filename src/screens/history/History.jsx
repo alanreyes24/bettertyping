@@ -8,9 +8,19 @@ function History({ user }) {
   const [userHasTakenTests, setUserHasTakenTests] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentlySelectedTest, setCurrentlySelectedTest] = useState(null);
+  const [currentTestDate, setCurrentTestDate] = useState(null);
 
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
+
+  function convertTimestampToTime(timestamp) {
+    let time = new Date(timestamp);
+    let stringifiedTime = time.toString();
+    let splitDateString = stringifiedTime.split("GMT");
+    let formattedDate = splitDateString[0].trim();
+
+    return formattedDate;
+  }
 
   async function retrieveAllTestsByUser() {
     try {
@@ -24,7 +34,9 @@ function History({ user }) {
       setTrueWPMArray(response.data[0].words.trueWPMArray);
       setRawWPMArray(response.data[0].words.rawWPMArray);
 
-      setLoading(false); // Set loading to false after data is fetched
+      setCurrentTestDate(convertTimestampToTime(response.data[0].timestamp));
+
+      setLoading(false);
     } catch (error) {
       console.log(error);
 
@@ -43,7 +55,6 @@ function History({ user }) {
   }, []);
 
   if (loading) {
-    // change this to just be apart of the page instead of the only thing on the page
     return <div>Loading...</div>; // Render a loading indicator while waiting for data
   }
 
@@ -114,7 +125,10 @@ function History({ user }) {
 
       <div className="history-container">
         <div className="test-display">
-          <Scatter data={wpmData} options={options} />
+          <div> {currentTestDate} </div>
+          <div style={{ width: "95vw", height: "30vh" }}>
+            <Scatter data={wpmData} options={options} />
+          </div>
         </div>
 
         <div className="history-content">
@@ -124,10 +138,17 @@ function History({ user }) {
               className="card"
               onClick={() => {
                 setCurrentlySelectedTest(allUserTests[index]);
+                setCurrentTestDate(
+                  convertTimestampToTime(allUserTests[index].timestamp)
+                );
                 setTrueWPMArray(allUserTests[index].words.trueWPMArray);
                 setRawWPMArray(allUserTests[index].words.rawWPMArray);
               }}
             >
+              <div>
+                {" "}
+                {convertTimestampToTime(allUserTests[index].timestamp)}
+              </div>
               <div>Type: {test.settings.type}</div>
               <div>Length: {(test.settings.length || 0) / 10}</div>
               <div>True WPM: {test.results.trueWPM}</div>

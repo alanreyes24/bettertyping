@@ -30,9 +30,12 @@ function TestFinished() {
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
   const retrieveMostRecentChartData = async () => {
-    const response = await axios.get("http://localhost:3090/test/chartData", {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      "http://localhost:3090/test/userMostRecentTest",
+      {
+        withCredentials: true,
+      }
+    );
     setMostRecentTest(response.data);
   };
 
