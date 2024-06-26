@@ -4,6 +4,7 @@ import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
 
 function TextArea({
+  selectedDifficulty,
   onTextFinished,
   passEventLog,
   passCorrectLetters,
@@ -143,8 +144,8 @@ function TextArea({
         Array(amount)
           .fill(false)
           .map((_, i) => (
-            <div key={i} className='word'>
-              <Word key={i} />
+            <div key={i} className="word">
+              <Word selectedDifficulty={selectedDifficulty} key={i} />
             </div>
           ))
       );
@@ -257,6 +258,20 @@ function TextArea({
     }
   }, [test.settings.type, test.settings.count, test.state]);
 
+  useEffect(() => {
+    const fetchAndSetWordList = async () => {
+      console.log(selectedDifficulty);
+      const result = await wordMap(50);
+
+      setWordsLoaded(true);
+      setWordList([]);
+      setWordList(result);
+      onTextLoaded();
+    };
+
+    fetchAndSetWordList();
+  }, [selectedDifficulty]);
+
   ////LINE SHIFTING
 
   useEffect(() => {
@@ -284,7 +299,7 @@ function TextArea({
       .fill(false)
       .map((_, i) => (
         //key has + wordlist.length because react elements must have unique keys
-        <div key={i + wordList.length} className='word'>
+        <div key={i + wordList.length} className="word">
           <Word key={i + wordList.length} />
         </div>
       ));
@@ -328,15 +343,15 @@ function TextArea({
           setShouldUpdateCursor(false);
           onFocusLost();
         }}
-        id='input'
-        autoComplete='off'
-        autoCapitalize='off'
-        autoCorrect='off'
-        type='text'
-        data-gramm='false'
-        data-gramm_editor='false'
-        data-enable-grammarly='false'
-        list='autocompleteOff'
+        id="input"
+        autoComplete="off"
+        autoCapitalize="off"
+        autoCorrect="off"
+        type="text"
+        data-gramm="false"
+        data-gramm_editor="false"
+        data-enable-grammarly="false"
+        list="autocompleteOff"
         onKeyDown={(event) => {
           //if test isnt started yet, tell test we have started the text input!
           if (
@@ -353,8 +368,9 @@ function TextArea({
             handleUserInput(event);
           }
         }}
-        style={{ opacity: 0, height: 0, width: 0 }}></input>
-      <div style={{}} className='type__container'>
+        style={{ opacity: 0, height: 0, width: 0 }}
+      ></input>
+      <div style={{}} className="type__container">
         <div
           onClick={() => {
             focusInput();
@@ -365,10 +381,11 @@ function TextArea({
                 .classList.add("next");
             }
           }}
-          className='type__box'
+          className="type__box"
           style={{
             marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
-          }}>
+          }}
+        >
           {wordsLoaded ? wordList : <></>}
         </div>
       </div>

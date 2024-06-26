@@ -7,13 +7,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../AuthContext";
 
-const Test = ({ user }) => {
-
-
+const Test = ({ user, selectedDifficulty }) => {
   const navigate = useNavigate();
 
   const handleEndTestRedirect = () => {
-    navigate('/test-finished');
+    navigate("/test-finished");
   };
 
   const sendTestToBackend = async () => {
@@ -22,10 +20,10 @@ const Test = ({ user }) => {
       await axios.post("http://localhost:3090/test", test, {
         withCredentials: true,
       });
-  
+
       // Navigate to result screen after test sent
       handleEndTestRedirect();
-  
+
       // Uncomment and adjust the following lines if you need to manipulate the URL directly
       // window.location.href = `${window.location.href}/test/${response.data._id}`;
     } catch (error) {
@@ -63,6 +61,7 @@ const Test = ({ user }) => {
       type: "time",
       length: 4040,
       count: 50,
+      difficulty: "normal",
       //   visible: false,
     },
     //timer object
@@ -98,10 +97,8 @@ const Test = ({ user }) => {
   // FINISH TEST
   if (test.state == 3 && !test.finished) {
     setTest((t) => ({ ...t, finished: true }));
-    
 
-// call the function here
-
+    // call the function here
   }
 
   // RESULTS
@@ -140,7 +137,10 @@ const Test = ({ user }) => {
     // console.log("true WPM: " + trueWPM);
     // console.log("raw WPM: " + rawWPM);
 
-    let accuracy = ((totalCorrect / (totalCorrect + totalIncorrect)) * 100).toFixed(2);
+    let accuracy = (
+      (totalCorrect / (totalCorrect + totalIncorrect)) *
+      100
+    ).toFixed(2);
     setTest((prevTest) => ({
       ...prevTest,
       results: {
@@ -153,15 +153,17 @@ const Test = ({ user }) => {
     }));
   }
 
-
   useEffect(() => {
     if (test.state == 1) {
-      
       if (test.userID == "") {
         setTest((prevTest) => ({
-         ...prevTest,
+          ...prevTest,
+          userID: user._id,
           username: user.username,
-          userID: user._id
+          settings: {
+            ...prevTest.settings,
+            difficulty: selectedDifficulty,
+          },
         }));
       }
     }
@@ -171,7 +173,6 @@ const Test = ({ user }) => {
     //HANDLE TIMER
     // TODO: PAUSE FUNCTIONALITY
     if (test.state == 1) {
-
       setHideSettings(true);
 
       if (test.settings.type == "time" && test.timer.timeLeft > 0) {
@@ -215,8 +216,12 @@ const Test = ({ user }) => {
   //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
 
   useEffect(() => {
-
-    if (test.state == 3 && test.finished && test.eventLog.length != 0 && user.username != "guest") {
+    if (
+      test.state == 3 &&
+      test.finished &&
+      test.eventLog.length != 0 &&
+      user.username != "guest"
+    ) {
       sendTestToBackend(); // not sure if this is gonna work right but
     }
   }, [test.eventLog]); // why does this use test.eventLog // this CANNOT be efficient LMFAOOOOOO // i lowk can't figure out another way to get it to work
@@ -237,7 +242,8 @@ const Test = ({ user }) => {
               width: "20rem",
               minHeight: "1rem",
               maxHeight: "1rem",
-            }}></div>
+            }}
+          ></div>
         ) : (
           <>
             <Settings
@@ -271,9 +277,11 @@ const Test = ({ user }) => {
             alignSelf: "center",
             justifyContent: "center",
             transition: "all.15s ease-out",
-          }}>
+          }}
+        >
           <TextArea
             test={test}
+            selectedDifficulty={selectedDifficulty}
             //   settings={settings}
             passWords={(w) => {
               setTest((prevTest) => ({
@@ -334,8 +342,11 @@ const Test = ({ user }) => {
           />
         </div>
       </>
-      {user.username === "guest"? (
-        <div style={{display: "flex"}}> in order to save your test you need to log-in</div>
+      {user.username === "guest" ? (
+        <div style={{ display: "flex" }}>
+          {" "}
+          in order to save your test you need to log-in
+        </div>
       ) : null}
       <div
         style={{
@@ -343,7 +354,8 @@ const Test = ({ user }) => {
           flexDirection: "column", // Align children vertically
           alignItems: "center", // Center horizontally
           justifyContent: "center", // Center vertically
-        }}>
+        }}
+      >
         <EndTest user={user} test={test} setTest={setTest} />
       </div>
     </>

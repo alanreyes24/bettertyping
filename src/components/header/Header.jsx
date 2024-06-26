@@ -87,10 +87,10 @@ function Header({ username, passLoggedIn, passLogout }) {
               viewBox="0 0 24 24"
               fill="none"
               stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="feather feather-bar-chart-2"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="feather feather-bar-chart-2"
             >
               <line x1="18" y1="20" x2="18" y2="10"></line>
               <line x1="12" y1="20" x2="12" y2="4"></line>
@@ -167,14 +167,16 @@ function Header({ username, passLoggedIn, passLogout }) {
           </button>
         )}
 
-        <Login // i think i don't need the loginVisible part and can just make the component conditionally render
-          loginVisible={showLogin}
-          passLoggedIn={(userID, username) => {
-            setAppUsername(username);
-            passLoggedIn(userID, username);
-            setUserLoggedIn(true);
-          }}
-        />
+        {showLogin && (
+          <Login
+            loginVisible={showLogin}
+            passLoggedIn={(userID, username) => {
+              setAppUsername(username);
+              passLoggedIn(userID, username);
+              setUserLoggedIn(true);
+            }}
+          />
+        )}
       </div>
     </div>
   );

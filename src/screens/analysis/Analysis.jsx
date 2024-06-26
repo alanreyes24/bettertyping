@@ -4,9 +4,6 @@ import "./Analysis.css";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 
-// Import the OpenAI client library
-import OpenAI from "openai";
-
 function Analysis() {
   async function getAnalysis() {
     const response = await axios.get("http://localhost:3090/ai/getAnalysis", {
@@ -16,11 +13,6 @@ function Analysis() {
   }
 
   const [analysisJson, setAnalysisJson] = useState({});
-
-  const openai = new OpenAI({
-    apiKey: "sk-proj-Pz7bUo2OgrJnHFiqmvaoT3BlbkFJk59tRC8yiuRHQyW7A1at",
-    dangerouslyAllowBrowser: true,
-  });
 
   return (
     <>

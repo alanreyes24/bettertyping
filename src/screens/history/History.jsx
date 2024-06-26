@@ -153,6 +153,7 @@ function History({ user }) {
               <div>Length: {(test.settings.length || 0) / 10}</div>
               <div>True WPM: {test.results.trueWPM}</div>
               <div>Accuracy: {test.results.accuracy}%</div>
+              <div> word difficulty: {test.settings.difficulty}</div>
             </button>
           ))}
         </div>
