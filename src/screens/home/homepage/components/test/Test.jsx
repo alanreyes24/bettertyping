@@ -97,7 +97,6 @@ const Test = ({ user, selectedDifficulty }) => {
   // FINISH TEST
   if (test.state == 3 && !test.finished) {
     setTest((t) => ({ ...t, finished: true }));
-
     // call the function here
   }
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createElement } from "react";
 
-function Word({ selectedDifficulty }) {
+function Word({ selectedDifficulty, word }) {
   const easyWords = [
     "the",
     "be",
@@ -654,20 +654,24 @@ function Word({ selectedDifficulty }) {
   useEffect(() => {
     let selectedDifficultyArray = [];
 
-    if (selectedDifficulty == "easy") {
-      selectedDifficultyArray = easyWords;
-    } else if (selectedDifficulty == "normal") {
-      selectedDifficultyArray = normalWords;
-    } else if (selectedDifficulty == "hard") {
-      selectedDifficultyArray = hardWords;
-    }
+    if (word) {
+      setRandomWord(word);
+    } else {
+      if (selectedDifficulty == "easy") {
+        selectedDifficultyArray = easyWords;
+      } else if (selectedDifficulty == "normal") {
+        selectedDifficultyArray = normalWords;
+      } else if (selectedDifficulty == "hard") {
+        selectedDifficultyArray = hardWords;
+      }
 
-    let randomIndex = Math.floor(
-      Math.random() * selectedDifficultyArray.length
-    );
-    let randomWordFromArray = selectedDifficultyArray[randomIndex];
-    setRandomWord(randomWordFromArray);
-  }, [selectedDifficulty]);
+      let randomIndex = Math.floor(
+        Math.random() * selectedDifficultyArray.length
+      );
+      let randomWordFromArray = selectedDifficultyArray[randomIndex];
+      setRandomWord(randomWordFromArray);
+    }
+  }, [selectedDifficulty, word]);
 
   let map = randomWord
     .split("")

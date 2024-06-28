@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Word from "../word/Word";
+import axios from "axios";
 import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
 
@@ -16,6 +17,20 @@ function TextArea({
   onFocusLost,
   test,
 }) {
+  const [aiWordList, setAIWordList] = useState([]);
+
+  async function retrieveAIWordList() {
+    const response = await axios.get("http://localhost:3090/ai/getAIWordList", {
+      withCredentials: true,
+    });
+    console.log("aiwordlist thing", response);
+    setAIWordList(response.data.practiceWords);
+  }
+
+  useEffect(() => {
+    console.log(aiWordList);
+  }, [aiWordList]);
+
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
 
@@ -138,17 +153,31 @@ function TextArea({
   ////////
 
   //////// WORD FUNCITONS
-  const wordMap = (amount) => {
+  const wordMap = async (amount) => {
+    await retrieveAIWordList();
+
     return new Promise((resolve) => {
-      resolve(
-        Array(amount)
-          .fill(false)
-          .map((_, i) => (
-            <div key={i} className="word">
-              <Word selectedDifficulty={selectedDifficulty} key={i} />
-            </div>
-          ))
-      );
+      if (aiWordList.length > 0) {
+        resolve(
+          Array(amount)
+            .fill(false)
+            .map((_, i) => (
+              <div key={i} className="word">
+                <Word word={aiWordList[i % aiWordList.length]} key={i} />
+              </div>
+            ))
+        );
+      } else {
+        resolve(
+          Array(amount)
+            .fill(false)
+            .map((_, i) => (
+              <div key={i} className="word">
+                <Word selectedDifficulty={selectedDifficulty} key={i} />
+              </div>
+            ))
+        );
+      }
     });
   };
 
@@ -248,7 +277,6 @@ function TextArea({
 
   //// PRE TEST WORD LOADING
   useEffect(() => {
-    //if the test has not been started yet, (state 0) load the initial words
     if (test.state <= 0) {
       if (test.settings.type == "words") {
         populateWordList(test.settings.count);
@@ -259,17 +287,18 @@ function TextArea({
   }, [test.settings.type, test.settings.count, test.state]);
 
   useEffect(() => {
+    // Define the async function outside the useEffect body
     const fetchAndSetWordList = async () => {
-      console.log(selectedDifficulty);
-      const result = await wordMap(50);
-
-      setWordsLoaded(true);
-      setWordList([]);
-      setWordList(result);
-      onTextLoaded();
+      if (test.state <= 0) {
+        if (test.settings.type == "words") {
+          populateWordList(test.settings.count);
+        } else {
+          populateWordList(50);
+        }
+      }
     };
 
-    fetchAndSetWordList();
+    fetchAndSetWordList().catch(console.error); // Catch potential errors
   }, [selectedDifficulty]);
 
   ////LINE SHIFTING
@@ -300,7 +329,10 @@ function TextArea({
       .map((_, i) => (
         //key has + wordlist.length because react elements must have unique keys
         <div key={i + wordList.length} className="word">
-          <Word key={i + wordList.length} />
+          <Word
+            selectedDifficulty={selectedDifficulty}
+            key={i + wordList.length}
+          />
         </div>
       ));
     //define temp array of old words

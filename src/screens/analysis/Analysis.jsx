@@ -14,6 +14,8 @@ function Analysis() {
 
   const [analysisJson, setAnalysisJson] = useState({});
 
+  console.log(analysisJson);
+
   return (
     <>
       <div
