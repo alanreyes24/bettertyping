@@ -20,11 +20,24 @@ function TextArea({
   const [aiWordList, setAIWordList] = useState([]);
 
   async function retrieveAIWordList() {
-    const response = await axios.get("http://localhost:3090/ai/getAIWordList", {
-      withCredentials: true,
-    });
-    console.log("aiwordlist thing", response);
-    setAIWordList(response.data.practiceWords);
+    try {
+      const response = await axios.get(
+        "http://localhost:3090/ai/getAIWordList",
+        {
+          withCredentials: true,
+        }
+      );
+
+      // Check if the request was successful
+      if (response.status >= 200 && response.status < 300) {
+        console.log("aiwordlist thing", response);
+        setAIWordList(response.data.practiceWords);
+      } else {
+        console.error("Failed to retrieve AI word list:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error retrieving AI word list:", error.message);
+    }
   }
 
   useEffect(() => {
