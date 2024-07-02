@@ -1,18 +1,13 @@
-.leaderboard {
-  /* background-color: rgb(44, 58, 140); */
+/* .leaderboard {
+  background-color: #2c3a8c;
   padding: 2rem;
-  color: white; /* Text color for better contrast */
+  color: white;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-}
-
-.leaderboard h1 {
-  text-transform: capitalize;
-  font-size: 2em;
-  margin-bottom: 20px;
-}
+  width: 100vw;
+} */
 
 .leaderboard-container {
   display: flex;
@@ -36,49 +31,7 @@
   width: 30rem;
 }
 
-.logo {
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.logo a {
-  text-decoration: none;
-  color: white;
-}
-
-.nav-container {
-  display: flex;
-  align-items: center;
-}
-
-.nav-list {
-  list-style: none;
-  display: flex;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-list li {
-  margin: 0 10px;
-}
-
-.nav-list a {
-  text-decoration: none;
-  color: white;
-}
-
-.login-container {
-  display: flex;
-  align-items: center;
-}
-
-.login-container a {
-  text-decoration: none;
-  cursor: pointer;
-  color: white;
-}
-
-@media (orientation: portrait) {
+/* @media (orientation: portrait) {
   .leaderboard-container {
     flex-direction: column;
   }
@@ -88,4 +41,86 @@
     align-items: center;
     justify-content: center;
   }
+} */
+
+/* 640
+768
+1024
+1280
+1536
+ */
+
+/* very small screens */
+@media (min-width: 475px) and (orientation: landscape) {
+  .leaderboard {
+    background-color: #2c3a8c;
+    padding: 2rem;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+  }
+}
+
+/* small screens */
+@media (min-width: 640px) and (orientation: landscape) {
+  .leaderboard {
+    background-color: green;
+  }
+}
+
+/* medium screens */
+@media (min-width: 768px) and (orientation: landscape) {
+  .leaderboard {
+    background-color: blue;
+  }
+}
+
+/* large screens */
+@media (min-width: 1024px) and (orientation: landscape) {
+  .leaderboard {
+    background-color: black;
+  }
+}
+
+/* extra large screens */
+@media (min-width: 1280px) and (orientation: landscape) {
+}
+
+/* 2xl screens */
+@media (min-width: 1536px) and (orientation: landscape) {
+}
+
+/* anything else is too small for portrait mode */
+/* medium portrait screens */
+@media (min-width: 640px) and (orientation: portrait) {
+  .leaderboard {
+    display: none;
+  }
+}
+
+/* medium portrait screens */
+@media (min-width: 768px) and (orientation: portrait) {
+  .leaderboard {
+    display: flex;
+    background-color: green;
+  }
+}
+
+/* large portrait screens */
+@media (min-width: 1024px) and (orientation: portrait) {
+  .leaderboard {
+    display: flex;
+    background-color: black;
+  }
+}
+
+/* extra large portrait screens */
+@media (min-width: 1280px) and (orientation: landscape) {
+}
+
+/* 2xl portrait screens */
+@media (min-width: 1536px) and (orientation: landscape) {
 }
