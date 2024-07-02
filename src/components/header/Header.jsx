@@ -8,11 +8,6 @@ import "./Header.css";
 function Header({ username, passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [appUsername, setAppUsername] = useState(username);
-
-  useEffect(() => {
-    setAppUsername(username);
-  }, [username]);
 
   async function logUserOut() {
     try {
@@ -32,14 +27,14 @@ function Header({ username, passLoggedIn, passLogout }) {
         <Link to="/">type.ac</Link>
       </div>
 
-      {appUsername === "guest" ? (
+      {username === "guest" ? (
         <div
           style={{ fontSize: "clamp(1rem, 2vw, 1.5rem)", fontWeight: "bold" }}
         >
           guest mode
         </div>
-      ) : appUsername ? (
-        <div>welcome, {appUsername}</div>
+      ) : username ? (
+        <div>welcome, {username}</div>
       ) : null}
 
       <div className="button-container">
@@ -168,14 +163,15 @@ function Header({ username, passLoggedIn, passLogout }) {
         )}
 
         {showLogin && (
-          <Login
-            loginVisible={showLogin}
-            passLoggedIn={(userID, username) => {
-              setAppUsername(username);
-              passLoggedIn(userID, username);
-              setUserLoggedIn(true);
-            }}
-          />
+          <>
+            <Login
+              loginVisible={showLogin}
+              passLoggedIn={(userID, username) => {
+                setUserLoggedIn(true);
+                passLoggedIn(userID, username);
+              }}
+            />
+          </>
         )}
       </div>
     </div>

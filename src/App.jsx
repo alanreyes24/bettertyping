@@ -27,6 +27,7 @@ function App() {
         { withCredentials: true }
       );
       if (response.status >= 200 && response.status < 300) {
+        console.log(response.data.practiceWords);
         setUser((prevUser) => ({
           ...prevUser,
           aiTestMode: true,
@@ -34,6 +35,11 @@ function App() {
         }));
       } else {
         console.error("Failed to retrieve AI word list:", response.statusText);
+        setUser((prevUser) => ({
+          ...prevUser,
+          aiTestMode: false,
+          aiWordList: [],
+        }));
       }
     } catch (error) {
       console.error("Error retrieving AI word list:", error.message);

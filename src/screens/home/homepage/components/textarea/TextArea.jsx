@@ -129,7 +129,6 @@ function TextArea({
     return new Promise((resolve) => {
       // if there is a ai test word list use it, if not use the regular set of words
       if (user.aiTestMode) {
-        console.log("ai word list:", user.aiWordList);
         resolve(
           Array(amount)
             .fill(false)
