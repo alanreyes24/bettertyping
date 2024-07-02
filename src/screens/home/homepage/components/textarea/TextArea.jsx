@@ -5,6 +5,8 @@ import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
 
 function TextArea({
+  aiTestMode,
+  aiWordList,
   selectedDifficulty,
   onTextFinished,
   passEventLog,
@@ -17,33 +19,6 @@ function TextArea({
   onFocusLost,
   test,
 }) {
-  const [aiWordList, setAIWordList] = useState([]);
-
-  async function retrieveAIWordList() {
-    try {
-      const response = await axios.get(
-        "http://localhost:3090/ai/getAIWordList",
-        {
-          withCredentials: true,
-        }
-      );
-
-      // Check if the request was successful
-      if (response.status >= 200 && response.status < 300) {
-        console.log("aiwordlist thing", response);
-        setAIWordList(response.data.practiceWords);
-      } else {
-        console.error("Failed to retrieve AI word list:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error retrieving AI word list:", error.message);
-    }
-  }
-
-  useEffect(() => {
-    console.log(aiWordList);
-  }, [aiWordList]);
-
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
 
@@ -70,22 +45,7 @@ function TextArea({
   const [eventLog, setEventLog] = useState([]);
   const [startTime, setStartTime] = useState(0);
 
-  // EXAMPLE EVENTS FOR THE EVENT LOG
-  // {
-  //   timestamp: 0,
-  //   type: "intended",
-  //   letter: "t",
-  // },
-  //       {
-  //   timestamp: 100,
-  //   type: "typed",
-  //   letter: "t",
-  // },
-  //       {
-  //   timestamp: 140,
-  //   type: "backspace",
-  // }
-
+  // CURSOR BLINKING
   useEffect(() => {
     if (shouldUpdateCursor && test.state == 0) {
       document.getElementById("cursor").classList.add("cursorBlink");
@@ -167,10 +127,12 @@ function TextArea({
 
   //////// WORD FUNCITONS
   const wordMap = async (amount) => {
-    await retrieveAIWordList();
-
     return new Promise((resolve) => {
-      if (aiWordList.length > 0) {
+      // if there is a ai test word list use it, if not use the regular set of words
+      if (aiTestMode) {
+        console.log("aiTestMode", aiTestMode);
+        console.log("aiwordList:", aiWordList);
+
         resolve(
           Array(amount)
             .fill(false)
@@ -300,7 +262,6 @@ function TextArea({
   }, [test.settings.type, test.settings.count, test.state]);
 
   useEffect(() => {
-    // Define the async function outside the useEffect body
     const fetchAndSetWordList = async () => {
       if (test.state <= 0) {
         if (test.settings.type == "words") {
@@ -311,7 +272,7 @@ function TextArea({
       }
     };
 
-    fetchAndSetWordList().catch(console.error); // Catch potential errors
+    fetchAndSetWordList().catch(console.error);
   }, [selectedDifficulty]);
 
   ////LINE SHIFTING

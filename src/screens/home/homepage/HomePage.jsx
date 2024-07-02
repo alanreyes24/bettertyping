@@ -6,6 +6,40 @@ import Test from "./components/test/Test";
 import axios from "axios";
 
 function HomePage({ user }) {
+  const [aiTestMode, setAITestMode] = useState(true);
+  const [aiWordList, setAIWordList] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // New loading state
+
+  async function retrieveAIWordList() {
+    try {
+      const response = await axios.get(
+        "http://localhost:3090/ai/getAIWordList",
+        {
+          withCredentials: true,
+        }
+      );
+
+      if (response.status >= 200 && response.status < 300) {
+        setAITestMode(true);
+        setAIWordList(response.data.practiceWords);
+        setIsLoading(false); // Set loading to false upon successful fetch
+      } else {
+        console.error("Failed to retrieve AI word list:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error retrieving AI word list:", error.message);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    const fetchAIWordList = async () => {
+      await retrieveAIWordList();
+    };
+
+    fetchAIWordList();
+  }, []);
+
   const [selectedDifficulty, setSelectedDifficulty] = useState("normal");
 
   return (
@@ -14,9 +48,16 @@ function HomePage({ user }) {
       <button onClick={() => setSelectedDifficulty("normal")}> normal </button>
       <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
 
-      <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
-        <Test user={user} selectedDifficulty={selectedDifficulty} />
-      </div>
+      {!isLoading && (
+        <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
+          <Test
+            user={user}
+            selectedDifficulty={selectedDifficulty}
+            aiTestMode={aiTestMode}
+            aiWordList={aiWordList}
+          />
+        </div>
+      )}
     </div>
   );
 }
