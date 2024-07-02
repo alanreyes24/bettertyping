@@ -21,9 +21,6 @@ const Test = ({ user, selectedDifficulty }) => {
         withCredentials: true,
       });
 
-      // Navigate to result screen after test sent
-      handleEndTestRedirect();
-
       // Uncomment and adjust the following lines if you need to manipulate the URL directly
       // window.location.href = `${window.location.href}/test/${response.data._id}`;
     } catch (error) {
@@ -219,9 +216,19 @@ const Test = ({ user, selectedDifficulty }) => {
       test.state == 3 &&
       test.finished &&
       test.eventLog.length != 0 &&
-      user.username != "guest"
+      user.username != "guest" &&
+      user.aiTestMode == false
     ) {
       sendTestToBackend(); // not sure if this is gonna work right but
+      handleEndTestRedirect();
+    } else if (
+      test.state == 3 &&
+      test.finished &&
+      test.eventLog.length != 0 &&
+      user.username != "guest" &&
+      user.aiTestMode == true
+    ) {
+      handleEndTestRedirect();
     }
   }, [test.eventLog]); // why does this use test.eventLog // this CANNOT be efficient LMFAOOOOOO // i lowk can't figure out another way to get it to work
 
