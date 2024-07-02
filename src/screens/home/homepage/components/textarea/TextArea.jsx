@@ -5,8 +5,7 @@ import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
 
 function TextArea({
-  aiTestMode,
-  aiWordList,
+  user,
   selectedDifficulty,
   onTextFinished,
   passEventLog,
@@ -129,20 +128,22 @@ function TextArea({
   const wordMap = async (amount) => {
     return new Promise((resolve) => {
       // if there is a ai test word list use it, if not use the regular set of words
-      if (aiTestMode) {
-        console.log("aiTestMode", aiTestMode);
-        console.log("aiwordList:", aiWordList);
-
+      if (user.aiTestMode) {
+        console.log("ai word list:", user.aiWordList);
         resolve(
           Array(amount)
             .fill(false)
             .map((_, i) => (
               <div key={i} className="word">
-                <Word word={aiWordList[i % aiWordList.length]} key={i} />
+                <Word
+                  word={user.aiWordList[i % user.aiWordList.length]}
+                  key={i}
+                />
               </div>
             ))
         );
       } else {
+        console.log("nto good");
         resolve(
           Array(amount)
             .fill(false)

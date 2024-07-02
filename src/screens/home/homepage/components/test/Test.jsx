@@ -7,7 +7,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../AuthContext";
 
-const Test = ({ user, selectedDifficulty, aiTestMode, aiWordList }) => {
+const Test = ({ user, selectedDifficulty }) => {
   const navigate = useNavigate();
 
   const handleEndTestRedirect = () => {
@@ -279,9 +279,8 @@ const Test = ({ user, selectedDifficulty, aiTestMode, aiWordList }) => {
           }}
         >
           <TextArea
+            user={user}
             test={test}
-            aiTestMode={aiTestMode}
-            aiWordList={aiWordList}
             selectedDifficulty={selectedDifficulty}
             //   settings={settings}
             passWords={(w) => {

@@ -15,82 +15,106 @@ function App() {
   const [user, setUser] = useState({
     _id: "",
     username: "",
+    aiTestMode: false,
+    aiWordList: [],
   });
+  const [isLoading, setIsLoading] = useState(true);
+
+  async function retrieveAIWordList() {
+    try {
+      const response = await axios.get(
+        "http://localhost:3090/ai/getAIWordList",
+        { withCredentials: true }
+      );
+      if (response.status >= 200 && response.status < 300) {
+        setUser((prevUser) => ({
+          ...prevUser,
+          aiTestMode: true,
+          aiWordList: response.data.practiceWords,
+        }));
+      } else {
+        console.error("Failed to retrieve AI word list:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error retrieving AI word list:", error.message);
+    }
+  }
 
   async function checkUserTokenValid() {
     try {
       const response = await axios.get(
         "http://localhost:3090/auth/tokenCheck",
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
-
-      setUser({
+      setUser((prevUser) => ({
+        ...prevUser,
         _id: response.data._id,
         username: response.data.username,
-      });
+      }));
     } catch (error) {
-      console.log(error.response.data); // make this later so that when jwt token expires it displays something unavoidable on the screen
-
-      if (error.response.data == "Token has expired.") {
-        setUser({
+      console.log(error.response.data);
+      if (
+        error.response.data === "Token has expired." ||
+        error.response.data === "No token provided."
+      ) {
+        setUser((prevUser) => ({
+          ...prevUser,
           _id: "",
           username: "guest",
-        });
-      } else if (error.response.data == "No token provided.") {
-        setUser({
-          _id: "",
-          username: "guest",
-        });
+        }));
       }
     }
   }
 
+  useEffect(() => {
+    const fetchData = async () => {
+      await checkUserTokenValid();
+      await retrieveAIWordList();
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
   const handleUserChange = (passedUserID, passedUsername) => {
-    let userID = passedUserID;
-    let username = passedUsername;
-    setUser({
-      _id: userID,
-      username: username,
-    });
+    setUser((prevUser) => ({
+      ...prevUser,
+      _id: passedUserID,
+      username: passedUsername,
+    }));
   };
 
   const handleLogout = () => {
     setUser((prevUser) => ({
       ...prevUser,
-      _id: " ",
+      _id: "",
       username: "guest",
     }));
   };
 
-  useEffect(() => {
-    checkUserTokenValid();
-  }, []);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <>
-      <Router>
-        <AuthProvider>
-          <div>
-            <Header
-              passLoggedIn={handleUserChange}
-              passLogout={handleLogout}
-              username={user.username}
-            />
-
-            <Routes>
-              <Route path="/" element={<HomePage user={user} />} />
-              <Route path="/leaderboard" element={<LeaderBoard />} />
-              <Route path="/analysis" element={<Analysis />} />
-              <Route path="/history" element={<History user={user} />} />
-              <Route path="/test/:id" element={<TestPage />} />
-              <Route path="/test-finished" element={<TestFinished />} />
-            </Routes>
-          </div>
-        </AuthProvider>
-      </Router>
-    </>
+    <Router>
+      <AuthProvider>
+        <div>
+          <Header
+            passLoggedIn={handleUserChange}
+            passLogout={handleLogout}
+            username={user.username}
+          />
+          <Routes>
+            <Route path="/" element={<HomePage user={user} />} />
+            <Route path="/leaderboard" element={<LeaderBoard />} />
+            <Route path="/analysis" element={<Analysis />} />
+            <Route path="/history" element={<History user={user} />} />
+            <Route path="/test/:id" element={<TestPage />} />
+            <Route path="/test-finished" element={<TestFinished />} />
+          </Routes>
+        </div>
+      </AuthProvider>
+    </Router>
   );
 }
 
