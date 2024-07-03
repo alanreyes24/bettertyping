@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
-import EndTest from "../endtest/EndTest";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../AuthContext";
@@ -13,18 +12,17 @@ const Test = ({ user, AIMode }) => {
   const [selectedDifficulty, setSelectedDifficulty] = useState("normal");
 
   const handleEndTestRedirect = () => {
-    navigate("/test-finished"); // add AIMode passing here as well as it just displays the user's last saved test instead of their most recently taken
+    navigate("/test-finished", { state: { AIMode } }); // add AIMode passing here
   };
 
   const sendTestToBackend = async () => {
     try {
-      // Assuming 'test' is defined elsewhere in your component
       await axios.post("http://localhost:3090/test", test, {
         withCredentials: true,
       });
 
       // Uncomment and adjust the following lines if you need to manipulate the URL directly
-      // window.location.href = `${window.location.href}/test/${response.data._id}`;
+      // window.location.href = ${window.location.href}/test/${response.data._id};
     } catch (error) {
       console.log(error);
       console.error("Error submitting test:", error.response?.data);
@@ -47,13 +45,10 @@ const Test = ({ user, AIMode }) => {
     words: {
       wordList: [],
       attemptedWords: 0,
-      //may possibly make this object?
-      //   letters: {
       correctLetters: [],
       incorrectLetters: [],
       trueWPMArray: [],
       rawWPMArray: [],
-      //   },
     },
     //settings object
     settings: {
@@ -61,7 +56,6 @@ const Test = ({ user, AIMode }) => {
       length: 4040,
       count: 50,
       difficulty: "normal",
-      //   visible: false,
     },
     //timer object
     timer: {
@@ -69,91 +63,89 @@ const Test = ({ user, AIMode }) => {
       isActive: false,
       timerGoesUp: false,
     },
-    results: {
-      //   correctOnlyWPM: 0,
-      //   rawWPM: 0,
-      //   trueWPM: 0,
-      //   accuracy: 0,
-    },
-    eventLog: [
-      //eventlog :)
-    ],
+    results: {},
+    eventLog: [],
     timestamp: 0,
   });
 
+  const [trueWPMArray, setTrueWPMArray] = useState([]);
+  const [rawWPMArray, setRawWPMArray] = useState([]);
+
   // END OF TEST
-  if (
-    test.state <= 1 &&
-    test.timer.timeLeft == 0 &&
-    test.settings.type == "time"
-  ) {
-    setTest((prevTest) => ({
-      ...prevTest,
-      state: 3,
-    }));
-  }
+  useEffect(() => {
+    if (
+      test.state <= 1 &&
+      test.timer.timeLeft === 0 &&
+      test.settings.type === "time"
+    ) {
+      setTest((prevTest) => ({
+        ...prevTest,
+        state: 3,
+      }));
+    }
+  }, [test]);
 
   // FINISH TEST
-  if (test.state == 3 && !test.finished) {
-    setTest((t) => ({ ...t, finished: true }));
-    // call the function here
-  }
+  useEffect(() => {
+    if (test.state === 3 && !test.finished) {
+      setTest((prevTest) => ({
+        ...prevTest,
+        finished: true,
+      }));
+    }
+  }, [test]);
 
   // RESULTS
-  // if test is over and results are empty, put results
-  if (test.finished && Object.keys(test.results).length === 0) {
-    //this will only work on time tests
-    let totalCorrect = 0;
-    let totalIncorrect = 0;
+  useEffect(() => {
+    if (test.finished && Object.keys(test.results).length === 0) {
+      let totalCorrect = 0;
+      let totalIncorrect = 0;
 
-    for (const [key, value] of Object.entries(test.words.correctLetters)) {
-      totalCorrect += value.length;
+      for (const value of Object.values(test.words.correctLetters)) {
+        totalCorrect += value.length;
+      }
+
+      for (const value of Object.values(test.words.incorrectLetters)) {
+        totalIncorrect += value.length;
+      }
+
+      let correctOnlyWPM =
+        (600 * (totalCorrect / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+
+      let trueWPM =
+        (600 * ((totalCorrect - totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+
+      let rawWPM =
+        (600 * ((totalCorrect + totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+
+      if (test.settings.type === "words") {
+        rawWPM *= -1;
+        trueWPM *= -1;
+        correctOnlyWPM *= -1;
+      }
+
+      let accuracy = (
+        (totalCorrect / (totalCorrect + totalIncorrect)) *
+        100
+      ).toFixed(2);
+      setTest((prevTest) => ({
+        ...prevTest,
+        results: {
+          trueWPM: trueWPM,
+          correctOnlyWPM: correctOnlyWPM,
+          rawWPM: rawWPM,
+          accuracy: accuracy,
+        },
+      }));
     }
-
-    for (const [key, value] of Object.entries(test.words.incorrectLetters)) {
-      totalIncorrect += value.length;
-    }
-
-    let correctOnlyWPM =
-      (600 * (totalCorrect / 5)) / (test.settings.length - test.timer.timeLeft);
-
-    let trueWPM =
-      (600 * ((totalCorrect - totalIncorrect) / 5)) /
-      (test.settings.length - test.timer.timeLeft);
-
-    let rawWPM =
-      (600 * ((totalCorrect + totalIncorrect) / 5)) /
-      (test.settings.length - test.timer.timeLeft);
-
-    if (test.settings.type == "words") {
-      rawWPM *= -1;
-      trueWPM *= -1;
-      correctOnlyWPM *= -1;
-    }
-
-    // console.log("correct only WPM: " + correctOnlyWPM);
-    // console.log("true WPM: " + trueWPM);
-    // console.log("raw WPM: " + rawWPM);
-
-    let accuracy = (
-      (totalCorrect / (totalCorrect + totalIncorrect)) *
-      100
-    ).toFixed(2);
-    setTest((prevTest) => ({
-      ...prevTest,
-      results: {
-        ...prevTest.results,
-        trueWPM: trueWPM,
-        correctOnlyWPM: correctOnlyWPM,
-        rawWPM: rawWPM,
-        accuracy: accuracy,
-      },
-    }));
-  }
+  }, [test]);
 
   useEffect(() => {
-    if (test.state == 1) {
-      if (test.userID == "") {
+    if (test.state === 1) {
+      if (test.userID === "") {
         setTest((prevTest) => ({
           ...prevTest,
           userID: user._id,
@@ -169,70 +161,123 @@ const Test = ({ user, AIMode }) => {
 
   useEffect(() => {
     //HANDLE TIMER
-    // TODO: PAUSE FUNCTIONALITY
-    if (test.state == 1) {
+    if (test.state === 1) {
       setHideSettings(true);
 
-      if (test.settings.type == "time" && test.timer.timeLeft > 0) {
+      if (test.settings.type === "time" && test.timer.timeLeft > 0) {
         setTimeout(() => {
-          setTest((prevTest) => {
-            {
-              return {
-                ...prevTest,
-                timer: {
-                  ...prevTest.timer,
-                  timeLeft: prevTest.timer.timeLeft - 1,
-                },
-              };
-            }
-          });
+          setTest((prevTest) => ({
+            ...prevTest,
+            timer: {
+              ...prevTest.timer,
+              timeLeft: prevTest.timer.timeLeft - 1,
+            },
+          }));
         }, 100);
-      } else if (test.settings.type == "words") {
+      } else if (test.settings.type === "words") {
         setTimeout(() => {
-          setTest((prevTest) => {
-            {
-              return {
-                ...prevTest,
-                timer: {
-                  ...prevTest.timer,
-                  timeLeft: prevTest.timer.timeLeft + 1,
-                  timerGoesUp: true,
-                },
-              };
-            }
-          });
+          setTest((prevTest) => ({
+            ...prevTest,
+            timer: {
+              ...prevTest.timer,
+              timeLeft: prevTest.timer.timeLeft + 1,
+              timerGoesUp: true,
+            },
+          }));
         }, 100);
       }
     }
   }, [test.settings.type, test.timer.timeLeft, test.state]);
 
-  //   console.log(test);
+  useEffect(() => {
+    if (test.state === 1 && !test.finished) {
+      setTimeout(() => {
+        setTrueWPMArray((prevArray) => [
+          ...prevArray,
+          calculateWPMs("trueWPM"),
+        ]);
+        setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
+      }, 1000);
+    }
+  }, [test.state, trueWPMArray]);
 
-  //   useEffect(() => {
-  //     // for the wpm timer
-  //     setCurrentTestWPM((60 * numOfCorrectWords) / (timerLength - timeLeft));
-  //   }, [currentTestWPM, numOfCorrectWords, timerLength, timeLeft]);
+  useEffect(() => {
+    if (test.finished) {
+      const convertedTrueWPMArray = trueWPMArray.map((item, index) => ({
+        x: index,
+        y: parseFloat(item),
+      }));
+      const convertedRawWPMArray = rawWPMArray.map((item, index) => ({
+        x: index,
+        y: parseFloat(item),
+      }));
+
+      setTrueWPMArray(convertedTrueWPMArray);
+      setRawWPMArray(convertedRawWPMArray);
+
+      setTest((prevTest) => ({
+        ...prevTest,
+        words: {
+          ...prevTest.words,
+          trueWPMArray: convertedTrueWPMArray,
+          rawWPMArray: convertedRawWPMArray,
+        },
+      }));
+    }
+  }, [test.finished]);
 
   useEffect(() => {
     if (
-      test.state == 3 &&
+      test.state === 3 &&
       test.finished &&
-      test.eventLog.length != 0 &&
-      user.username != "guest" &&
-      AIMode == false
+      test.eventLog.length !== 0 &&
+      user.username !== "guest" &&
+      !AIMode
     ) {
       sendTestToBackend(); // not sure if this is gonna work right but
       handleEndTestRedirect();
     } else if (
-      test.state == 3 &&
+      test.state === 3 &&
       test.finished &&
-      test.eventLog.length != 0 &&
-      user.username != "guest" &&
-      AIMode == true
+      test.eventLog.length !== 0 &&
+      user.username !== "guest" &&
+      AIMode
     ) {
       handleEndTestRedirect();
     }
-  }, [test.eventLog]); // why does this use test.eventLog // this CANNOT be efficient LMFAOOOOOO // i lowk can't figure out another way to get it to work
+  }, [test.eventLog]);
+
+  const calculateWPMs = (type) => {
+    if (test.state === 1) {
+      let totalCorrect = 0;
+      let totalIncorrect = 0;
+
+      for (const value of Object.values(test.words.correctLetters)) {
+        totalCorrect += value.length;
+      }
+
+      for (const value of Object.values(test.words.incorrectLetters)) {
+        totalIncorrect += value.length;
+      }
+
+      let trueWPM =
+        (600 * ((totalCorrect - totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+      let rawWPM =
+        (600 * ((totalCorrect + totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+
+      if (type === "trueWPM" && !isNaN(trueWPM)) {
+        return test.settings.type === "time"
+          ? trueWPM.toFixed(2)
+          : (trueWPM * -1).toFixed(2);
+      } else if (type === "rawWPM" && !isNaN(rawWPM)) {
+        return test.settings.type === "time"
+          ? rawWPM.toFixed(2)
+          : (rawWPM * -1).toFixed(2);
+      }
+    }
+  };
 
   return (
     <>
@@ -240,7 +285,7 @@ const Test = ({ user, AIMode }) => {
       <button onClick={() => setSelectedDifficulty("normal")}> normal </button>
       <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
       <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
-        {hideSettings || AIMode == true ? (
+        {hideSettings || AIMode ? (
           <div
             style={{
               display: "flex",
@@ -261,18 +306,14 @@ const Test = ({ user, AIMode }) => {
               hideModal={hideSettings}
               test={test}
               passSettings={(newSettings) => {
-                if (
-                  JSON.stringify(newSettings) != JSON.stringify(test.settings)
-                ) {
-                  setTest((prevTest) => ({
-                    ...prevTest,
-                    timer: {
-                      ...prevTest.timer,
-                      timeLeft: newSettings.length,
-                    },
-                    settings: newSettings,
-                  }));
-                }
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  timer: {
+                    ...prevTest.timer,
+                    timeLeft: newSettings.length,
+                  },
+                  settings: newSettings,
+                }));
               }}
             />
           </>
@@ -287,7 +328,7 @@ const Test = ({ user, AIMode }) => {
             display: "flex",
             alignSelf: "center",
             justifyContent: "center",
-            transition: "all.15s ease-out",
+            transition: "all .15s ease-out",
           }}
         >
           <TextArea
@@ -295,7 +336,6 @@ const Test = ({ user, AIMode }) => {
             aiMode={AIMode}
             test={test}
             selectedDifficulty={selectedDifficulty}
-            //   settings={settings}
             passWords={(w) => {
               setTest((prevTest) => ({
                 ...prevTest,
@@ -324,7 +364,6 @@ const Test = ({ user, AIMode }) => {
                 },
               }));
             }}
-            // passCorrectWords={setNumOfCorrectWords}
             onTextLoaded={() => {
               setTest((prevTest) => ({
                 ...prevTest,
@@ -361,16 +400,6 @@ const Test = ({ user, AIMode }) => {
           in order to save your test you need to log-in
         </div>
       ) : null}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column", // Align children vertically
-          alignItems: "center", // Center horizontally
-          justifyContent: "center", // Center vertically
-        }}
-      >
-        <EndTest user={user} test={test} setTest={setTest} />
-      </div>
     </>
   );
 };

@@ -6,7 +6,6 @@ import "./App.css";
 import HomePage from "./screens/home/homepage/HomePage";
 import LeaderBoard from "./screens/leaderboard/LeaderBoard";
 import Analysis from "./screens/analysis/Analysis";
-import TestPage from "./screens/test/TestPage";
 import Header from "./components/header/Header";
 import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
@@ -84,7 +83,6 @@ function App() {
             <Route path="/leaderboard" element={<LeaderBoard />} />
             <Route path="/analysis" element={<Analysis user={user} />} />
             <Route path="/history" element={<History user={user} />} />
-            <Route path="/test/:id" element={<TestPage />} />
             <Route path="/test-finished" element={<TestFinished />} />
             <Route path="/ai-test" element={<AITest user={user} />} />
           </Routes>
