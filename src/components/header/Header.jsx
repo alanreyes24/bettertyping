@@ -43,7 +43,7 @@ function Header({ user, passLoggedIn, passLogout }) {
         >
           guest mode
         </div>
-      ) : user.username ? (
+      ) : user.username && !user.aiTestMode ? (
         <div>welcome, {user.username}</div>
       ) : null}
 

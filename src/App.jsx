@@ -10,6 +10,7 @@ import TestPage from "./screens/test/TestPage";
 import Header from "./components/header/Header";
 import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
+import AITest from "./screens/aitest/AITest";
 
 function App() {
   const [user, setUser] = useState({
@@ -114,10 +115,11 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage user={user} />} />
             <Route path="/leaderboard" element={<LeaderBoard />} />
-            <Route path="/analysis" element={<Analysis />} />
+            <Route path="/analysis" element={<Analysis user={user} />} />
             <Route path="/history" element={<History user={user} />} />
             <Route path="/test/:id" element={<TestPage />} />
             <Route path="/test-finished" element={<TestFinished />} />
+            <Route path="/ai-test" element={<AITest user={user} />} />
           </Routes>
         </div>
       </AuthProvider>
