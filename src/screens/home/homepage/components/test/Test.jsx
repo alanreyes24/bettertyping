@@ -7,8 +7,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../AuthContext";
 
-const Test = ({ user, selectedDifficulty }) => {
+const Test = ({ user }) => {
   const navigate = useNavigate();
+
+  const [selectedDifficulty, setSelectedDifficulty] = useState("normal");
 
   const handleEndTestRedirect = () => {
     navigate("/test-finished");
@@ -234,6 +236,9 @@ const Test = ({ user, selectedDifficulty }) => {
 
   return (
     <>
+      <button onClick={() => setSelectedDifficulty("easy")}> easy </button>
+      <button onClick={() => setSelectedDifficulty("normal")}> normal </button>
+      <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
       <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
         {hideSettings ? (
           <div
