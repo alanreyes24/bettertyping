@@ -56,10 +56,12 @@ function Analysis({ user }) {
         </a>
         <div style={{ fontSize: "10px" }}>{JSON.stringify(analysisJson)}</div>
 
-        <button onClick={handleAITestRedirect}>
-          {" "}
-          navigate to your ai test{" "}
-        </button>
+        {Object.keys(analysisJson).length > 0 && (
+          <button onClick={handleAITestRedirect}>
+            {" "}
+            navigate to your ai test{" "}
+          </button>
+        )}
       </div>
     </>
   );
