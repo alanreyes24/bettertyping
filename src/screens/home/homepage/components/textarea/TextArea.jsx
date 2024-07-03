@@ -142,7 +142,6 @@ function TextArea({
             ))
         );
       } else {
-        console.log("nto good");
         resolve(
           Array(amount)
             .fill(false)

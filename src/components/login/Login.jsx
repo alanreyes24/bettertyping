@@ -33,8 +33,8 @@ function Login({ loginVisible, passLoggedIn }) {
       await passLoggedIn(userID, confirmedUsername);
       setLoginVisible(false);
     } catch (error) {
-      setError(error);
-      console.log(error);
+      setError(error.response ? error.response.data : "An error occurred");
+      console.log(error.response ? error.response.data : error);
     }
   };
 
@@ -47,14 +47,16 @@ function Login({ loginVisible, passLoggedIn }) {
       });
       setShowRegister(false);
     } catch (error) {
-      setError(error);
-      console.error("Error registering:", error.response.data);
+      setError(error.response ? error.response.data : "An error occurred");
+      console.error(
+        "Error registering:",
+        error.response ? error.response.data : error
+      );
     }
   };
 
   return (
     <div className="login-container show">
-      <button onClick={() => console.log(error)}>test show error</button>
       <div className="login-box">
         <form
           className="login-form"
@@ -74,7 +76,9 @@ function Login({ loginVisible, passLoggedIn }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          {/* {error && <div style={{ color: "red" }}>{error.response.data}</div>} */}
+          {error && (
+            <div style={{ color: "red" }}>{error.message || error}</div>
+          )}
           <button className="login-button" type="submit">
             {showRegister ? "Register" : "Login"}
           </button>
