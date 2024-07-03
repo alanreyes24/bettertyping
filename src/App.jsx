@@ -90,6 +90,7 @@ function App() {
   };
 
   const handleLogout = () => {
+    console.log("this is running");
     setUser((prevUser) => ({
       ...prevUser,
       _id: "",
@@ -108,7 +109,7 @@ function App() {
           <Header
             passLoggedIn={handleUserChange}
             passLogout={handleLogout}
-            username={user.username}
+            user={user}
           />
           <Routes>
             <Route path="/" element={<HomePage user={user} />} />

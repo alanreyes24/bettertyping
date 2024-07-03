@@ -5,9 +5,17 @@ import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
-function Header({ username, passLoggedIn, passLogout }) {
+function Header({ user, passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (user.username && user.username !== "guest") {
+      setUserLoggedIn(true);
+    } else {
+      setUserLoggedIn(false);
+    }
+  }, [user.username]);
 
   async function logUserOut() {
     try {
@@ -27,14 +35,16 @@ function Header({ username, passLoggedIn, passLogout }) {
         <Link to="/">type.ac</Link>
       </div>
 
-      {username === "guest" ? (
+      {user.aiTestMode && <div> AI TEST MODE </div>}
+
+      {user.username === "guest" ? (
         <div
           style={{ fontSize: "clamp(1rem, 2vw, 1.5rem)", fontWeight: "bold" }}
         >
           guest mode
         </div>
-      ) : username ? (
-        <div>welcome, {username}</div>
+      ) : user.username ? (
+        <div>welcome, {user.username}</div>
       ) : null}
 
       <div className="button-container">
@@ -139,6 +149,7 @@ function Header({ username, passLoggedIn, passLogout }) {
           <button
             className="button"
             onClick={() => {
+              setUserLoggedIn(false);
               logUserOut();
               passLogout();
             }}
@@ -167,6 +178,7 @@ function Header({ username, passLoggedIn, passLogout }) {
             <Login
               loginVisible={showLogin}
               passLoggedIn={(userID, username) => {
+                setShowLogin(false);
                 setUserLoggedIn(true);
                 passLoggedIn(userID, username);
               }}

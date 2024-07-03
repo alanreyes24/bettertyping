@@ -52,7 +52,7 @@ function Login({ loginVisible, passLoggedIn }) {
     }
   };
 
-  return showLogin ? (
+  return (
     <div className="login-container show">
       <button onClick={() => console.log(error)}>test show error</button>
       <div className="login-box">
@@ -91,7 +91,7 @@ function Login({ loginVisible, passLoggedIn }) {
         </form>
       </div>
     </div>
-  ) : null;
+  );
 }
 
 export default Login;
