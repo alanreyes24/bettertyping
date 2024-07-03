@@ -7,13 +7,13 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../../../AuthContext";
 
-const Test = ({ user }) => {
+const Test = ({ user, AIMode }) => {
   const navigate = useNavigate();
 
   const [selectedDifficulty, setSelectedDifficulty] = useState("normal");
 
   const handleEndTestRedirect = () => {
-    navigate("/test-finished");
+    navigate("/test-finished"); // add AIMode passing here as well as it just displays the user's last saved test instead of their most recently taken
   };
 
   const sendTestToBackend = async () => {
@@ -219,7 +219,7 @@ const Test = ({ user }) => {
       test.finished &&
       test.eventLog.length != 0 &&
       user.username != "guest" &&
-      user.aiTestMode == false
+      AIMode == false
     ) {
       sendTestToBackend(); // not sure if this is gonna work right but
       handleEndTestRedirect();
@@ -228,7 +228,7 @@ const Test = ({ user }) => {
       test.finished &&
       test.eventLog.length != 0 &&
       user.username != "guest" &&
-      user.aiTestMode == true
+      AIMode == true
     ) {
       handleEndTestRedirect();
     }
@@ -292,6 +292,7 @@ const Test = ({ user }) => {
         >
           <TextArea
             user={user}
+            aiMode={AIMode}
             test={test}
             selectedDifficulty={selectedDifficulty}
             //   settings={settings}

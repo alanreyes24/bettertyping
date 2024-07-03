@@ -19,33 +19,6 @@ function App() {
     aiTestMode: false,
     aiWordList: [],
   });
-  const [isLoading, setIsLoading] = useState(true);
-
-  async function retrieveAIWordList() {
-    try {
-      const response = await axios.get(
-        "http://localhost:3090/ai/getAIWordList",
-        { withCredentials: true }
-      );
-      if (response.status >= 200 && response.status < 300) {
-        console.log(response.data.practiceWords);
-        setUser((prevUser) => ({
-          ...prevUser,
-          aiTestMode: true,
-          aiWordList: response.data.practiceWords,
-        }));
-      } else {
-        console.error("Failed to retrieve AI word list:", response.statusText);
-        setUser((prevUser) => ({
-          ...prevUser,
-          aiTestMode: false,
-          aiWordList: [],
-        }));
-      }
-    } catch (error) {
-      console.error("Error retrieving AI word list:", error.message);
-    }
-  }
 
   async function checkUserTokenValid() {
     try {
@@ -76,8 +49,6 @@ function App() {
   useEffect(() => {
     const fetchData = async () => {
       await checkUserTokenValid();
-      await retrieveAIWordList();
-      setIsLoading(false);
     };
     fetchData();
   }, []);
@@ -98,10 +69,6 @@ function App() {
       username: "guest",
     }));
   };
-
-  if (isLoading) {
-    return <div></div>;
-  }
 
   return (
     <Router>

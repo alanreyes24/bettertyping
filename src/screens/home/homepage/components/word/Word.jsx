@@ -656,6 +656,7 @@ function Word({ selectedDifficulty, word }) {
     let selectedDifficultyArray = [];
 
     if (word) {
+      console.log(word);
       setRandomWord(word);
     } else {
       if (selectedDifficulty == "easy") {

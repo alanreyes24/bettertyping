@@ -6,6 +6,7 @@ import "./TextAreaStyles.css";
 
 function TextArea({
   user,
+  aiMode,
   selectedDifficulty,
   onTextFinished,
   passEventLog,
@@ -43,6 +44,27 @@ function TextArea({
 
   const [eventLog, setEventLog] = useState([]);
   const [startTime, setStartTime] = useState(0);
+
+  const [AIWordList, setAIWordList] = useState([" "]);
+
+  async function retrieveAIWordList() {
+    try {
+      const response = await axios.get(
+        "http://localhost:3090/ai/getAIWordList",
+        { withCredentials: true }
+      );
+      if (response.status >= 200 && response.status < 300) {
+        console.log(response.data.practiceWords);
+        setAIWordList(response.data.practiceWords);
+      } else {
+        console.log("hey");
+        setAIWordList("error", "uhh");
+        console.error("Failed to retrieve AI word list:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error retrieving AI word list:", error.message);
+    }
+  }
 
   // CURSOR BLINKING
   useEffect(() => {
@@ -126,18 +148,17 @@ function TextArea({
 
   //////// WORD FUNCITONS
   const wordMap = async (amount) => {
-    return new Promise((resolve) => {
+    return new Promise(async (resolve) => {
       // if there is a ai test word list use it, if not use the regular set of words
-      if (user.aiTestMode) {
+      if (aiMode) {
+        await retrieveAIWordList();
+
         resolve(
           Array(amount)
             .fill(false)
             .map((_, i) => (
               <div key={i} className="word">
-                <Word
-                  word={user.aiWordList[i % user.aiWordList.length]}
-                  key={i}
-                />
+                <Word word={AIWordList[i % AIWordList.length]} key={i} />
               </div>
             ))
         );
