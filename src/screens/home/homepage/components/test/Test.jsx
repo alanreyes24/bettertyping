@@ -240,7 +240,7 @@ const Test = ({ user, AIMode }) => {
       <button onClick={() => setSelectedDifficulty("normal")}> normal </button>
       <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
       <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
-        {hideSettings ? (
+        {hideSettings || AIMode == true ? (
           <div
             style={{
               display: "flex",

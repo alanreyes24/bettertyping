@@ -1,180 +1,174 @@
-import React, { useEffect } from "react";
-
+import React, { useEffect, useState } from "react";
 import "./SettingsStyles.css";
 
 function Settings({ hideModal, passSettings }) {
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [testType, setTestType] = React.useState("time");
-  const [testLength, setTestLength] = React.useState(300);
-  const [testWordCount, setTestWordCount] = React.useState(50);
+  const [settings, setSettings] = useState({
+    modalVisible: false,
+    testType: "time",
+    testLength: 300,
+    testWordCount: 50,
+    testDifficulty: 50,
+  });
 
   useEffect(() => {
     passSettings({
-      type: testType,
-      length: testLength,
-      count: testWordCount,
-      //   visible: modalVisible,
+      type: settings.testType,
+      length: settings.testLength,
+      count: settings.testWordCount,
+      difficulty: settings.testDifficulty,
     });
-  }, [testType, testLength, testWordCount, modalVisible]);
+  }, [settings]);
 
   useEffect(() => {
-    if (modalVisible) {
-      setModalVisible(!hideModal);
+    if (settings.modalVisible) {
+      setSettings((prevSettings) => ({
+        ...prevSettings,
+        modalVisible: !hideModal,
+      }));
     }
-  }, [hideModal, modalVisible]);
+  }, [hideModal, settings.modalVisible]);
 
-  return modalVisible ? (
-    <div className='modal__container'>
-      <div className='modal__subcontainer'>
-        <div className='modal__title' style={{ alignSelf: "center" }}>
+  const toggleModalVisibility = () => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      modalVisible: !prevSettings.modalVisible,
+    }));
+  };
+
+  const updateSetting = (key, value) => {
+    setSettings((prevSettings) => ({
+      ...prevSettings,
+      [key]: value,
+    }));
+  };
+
+  return settings.modalVisible ? (
+    <div className="modal__container">
+      <div className="modal__subcontainer">
+        <div className="modal__title" style={{ alignSelf: "center" }}>
           type
         </div>
-        <div className='modal__option__container'>
+        <div className="modal__option__container">
           <div
             className={
-              testType == "time" ? "modal__option selected" : "modal__option"
-            }>
-            <a
-              onClick={() => {
-                setTestType("time");
-              }}>
-              time
-            </a>
+              settings.testType === "time"
+                ? "modal__option selected"
+                : "modal__option"
+            }
+          >
+            <a onClick={() => updateSetting("testType", "time")}>time</a>
           </div>
           <div
             className={
-              testType == "words" ? "modal__option selected" : "modal__option"
+              settings.testType === "words"
+                ? "modal__option selected"
+                : "modal__option"
             }
-            style={{ marginLeft: "3rem" }}>
-            <a
-              onClick={() => {
-                setTestType("words");
-              }}>
-              words
-            </a>
+            style={{ marginLeft: "3rem" }}
+          >
+            <a onClick={() => updateSetting("testType", "words")}>words</a>
           </div>
         </div>
       </div>
 
-      {testType == "time" ? (
-        <div className='modal__subcontainer'>
-          <div className='modal__title'>length</div>
-
-          <div className='modal__option__container'>
+      {settings.testType === "time" ? (
+        <div className="modal__subcontainer">
+          <div className="modal__title">length</div>
+          <div className="modal__option__container">
             <div
               className={
-                testLength == 150 ? "modal__option selected" : "modal__option"
-              }>
-              <a
-                onClick={() => {
-                  setTestLength(150);
-                }}>
-                15
-              </a>
+                settings.testLength === 150
+                  ? "modal__option selected"
+                  : "modal__option"
+              }
+            >
+              <a onClick={() => updateSetting("testLength", 150)}>15</a>
             </div>
             <div
               className={
-                testLength == 300 ? "modal__option selected" : "modal__option"
+                settings.testLength === 300
+                  ? "modal__option selected"
+                  : "modal__option"
               }
-              style={{ marginLeft: "2rem" }}>
-              <a
-                onClick={() => {
-                  setTestLength(300);
-                }}>
-                30
-              </a>
+              style={{ marginLeft: "2rem" }}
+            >
+              <a onClick={() => updateSetting("testLength", 300)}>30</a>
             </div>
             <div
               className={
-                testLength == 600 ? "modal__option selected" : "modal__option"
+                settings.testLength === 600
+                  ? "modal__option selected"
+                  : "modal__option"
               }
-              style={{ marginLeft: "2rem" }}>
-              <a
-                onClick={() => {
-                  setTestLength(600);
-                }}>
-                60
-              </a>
+              style={{ marginLeft: "2rem" }}
+            >
+              <a onClick={() => updateSetting("testLength", 600)}>60</a>
             </div>
           </div>
         </div>
       ) : (
-        <div className='modal__subcontainer'>
-          <div className='modal__title'>count</div>
-
-          <div className='modal__option__container'>
+        <div className="modal__subcontainer">
+          <div className="modal__title">count</div>
+          <div className="modal__option__container">
             <div
               className={
-                testWordCount == 25 ? "modal__option selected" : "modal__option"
-              }>
-              <a
-                onClick={() => {
-                  setTestWordCount(25);
-                }}>
-                25
-              </a>
-            </div>
-            <div
-              className={
-                testWordCount == 50 ? "modal__option selected" : "modal__option"
-              }
-              style={{ marginLeft: "2rem" }}>
-              <a
-                onClick={() => {
-                  setTestWordCount(50);
-                }}>
-                50
-              </a>
-            </div>
-            <div
-              className={
-                testWordCount == 100
+                settings.testWordCount === 25
                   ? "modal__option selected"
                   : "modal__option"
               }
-              style={{ marginLeft: "2rem" }}>
-              <a
-                onClick={() => {
-                  setTestWordCount(100);
-                }}>
-                100
-              </a>
+            >
+              <a onClick={() => updateSetting("testWordCount", 25)}>25</a>
+            </div>
+            <div
+              className={
+                settings.testWordCount === 50
+                  ? "modal__option selected"
+                  : "modal__option"
+              }
+              style={{ marginLeft: "2rem" }}
+            >
+              <a onClick={() => updateSetting("testWordCount", 50)}>50</a>
+            </div>
+            <div
+              className={
+                settings.testWordCount === 100
+                  ? "modal__option selected"
+                  : "modal__option"
+              }
+              style={{ marginLeft: "2rem" }}
+            >
+              <a onClick={() => updateSetting("testWordCount", 100)}>100</a>
             </div>
           </div>
         </div>
       )}
 
       <div
-        className='modal__close'
-        style={{ alignSelf: "center", color: "#FF5757" }}>
-        <a
-          onClick={() => {
-            setModalVisible(!modalVisible);
-          }}>
-          close
-        </a>
+        className="modal__close"
+        style={{ alignSelf: "center", color: "#FF5757" }}
+      >
+        <a onClick={toggleModalVisibility}>close</a>
       </div>
     </div>
   ) : (
-    <a
-      onClick={() => {
-        setModalVisible(!modalVisible);
-      }}>
-      <div className='modal__small__container'>
+    <a onClick={toggleModalVisibility}>
+      <div className="modal__small__container">
         <div style={{ display: "flex", flex: 1, opacity: 1 }}></div>
         <div style={{ display: "flex", flex: 1 }}>
           <div
             style={{ paddingRight: "0.5rem" }}
-            className='modal__small__option'>
-            {testType}
+            className="modal__small__option"
+          >
+            {settings.testType}
           </div>
-          {testType == "time" ? (
-            <div className='modal__small__option'>{testLength / 10}</div>
+          {settings.testType === "time" ? (
+            <div className="modal__small__option">
+              {settings.testLength / 10}
+            </div>
           ) : (
-            <div className='modal__small__option'>{testWordCount}</div>
+            <div className="modal__small__option">{settings.testWordCount}</div>
           )}
         </div>
-
         <div style={{ fontWeight: "200", display: "flex", flex: 1 }}>edit</div>
       </div>
     </a>
