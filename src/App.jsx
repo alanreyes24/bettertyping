@@ -6,10 +6,10 @@ import "./App.css";
 import HomePage from "./screens/home/homepage/HomePage";
 import LeaderBoard from "./screens/leaderboard/LeaderBoard";
 import Analysis from "./screens/analysis/Analysis";
-import Header from "./components/header/Header";
 import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
 import AITest from "./screens/aitest/AITest";
+import HeaderWrapper from "./components/header/HeaderWrapper";
 
 function App() {
   const [user, setUser] = useState({
@@ -23,7 +23,9 @@ function App() {
     try {
       const response = await axios.get(
         "http://localhost:3090/auth/tokenCheck",
-        { withCredentials: true }
+        {
+          withCredentials: true,
+        }
       );
       setUser((prevUser) => ({
         ...prevUser,
@@ -73,7 +75,7 @@ function App() {
     <Router>
       <AuthProvider>
         <div>
-          <Header
+          <HeaderWrapper
             passLoggedIn={handleUserChange}
             passLogout={handleLogout}
             user={user}

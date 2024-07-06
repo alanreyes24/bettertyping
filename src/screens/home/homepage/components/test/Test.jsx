@@ -280,11 +280,24 @@ const Test = ({ user, AIMode }) => {
   };
 
   return (
-    <>
+    <div
+      style={{
+        backgroundColor: AIMode ? "red" : "initial",
+        width: "100vw",
+        height: "100vh",
+      }}
+    >
       <button onClick={() => setSelectedDifficulty("easy")}> easy </button>
       <button onClick={() => setSelectedDifficulty("normal")}> normal </button>
       <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
-      <div style={{ display: "flex", alignSelf: "center", marginTop: "5rem" }}>
+
+      <div
+        style={{
+          display: "flex",
+          alignSelf: "center",
+          marginTop: "5rem",
+        }}
+      >
         {hideSettings || AIMode ? (
           <div
             style={{
@@ -400,7 +413,7 @@ const Test = ({ user, AIMode }) => {
           in order to save your test you need to log-in
         </div>
       ) : null}
-    </>
+    </div>
   );
 };
 

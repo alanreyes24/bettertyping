@@ -5,7 +5,7 @@ import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
 
-function Header({ user, passLoggedIn, passLogout }) {
+function Header({ user, AIMode, passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
 
@@ -35,7 +35,7 @@ function Header({ user, passLoggedIn, passLogout }) {
         <Link to="/">type.ac</Link>
       </div>
 
-      {user.aiTestMode && <div> AI TEST MODE </div>}
+      {AIMode && <div> AI TEST MODE </div>}
 
       {user.username === "guest" ? (
         <div
