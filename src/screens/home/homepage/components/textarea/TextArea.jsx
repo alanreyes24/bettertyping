@@ -150,7 +150,7 @@ function TextArea({
   const wordMap = async (amount) => {
     return new Promise(async (resolve) => {
       // if there is a ai test word list use it, if not use the regular set of words
-      if (aiMode) {
+      if (aiMode && user.AIWordList) {
         await retrieveAIWordList();
 
         resolve(
