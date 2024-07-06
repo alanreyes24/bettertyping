@@ -14,7 +14,7 @@ import HeaderWrapper from "./components/header/HeaderWrapper";
 function App() {
   const [user, setUser] = useState({
     _id: "",
-    username: "",
+    username: "guest",
     aiTestMode: false,
     aiWordList: [],
   });

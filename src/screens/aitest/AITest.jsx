@@ -7,8 +7,14 @@ function AITest({ user }) {
 
   return (
     <>
-      <div> AI TEST: </div>
-      <div style={{ padding: "20px", color: "white", fontSize: "2rem" }}>
+      <div
+        style={{
+          padding: "20px",
+          color: "white",
+          fontSize: "2rem",
+          backgroundColor: "#80C080",
+        }}
+      >
         <Test user={user} AIMode={true} />
       </div>
     </>

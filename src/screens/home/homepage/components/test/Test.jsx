@@ -282,7 +282,6 @@ const Test = ({ user, AIMode }) => {
   return (
     <div
       style={{
-        backgroundColor: AIMode ? "red" : "initial",
         width: "100vw",
         height: "100vh",
       }}

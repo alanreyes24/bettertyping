@@ -7,7 +7,14 @@ import axios from "axios";
 
 function HomePage({ user }) {
   return (
-    <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        backgroundColor: "#ADD8E6",
+      }}
+    >
       <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
         <Test user={user} AIMode={false} />
       </div>
