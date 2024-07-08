@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Scatter } from "react-chartjs-2";
 import { useLocation } from "react-router-dom";
+import HeaderWrapper from "../../components/header/HeaderWrapper";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,7 +28,7 @@ ChartJS.register(
   Legend
 );
 
-function TestFinished() {
+function TestFinished(user) {
   const location = useLocation();
   const { AIMode } = location.state || {};
 
@@ -137,11 +138,17 @@ function TestFinished() {
 
   return (
     <>
+      <HeaderWrapper
+        passLoggedIn={() => {}}
+        passLogout={() => {}}
+        user={user}
+        AIMode={AIMode}
+      />
       <div
         style={{
           width: "100vw",
           height: "100vh",
-          backgroundColor: AIMode ? "#80C080" : "red",
+          backgroundColor: AIMode ? "#80C080" : "#ADD8E6",
         }}
       >
         {AIMode && <div> AI Test: </div>}
