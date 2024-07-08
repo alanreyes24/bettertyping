@@ -15,8 +15,6 @@ function App() {
   const [user, setUser] = useState({
     _id: "",
     username: "guest",
-    aiTestMode: false,
-    aiWordList: [],
   });
 
   async function checkUserTokenValid() {
