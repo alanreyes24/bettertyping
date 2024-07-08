@@ -205,7 +205,6 @@ function Word({ selectedDifficulty, word }) {
     "against",
   ];
 
-  // const normalWords = ["bruh", "error"];
   const normalWords = [
     "the",
     "be",
@@ -656,7 +655,6 @@ function Word({ selectedDifficulty, word }) {
     let selectedDifficultyArray = [];
 
     if (word) {
-      console.log(word);
       setRandomWord(word);
     } else {
       if (selectedDifficulty == "easy") {

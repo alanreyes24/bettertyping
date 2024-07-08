@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Scatter } from "react-chartjs-2";
+import { useLocation } from "react-router-dom";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -25,23 +26,38 @@ ChartJS.register(
 );
 
 function TestFinished() {
+  const location = useLocation();
+  const { AIMode } = location.state || {};
+
   const [mostRecentTest, setMostRecentTest] = useState(null);
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
-  const retrieveMostRecentChartData = async () => {
-    const response = await axios.get(
-      "http://localhost:3090/test/userMostRecentTest",
-      {
-        withCredentials: true,
-      }
-    );
-    setMostRecentTest(response.data);
+  const retrieveMostRecentChartData = async (AIMode) => {
+    console.log();
+    if (!AIMode) {
+      console.log("regular");
+      const response = await axios.get(
+        "http://localhost:3090/test/userMostRecentTest",
+        {
+          withCredentials: true,
+        }
+      );
+      setMostRecentTest(response.data);
+    } else if (AIMode) {
+      const response = await axios.get(
+        "http://localhost:3090/ai/mostRecentTest",
+        {
+          withCredentials: true,
+        }
+      );
+      setMostRecentTest(response.data);
+    }
   };
 
   useEffect(() => {
     const fetchDataAndLog = async () => {
-      await retrieveMostRecentChartData();
+      await retrieveMostRecentChartData(AIMode);
     };
 
     fetchDataAndLog();
@@ -116,9 +132,11 @@ function TestFinished() {
 
   return (
     <>
+      {AIMode && <div> AI Test: </div>}
       <div>{mostRecentTest?.username}</div>
       <div>{mostRecentTest?.results.rawWPM}</div>
       <div>{mostRecentTest?.results.trueWPM}</div>
+      <div>{`AI Mode: ${AIMode}`}</div>
       <div style={{ width: "95vw", height: "50vh" }}>
         <Scatter data={wpmData} options={options} />
       </div>
