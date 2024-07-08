@@ -235,26 +235,19 @@ const Test = ({ user, AIMode }) => {
   }, [test.finished]);
 
   useEffect(() => {
-    if (
-      test.state === 3 &&
-      test.finished &&
-      test.eventLog.length !== 0 &&
-      user.username !== "guest" &&
-      !AIMode
-    ) {
-      sendTestToBackend(); // not sure if this is gonna work right but
+    const handleTestCompletion = async () => {
+      if (user.username !== "guest" && !AIMode) {
+        await sendTestToBackend();
+      } else if (user.username !== "guest" && AIMode) {
+        await sendAITestToBackend();
+      }
       handleEndTestRedirect();
-    } else if (
-      test.state === 3 &&
-      test.finished &&
-      test.eventLog.length !== 0 &&
-      user.username !== "guest" &&
-      AIMode
-    ) {
-      sendAITestToBackend();
-      handleEndTestRedirect();
+    };
+
+    if (test.state === 3 && test.finished && test.eventLog.length !== 0) {
+      handleTestCompletion();
     }
-  }, [test.eventLog]);
+  }, [test.eventLog]); // there has to be a more efficient way...
 
   const calculateWPMs = (type) => {
     if (test.state === 1) {
