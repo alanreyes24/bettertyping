@@ -2,8 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
+import HeaderWrapper from "../../components/header/HeaderWrapper";
 
-function LeaderBoard() {
+function LeaderBoard({ user }) {
   const [loading, setLoading] = useState(true); // eventually change loading into a cool component that has a cool spiny wheel and such
 
   const [displayTimedTests, setDisplayTimedTests] = useState(true);
@@ -159,6 +160,11 @@ function LeaderBoard() {
 
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+      <HeaderWrapper
+        passLoggedIn={() => {}}
+        passLogout={() => {}}
+        user={user}
+      />
       <div> Time Until Reset: {remainingTime}</div>
       <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
         Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
@@ -172,17 +178,19 @@ function LeaderBoard() {
       {loading ? (
         "loading..."
       ) : (
-        <div className='leaderboard'>
+        <div className="leaderboard">
           <div
             style={{ display: displayTimedTests ? "flex" : "none" }}
-            className='leaderboard-container'>
-            <div className='leaderboard-section'>
+            className="leaderboard-container"
+          >
+            <div className="leaderboard-section">
               <div>15 Seconds Tests</div>
-              <div className='leaderboard-list'>
+              <div className="leaderboard-list">
                 {currentTests15.map((test, index) => (
-                  <div key={index} className='leaderboard-item'>
+                  <div key={index} className="leaderboard-item">
                     <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                      style={{ display: "flex", flex: 1, textAlign: "center" }}
+                    >
                       {index + 1}:
                       <div style={{ marginLeft: "0.25rem" }}>
                         {test.username}
@@ -199,13 +207,14 @@ function LeaderBoard() {
               </div>
             </div>
 
-            <div className='leaderboard-section'>
+            <div className="leaderboard-section">
               <div>30 Seconds Tests</div>
-              <div className='leaderboard-list'>
+              <div className="leaderboard-list">
                 {currentTests30.map((test, index) => (
-                  <div key={index} className='leaderboard-item'>
+                  <div key={index} className="leaderboard-item">
                     <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                      style={{ display: "flex", flex: 1, textAlign: "center" }}
+                    >
                       {index + 1}:
                       <div style={{ marginLeft: "0.25rem" }}>
                         {test.username}
@@ -222,13 +231,14 @@ function LeaderBoard() {
               </div>
             </div>
 
-            <div className='leaderboard-section'>
+            <div className="leaderboard-section">
               <div>60 Seconds Tests</div>
-              <div className='leaderboard-list'>
+              <div className="leaderboard-list">
                 {currentTests60.map((test, index) => (
-                  <div key={index} className='leaderboard-item'>
+                  <div key={index} className="leaderboard-item">
                     <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                      style={{ display: "flex", flex: 1, textAlign: "center" }}
+                    >
                       {index + 1}:
                       <div style={{ marginLeft: "0.25rem" }}>
                         {test.username}
@@ -248,14 +258,16 @@ function LeaderBoard() {
 
           <div
             style={{ display: displayTimedTests ? "none" : "flex" }}
-            className='leaderboard-container'>
-            <div className='leaderboard-section'>
+            className="leaderboard-container"
+          >
+            <div className="leaderboard-section">
               <div>25 Word Tests</div>
-              <div className='leaderboard-list'>
+              <div className="leaderboard-list">
                 {currentTestsWord25.map((test, index) => (
-                  <div key={index} className='leaderboard-item'>
+                  <div key={index} className="leaderboard-item">
                     <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                      style={{ display: "flex", flex: 1, textAlign: "center" }}
+                    >
                       {index + 1}:
                       <div style={{ marginLeft: "0.25rem" }}>
                         {test.username}
@@ -272,13 +284,14 @@ function LeaderBoard() {
               </div>
             </div>
 
-            <div className='leaderboard-section'>
+            <div className="leaderboard-section">
               <div>50 Word Tests</div>
-              <div className='leaderboard-list'>
+              <div className="leaderboard-list">
                 {currentTestsWord50.map((test, index) => (
-                  <div key={index} className='leaderboard-item'>
+                  <div key={index} className="leaderboard-item">
                     <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                      style={{ display: "flex", flex: 1, textAlign: "center" }}
+                    >
                       {index + 1}:
                       <div style={{ marginLeft: "0.25rem" }}>
                         {test.username}
@@ -295,13 +308,14 @@ function LeaderBoard() {
               </div>
             </div>
 
-            <div className='leaderboard-section'>
+            <div className="leaderboard-section">
               <div>100 Word Tests</div>
-              <div className='leaderboard-list'>
+              <div className="leaderboard-list">
                 {currentTestsWord100.map((test, index) => (
-                  <div key={index} className='leaderboard-item'>
+                  <div key={index} className="leaderboard-item">
                     <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}>
+                      style={{ display: "flex", flex: 1, textAlign: "center" }}
+                    >
                       {index + 1}:
                       <div style={{ marginLeft: "0.25rem" }}>
                         {test.username}

@@ -35,6 +35,9 @@ function TestFinished() {
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
+  useEffect(() => {
+    console.log("Aimode:", AIMode);
+  }, []);
   const retrieveMostRecentChartData = async (AIMode) => {
     console.log();
     if (!AIMode) {
@@ -138,7 +141,7 @@ function TestFinished() {
         style={{
           width: "100vw",
           height: "100vh",
-          backgroundColor: "#80C080",
+          backgroundColor: AIMode ? "#80C080" : "red",
         }}
       >
         {AIMode && <div> AI Test: </div>}

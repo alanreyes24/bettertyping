@@ -13,6 +13,9 @@ const Test = ({ user, AIMode }) => {
     navigate("/test-finished", { state: { AIMode } });
   };
 
+  useEffect(() => {
+    console.log("test AIMODE: ", AIMode);
+  }, []);
   const sendTestToBackend = async () => {
     try {
       await axios.post("http://localhost:3090/test", test, {

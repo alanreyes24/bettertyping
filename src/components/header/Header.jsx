@@ -33,10 +33,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   return (
     <div
       style={{
-        backgroundColor:
-          AIMode || location.pathname === "/test-finished"
-            ? "#80C080"
-            : "#ADD8E6",
+        backgroundColor: AIMode ? "#80C080" : "#ADD8E6",
       }}
     >
       <div className="header">

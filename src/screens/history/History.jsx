@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Scatter } from "react-chartjs-2";
 import "./History.css";
+import HeaderWrapper from "../../components/header/HeaderWrapper";
 
 function History({ user }) {
   const [allUserTests, setAllUserTests] = useState([]);
@@ -119,6 +120,11 @@ function History({ user }) {
 
   return (
     <>
+      <HeaderWrapper
+        passLoggedIn={() => {}}
+        passLogout={() => {}}
+        user={user}
+      />
       {!userHasTakenTests ? (
         <div>You need to take a test in order to use this page</div>
       ) : null}

@@ -5,12 +5,13 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import Test from "./../home/homepage/components/test/Test";
 import { useNavigate } from "react-router-dom";
+import HeaderWrapper from "../../components/header/HeaderWrapper";
 
 function Analysis({ user }) {
   const navigate = useNavigate();
 
   const handleAITestRedirect = () => {
-    navigate("/ai-test"); 
+    navigate("/ai-test");
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -27,6 +28,11 @@ function Analysis({ user }) {
 
   return (
     <>
+      <HeaderWrapper
+        passLoggedIn={() => {}}
+        passLogout={() => {}}
+        user={user}
+      />
       <div
         style={{
           display: "flex",
@@ -34,8 +40,8 @@ function Analysis({ user }) {
           justifyContent: "center",
           alignItems: "center",
           width: "100vw",
-          height: "100vh", 
-          overflow: "auto", 
+          height: "100vh",
+          overflow: "auto",
           fontSize: "2rem",
         }}
       >

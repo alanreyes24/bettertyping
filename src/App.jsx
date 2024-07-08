@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import axios from "axios";
-import { AuthProvider } from "./AuthContext";
 import "./App.css";
 import HomePage from "./screens/home/homepage/HomePage";
 import LeaderBoard from "./screens/leaderboard/LeaderBoard";
@@ -71,23 +70,16 @@ function App() {
 
   return (
     <Router>
-      <AuthProvider>
-        <div>
-          <HeaderWrapper
-            passLoggedIn={handleUserChange}
-            passLogout={handleLogout}
-            user={user}
-          />
-          <Routes>
-            <Route path="/" element={<HomePage user={user} />} />
-            <Route path="/leaderboard" element={<LeaderBoard />} />
-            <Route path="/analysis" element={<Analysis user={user} />} />
-            <Route path="/history" element={<History user={user} />} />
-            <Route path="/test-finished" element={<TestFinished />} />
-            <Route path="/ai-test" element={<AITest user={user} />} />
-          </Routes>
-        </div>
-      </AuthProvider>
+      <div>
+        <Routes>
+          <Route path="/" element={<HomePage user={user} />} />
+          <Route path="/leaderboard" element={<LeaderBoard user={user} />} />
+          <Route path="/analysis" element={<Analysis user={user} />} />
+          <Route path="/history" element={<History user={user} />} />
+          <Route path="/test-finished" element={<TestFinished user={user} />} />
+          <Route path="/ai-test" element={<AITest user={user} />} />
+        </Routes>
+      </div>
     </Router>
   );
 }
