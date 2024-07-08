@@ -20,9 +20,17 @@ const Test = ({ user, AIMode }) => {
       await axios.post("http://localhost:3090/test", test, {
         withCredentials: true,
       });
+    } catch (error) {
+      console.log(error);
+      console.error("Error submitting test:", error.response?.data);
+    }
+  };
 
-      // Uncomment and adjust the following lines if you need to manipulate the URL directly
-      // window.location.href = ${window.location.href}/test/${response.data._id};
+  const sendAITestToBackend = async () => {
+    try {
+      await axios.post("http://localhost:3090/ai/test", test, {
+        withCredentials: true,
+      });
     } catch (error) {
       console.log(error);
       console.error("Error submitting test:", error.response?.data);
@@ -243,6 +251,7 @@ const Test = ({ user, AIMode }) => {
       user.username !== "guest" &&
       AIMode
     ) {
+      sendAITestToBackend();
       handleEndTestRedirect();
     }
   }, [test.eventLog]);
