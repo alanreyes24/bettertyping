@@ -286,9 +286,16 @@ const Test = ({ user, AIMode }) => {
         height: "100vh",
       }}
     >
-      <button onClick={() => setSelectedDifficulty("easy")}> easy </button>
-      <button onClick={() => setSelectedDifficulty("normal")}> normal </button>
-      <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
+      {!AIMode && (
+        <div>
+          <button onClick={() => setSelectedDifficulty("easy")}> easy </button>
+          <button onClick={() => setSelectedDifficulty("normal")}>
+            {" "}
+            normal{" "}
+          </button>
+          <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
+        </div>
+      )}
 
       <div
         style={{
