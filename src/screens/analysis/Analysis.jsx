@@ -13,11 +13,14 @@ function Analysis({ user }) {
     navigate("/ai-test"); // add AIMode passing here as well as it just displays the user's last saved test instead of their most recently taken
   };
 
+  const [isLoading, setIsLoading] = useState(false);
+
   async function getAnalysis() {
     const response = await axios.get("http://localhost:3090/ai/getAnalysis", {
       withCredentials: true,
     });
     setAnalysisJson(response.data);
+    setIsLoading(false);
   }
 
   const [analysisJson, setAnalysisJson] = useState({});
@@ -50,10 +53,18 @@ function Analysis({ user }) {
         <a
           onClick={() => {
             getAnalysis();
+            setIsLoading(true);
           }}
         >
           Get Analysis
         </a>
+        {isLoading && (
+          <div class="load">
+            <div class="progress"></div>
+            <div class="progress"></div>
+            <div class="progress"></div>
+          </div>
+        )}
         <div style={{ fontSize: "10px" }}>{JSON.stringify(analysisJson)}</div>
 
         {Object.keys(analysisJson).length > 0 && (
