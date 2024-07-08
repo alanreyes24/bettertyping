@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Login from "../login/Login";
 import { useAuth } from "../../AuthContext";
 import "./Header.css";
@@ -8,6 +8,7 @@ import "./Header.css";
 function Header({ user, AIMode, passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     if (user.username && user.username !== "guest") {
@@ -30,7 +31,14 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   }
 
   return (
-    <div style={{ backgroundColor: AIMode ? "#80C080" : "#ADD8E6" }}>
+    <div
+      style={{
+        backgroundColor:
+          AIMode || location.pathname === "/test-finished"
+            ? "#80C080"
+            : "#ADD8E6",
+      }}
+    >
       <div className="header">
         <div className="logo">
           <Link to="/">type.ac</Link>

@@ -1,3 +1,5 @@
+// TestFinished.j
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Scatter } from "react-chartjs-2";
@@ -132,13 +134,21 @@ function TestFinished() {
 
   return (
     <>
-      {AIMode && <div> AI Test: </div>}
-      <div>{mostRecentTest?.username}</div>
-      <div>{mostRecentTest?.results.rawWPM}</div>
-      <div>{mostRecentTest?.results.trueWPM}</div>
-      <div>{`AI Mode: ${AIMode}`}</div>
-      <div style={{ width: "95vw", height: "50vh" }}>
-        <Scatter data={wpmData} options={options} />
+      <div
+        style={{
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "#80C080",
+        }}
+      >
+        {AIMode && <div> AI Test: </div>}
+        <div>{mostRecentTest?.username}</div>
+        <div>{mostRecentTest?.results.rawWPM}</div>
+        <div>{mostRecentTest?.results.trueWPM}</div>
+        <div>{`AI Mode: ${AIMode}`}</div>
+        <div style={{ width: "95vw", height: "50vh" }}>
+          <Scatter data={wpmData} options={options} />
+        </div>
       </div>
     </>
   );
