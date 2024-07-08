@@ -54,7 +54,6 @@ function TextArea({
         { withCredentials: true }
       );
       if (response.status >= 200 && response.status < 300) {
-        console.log(response.data.practiceWords);
         setAIWordList(response.data.practiceWords);
       } else {
         console.log("hey");

@@ -9,10 +9,8 @@ import { useAuth } from "../../../../../AuthContext";
 const Test = ({ user, AIMode }) => {
   const navigate = useNavigate();
 
-  const [selectedDifficulty, setSelectedDifficulty] = useState("normal");
-
   const handleEndTestRedirect = () => {
-    navigate("/test-finished", { state: { AIMode } }); // add AIMode passing here
+    navigate("/test-finished", { state: { AIMode } });
   };
 
   const sendTestToBackend = async () => {
@@ -21,7 +19,6 @@ const Test = ({ user, AIMode }) => {
         withCredentials: true,
       });
     } catch (error) {
-      console.log(error);
       console.error("Error submitting test:", error.response?.data);
     }
   };
@@ -32,24 +29,18 @@ const Test = ({ user, AIMode }) => {
         withCredentials: true,
       });
     } catch (error) {
-      console.log(error);
       console.error("Error submitting test:", error.response?.data);
     }
   };
 
   const [hideSettings, setHideSettings] = useState(false);
 
-  // sets default of test object to this state
   const [test, setTest] = useState({
-    //eventually have unique IDs for tests for links/db
-    userID: "", // gets set to the User's ID later on
+    userID: "",
     username: "aaaa",
     testID: 0,
-    // -1 loading, 0 unstarted, 1 running, 2 paused, 3 finished
     state: -1,
     finished: false,
-
-    //words object
     words: {
       wordList: [],
       attemptedWords: 0,
@@ -58,14 +49,12 @@ const Test = ({ user, AIMode }) => {
       trueWPMArray: [],
       rawWPMArray: [],
     },
-    //settings object
     settings: {
       type: "time",
-      length: 4040,
+      length: 300,
       count: 50,
       difficulty: "normal",
     },
-    //timer object
     timer: {
       timeLeft: 300,
       isActive: false,
@@ -79,7 +68,6 @@ const Test = ({ user, AIMode }) => {
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
-  // END OF TEST
   useEffect(() => {
     if (
       test.state <= 1 &&
@@ -93,7 +81,6 @@ const Test = ({ user, AIMode }) => {
     }
   }, [test]);
 
-  // FINISH TEST
   useEffect(() => {
     if (test.state === 3 && !test.finished) {
       setTest((prevTest) => ({
@@ -103,7 +90,6 @@ const Test = ({ user, AIMode }) => {
     }
   }, [test]);
 
-  // RESULTS
   useEffect(() => {
     if (test.finished && Object.keys(test.results).length === 0) {
       let totalCorrect = 0;
@@ -120,11 +106,9 @@ const Test = ({ user, AIMode }) => {
       let correctOnlyWPM =
         (600 * (totalCorrect / 5)) /
         (test.settings.length - test.timer.timeLeft);
-
       let trueWPM =
         (600 * ((totalCorrect - totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
-
       let rawWPM =
         (600 * ((totalCorrect + totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
@@ -158,17 +142,12 @@ const Test = ({ user, AIMode }) => {
           ...prevTest,
           userID: user._id,
           username: user.username,
-          settings: {
-            ...prevTest.settings,
-            difficulty: selectedDifficulty,
-          },
         }));
       }
     }
   }, [test.state]);
 
   useEffect(() => {
-    //HANDLE TIMER
     if (test.state === 1) {
       setHideSettings(true);
 
@@ -247,7 +226,7 @@ const Test = ({ user, AIMode }) => {
     if (test.state === 3 && test.finished && test.eventLog.length !== 0) {
       handleTestCompletion();
     }
-  }, [test.eventLog]); // there has to be a more efficient way...
+  }, [test.eventLog]);
 
   const calculateWPMs = (type) => {
     if (test.state === 1) {
@@ -288,17 +267,6 @@ const Test = ({ user, AIMode }) => {
         height: "100vh",
       }}
     >
-      {!AIMode && (
-        <div>
-          <button onClick={() => setSelectedDifficulty("easy")}> easy </button>
-          <button onClick={() => setSelectedDifficulty("normal")}>
-            {" "}
-            normal{" "}
-          </button>
-          <button onClick={() => setSelectedDifficulty("hard")}> hard </button>
-        </div>
-      )}
-
       <div
         style={{
           display: "flex",
@@ -322,22 +290,20 @@ const Test = ({ user, AIMode }) => {
             }}
           ></div>
         ) : (
-          <>
-            <Settings
-              hideModal={hideSettings}
-              test={test}
-              passSettings={(newSettings) => {
-                setTest((prevTest) => ({
-                  ...prevTest,
-                  timer: {
-                    ...prevTest.timer,
-                    timeLeft: newSettings.length,
-                  },
-                  settings: newSettings,
-                }));
-              }}
-            />
-          </>
+          <Settings
+            hideModal={hideSettings}
+            test={test}
+            passSettings={(newSettings) => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                timer: {
+                  ...prevTest.timer,
+                  timeLeft: newSettings.length,
+                },
+                settings: newSettings,
+              }));
+            }}
+          />
         )}
       </div>
       <>
@@ -356,7 +322,7 @@ const Test = ({ user, AIMode }) => {
             user={user}
             aiMode={AIMode}
             test={test}
-            selectedDifficulty={selectedDifficulty}
+            selectedDifficulty={test.settings.difficulty} // Use the correct field
             passWords={(w) => {
               setTest((prevTest) => ({
                 ...prevTest,

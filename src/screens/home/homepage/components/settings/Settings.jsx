@@ -7,7 +7,7 @@ function Settings({ hideModal, passSettings }) {
     testType: "time",
     testLength: 300,
     testWordCount: 50,
-    testDifficulty: 50,
+    testDifficulty: "normal",
   });
 
   useEffect(() => {
@@ -67,6 +67,45 @@ function Settings({ hideModal, passSettings }) {
             style={{ marginLeft: "3rem" }}
           >
             <a onClick={() => updateSetting("testType", "words")}>words</a>
+          </div>
+        </div>
+      </div>
+
+      <div className="modal__subcontainer">
+        <div className="modal__title" style={{ alignSelf: "center" }}>
+          difficulty
+        </div>
+        <div className="modal__option__container">
+          <div
+            className={
+              settings.testDifficulty === "easy"
+                ? "modal__option selected"
+                : "modal__option"
+            }
+          >
+            <a onClick={() => updateSetting("testDifficulty", "easy")}>easy</a>
+          </div>
+          <div
+            className={
+              settings.testDifficulty === "normal"
+                ? "modal__option selected"
+                : "modal__option"
+            }
+            style={{ marginLeft: "3rem" }}
+          >
+            <a onClick={() => updateSetting("testDifficulty", "normal")}>
+              normal
+            </a>
+          </div>
+          <div
+            className={
+              settings.testDifficulty === "hard"
+                ? "modal__option selected"
+                : "modal__option"
+            }
+            style={{ marginLeft: "3rem" }}
+          >
+            <a onClick={() => updateSetting("testDifficulty", "hard")}>hard</a>
           </div>
         </div>
       </div>
@@ -168,6 +207,10 @@ function Settings({ hideModal, passSettings }) {
           ) : (
             <div className="modal__small__option">{settings.testWordCount}</div>
           )}
+          <div className="modal__small__option">
+            {settings.testDifficulty.charAt(0).toUpperCase() +
+              settings.testDifficulty.slice(1)}
+          </div>
         </div>
         <div style={{ fontWeight: "200", display: "flex", flex: 1 }}>edit</div>
       </div>

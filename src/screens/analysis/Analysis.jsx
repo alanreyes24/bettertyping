@@ -10,7 +10,7 @@ function Analysis({ user }) {
   const navigate = useNavigate();
 
   const handleAITestRedirect = () => {
-    navigate("/ai-test"); // add AIMode passing here as well as it just displays the user's last saved test instead of their most recently taken
+    navigate("/ai-test"); 
   };
 
   const [isLoading, setIsLoading] = useState(false);
@@ -34,8 +34,8 @@ function Analysis({ user }) {
           justifyContent: "center",
           alignItems: "center",
           width: "100vw",
-          height: "100vh", // Adjusted height to ensure visibility
-          overflow: "auto", // Changed from hidden to auto
+          height: "100vh", 
+          overflow: "auto", 
           fontSize: "2rem",
         }}
       >
