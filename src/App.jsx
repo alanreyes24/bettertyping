@@ -9,6 +9,7 @@ import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
 import AITest from "./screens/aitest/AITest";
 import HeaderWrapper from "./components/header/HeaderWrapper";
+import Information from "./screens/information/Information";
 
 function App() {
   const [user, setUser] = useState({
@@ -78,6 +79,7 @@ function App() {
           <Route path="/history" element={<History user={user} />} />
           <Route path="/test-finished" element={<TestFinished user={user} />} />
           <Route path="/ai-test" element={<AITest user={user} />} />
+          <Route path="/information" element={<Information user={user} />} />
         </Routes>
       </div>
     </Router>
