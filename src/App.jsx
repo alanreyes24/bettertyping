@@ -8,7 +8,7 @@ import Analysis from "./screens/analysis/Analysis";
 import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
 import AITest from "./screens/aitest/AITest";
-import HeaderWrapper from "./components/header/HeaderWrapper";
+// Removed unused import HeaderWrapper
 import Information from "./screens/information/Information";
 
 function App() {
@@ -73,13 +73,67 @@ function App() {
     <Router>
       <div>
         <Routes>
-          <Route path="/" element={<HomePage user={user} />} />
-          <Route path="/leaderboard" element={<LeaderBoard user={user} />} />
-          <Route path="/analysis" element={<Analysis user={user} />} />
-          <Route path="/history" element={<History user={user} />} />
+          <Route
+            path="/"
+            element={
+              <HomePage
+                user={user}
+                handleUserChange={handleUserChange}
+                handleLogout={handleLogout}
+              />
+            }
+          />
+          <Route
+            path="/leaderboard"
+            element={
+              <LeaderBoard
+                user={user}
+                handleUserChange={handleUserChange}
+                handleLogout={handleLogout}
+              />
+            }
+          />
+          <Route
+            path="/analysis"
+            element={
+              <Analysis
+                user={user}
+                handleUserChange={handleUserChange}
+                handleLogout={handleLogout}
+              />
+            }
+          />
+          <Route
+            path="/history"
+            element={
+              <History
+                user={user}
+                handleUserChange={handleUserChange}
+                handleLogout={handleLogout}
+              />
+            }
+          />
+          <Route
+            path="/ai-test"
+            element={
+              <AITest
+                user={user}
+                handleUserChange={handleUserChange}
+                handleLogout={handleLogout}
+              />
+            }
+          />
+          <Route
+            path="/information"
+            element={
+              <Information
+                user={user}
+                handleUserChange={handleUserChange}
+                handleLogout={handleLogout}
+              />
+            }
+          />
           <Route path="/test-finished" element={<TestFinished user={user} />} />
-          <Route path="/ai-test" element={<AITest user={user} />} />
-          <Route path="/information" element={<Information user={user} />} />
         </Routes>
       </div>
     </Router>

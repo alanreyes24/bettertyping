@@ -7,7 +7,7 @@ import Test from "./../home/homepage/components/test/Test";
 import { useNavigate } from "react-router-dom";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
 
-function Analysis({ user }) {
+function Analysis({ user, handleUserChange, handleLogout }) {
   const navigate = useNavigate();
 
   const handleAITestRedirect = () => {
@@ -29,8 +29,8 @@ function Analysis({ user }) {
   return (
     <>
       <HeaderWrapper
-        passLoggedIn={() => {}}
-        passLogout={() => {}}
+        passLoggedIn={handleUserChange}
+        passLogout={handleLogout}
         user={user}
       />
       <div

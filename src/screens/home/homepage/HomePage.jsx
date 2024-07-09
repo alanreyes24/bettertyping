@@ -3,12 +3,12 @@ import React from "react"; // Removed unused imports
 import HeaderWrapper from "../../../components/header/HeaderWrapper";
 import Test from "./components/test/Test";
 
-function HomePage({ user }) {
+function HomePage({ user, handleUserChange, handleLogout }) {
   return (
     <>
       <HeaderWrapper
-        passLoggedIn={() => {}}
-        passLogout={() => {}}
+        passLoggedIn={handleUserChange}
+        passLogout={handleLogout}
         user={user}
       />
       <div

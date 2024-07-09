@@ -1,12 +1,12 @@
 import React from "react";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
 
-function Information({ user }) {
+function Information({ user, handleUserChange, handleLogout }) {
   return (
     <>
       <HeaderWrapper
-        passLoggedIn={() => {}}
-        passLogout={() => {}}
+        passLoggedIn={handleUserChange}
+        passLogout={handleLogout}
         user={user}
       />
 

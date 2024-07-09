@@ -4,7 +4,7 @@ import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
 
-function LeaderBoard({ user }) {
+function LeaderBoard({ user, handleUserChange, handleLogout }) {
   const [loading, setLoading] = useState(true); // eventually change loading into a cool component that has a cool spiny wheel and such
 
   const [displayTimedTests, setDisplayTimedTests] = useState(true);
@@ -161,8 +161,8 @@ function LeaderBoard({ user }) {
   return (
     <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
       <HeaderWrapper
-        passLoggedIn={() => {}}
-        passLogout={() => {}}
+        passLoggedIn={handleUserChange}
+        passLogout={handleLogout}
         user={user}
       />
       <div> Time Until Reset: {remainingTime}</div>
