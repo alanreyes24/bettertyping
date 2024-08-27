@@ -1,9 +1,10 @@
+Here's the full CSS code without any comments:
+
+```
 .modal__container {
   transition: all 0.15s ease;
-
   display: flex;
   flex: 1;
-  /* background-color: #273356; */
   align-self: center;
   flex-direction: column;
   border-radius: 15px;
@@ -53,22 +54,27 @@
 .modal__small__container {
   transition: all 0.15s ease-out;
   display: flex;
-  flex: 1;
-  /* background-color: #273356; */
+  flex-direction: column;
   align-self: center;
   align-items: center;
   justify-content: center;
   border-radius: 15px;
   padding: 1rem;
   width: 20rem;
-  min-height: 1rem;
-  max-height: 1rem;
-  transition: all 0.15s ease;
+  min-height: 6rem;
 }
 
 .modal__small__option {
   font-size: 1rem;
   font-weight: 400;
   color: #fff;
-  letter-spacing: 0.07rem;
+  margin-bottom: 0.5rem;
 }
+
+.modal__edit__option {
+  font-size: 1rem;
+  font-weight: 200;
+  color: #fff;
+  margin-top: 0.5rem;
+}
+```

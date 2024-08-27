@@ -26,7 +26,7 @@ function Settings({ hideModal, passSettings }) {
         modalVisible: !hideModal,
       }));
     }
-  }, [hideModal, settings.modalVisible]);
+  }, [hideModal]);
 
   const toggleModalVisibility = () => {
     setSettings((prevSettings) => ({
@@ -192,27 +192,16 @@ function Settings({ hideModal, passSettings }) {
   ) : (
     <a onClick={toggleModalVisibility}>
       <div className="modal__small__container">
-        <div style={{ display: "flex", flex: 1, opacity: 1 }}></div>
-        <div style={{ display: "flex", flex: 1 }}>
-          <div
-            style={{ paddingRight: "0.5rem" }}
-            className="modal__small__option"
-          >
-            {settings.testType}
-          </div>
-          {settings.testType === "time" ? (
-            <div className="modal__small__option">
-              {settings.testLength / 10}
-            </div>
-          ) : (
-            <div className="modal__small__option">{settings.testWordCount}</div>
-          )}
-          <div className="modal__small__option">
-            {settings.testDifficulty.charAt(0).toUpperCase() +
-              settings.testDifficulty.slice(1)}
-          </div>
+        <div className="modal__small__option">
+          {settings.testType} {settings.testLength / 10}
         </div>
-        <div style={{ fontWeight: "200", display: "flex", flex: 1 }}>edit</div>
+        {settings.testType !== "time" && (
+          <div className="modal__small__option">{settings.testWordCount}</div>
+        )}
+        <div className="modal__small__option">
+          {settings.testDifficulty} difficulty
+        </div>
+        <div className="modal__edit__option">edit</div>
       </div>
     </a>
   );
