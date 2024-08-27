@@ -14,8 +14,9 @@ const Test = ({ user, AIMode }) => {
   };
 
   useEffect(() => {
-    console.log("test AIMODE: ", AIMode);
-  }, []);
+    console.log("test AIMode:", AIMode);
+  }, [AIMode]);
+
   const sendTestToBackend = async () => {
     try {
       await axios.post("http://localhost:3090/test", test, {
@@ -32,7 +33,7 @@ const Test = ({ user, AIMode }) => {
         withCredentials: true,
       });
     } catch (error) {
-      console.error("Error submitting test:", error.response?.data);
+      console.error("Error submitting AI test:", error.response?.data);
     }
   };
 
@@ -106,49 +107,45 @@ const Test = ({ user, AIMode }) => {
         totalIncorrect += value.length;
       }
 
-      let correctOnlyWPM =
+      const correctOnlyWPM =
         (600 * (totalCorrect / 5)) /
         (test.settings.length - test.timer.timeLeft);
-      let trueWPM =
+      const trueWPM =
         (600 * ((totalCorrect - totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
-      let rawWPM =
+      const rawWPM =
         (600 * ((totalCorrect + totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
 
-      if (test.settings.type === "words") {
-        rawWPM *= -1;
-        trueWPM *= -1;
-        correctOnlyWPM *= -1;
-      }
-
-      let accuracy = (
+      const accuracy = (
         (totalCorrect / (totalCorrect + totalIncorrect)) *
         100
       ).toFixed(2);
+
       setTest((prevTest) => ({
         ...prevTest,
         results: {
-          trueWPM: trueWPM,
-          correctOnlyWPM: correctOnlyWPM,
-          rawWPM: rawWPM,
-          accuracy: accuracy,
+          trueWPM: test.settings.type === "time" ? trueWPM : trueWPM * -1,
+          correctOnlyWPM:
+            test.settings.type === "time"
+              ? correctOnlyWPM
+              : correctOnlyWPM * -1,
+          rawWPM: test.settings.type === "time" ? rawWPM : rawWPM * -1,
+          accuracy,
         },
       }));
     }
   }, [test]);
 
   useEffect(() => {
-    if (test.state === 1) {
-      if (test.userID === "") {
-        setTest((prevTest) => ({
-          ...prevTest,
-          userID: user._id,
-          username: user.username,
-        }));
-      }
+    if (test.state === 1 && test.userID === "") {
+      setTest((prevTest) => ({
+        ...prevTest,
+        userID: user._id,
+        username: user.username,
+      }));
     }
-  }, [test.state]);
+  }, [test.state, user]);
 
   useEffect(() => {
     if (test.state === 1) {
@@ -214,7 +211,7 @@ const Test = ({ user, AIMode }) => {
         },
       }));
     }
-  }, [test.finished]);
+  }, [test.finished, trueWPMArray, rawWPMArray]);
 
   useEffect(() => {
     const handleTestCompletion = async () => {
@@ -229,7 +226,7 @@ const Test = ({ user, AIMode }) => {
     if (test.state === 3 && test.finished && test.eventLog.length !== 0) {
       handleTestCompletion();
     }
-  }, [test.eventLog]);
+  }, [test.eventLog, test.state, test.finished, user.username, AIMode]);
 
   const calculateWPMs = (type) => {
     if (test.state === 1) {
@@ -244,10 +241,10 @@ const Test = ({ user, AIMode }) => {
         totalIncorrect += value.length;
       }
 
-      let trueWPM =
+      const trueWPM =
         (600 * ((totalCorrect - totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
-      let rawWPM =
+      const rawWPM =
         (600 * ((totalCorrect + totalIncorrect) / 5)) /
         (test.settings.length - test.timer.timeLeft);
 
@@ -261,19 +258,16 @@ const Test = ({ user, AIMode }) => {
           : (rawWPM * -1).toFixed(2);
       }
     }
+    return 0;
   };
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100vh",
-      }}
-    >
+    <div style={{ width: "100%", height: "100%" }}>
       <div
         style={{
           display: "flex",
-          alignSelf: "center",
+          justifyContent: "center",
+          alignItems: "center",
           marginTop: "5rem",
         }}
       >
@@ -281,7 +275,6 @@ const Test = ({ user, AIMode }) => {
           <div
             style={{
               display: "flex",
-              flex: 1,
               alignSelf: "center",
               alignItems: "center",
               justifyContent: "center",
@@ -291,7 +284,7 @@ const Test = ({ user, AIMode }) => {
               minHeight: "1rem",
               maxHeight: "1rem",
             }}
-          ></div>
+          />
         ) : (
           <Settings
             hideModal={hideSettings}
@@ -309,87 +302,89 @@ const Test = ({ user, AIMode }) => {
           />
         )}
       </div>
-      <>
-        <div style={{ justifyContent: "center", alignSelf: "center" }}>
-          <Timer test={test} />
-        </div>
+      <div style={{ justifyContent: "center", alignSelf: "center" }}>
+        <Timer test={test} />
+      </div>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          transition: "all .15s ease-out",
+        }}
+      >
+        <TextArea
+          user={user}
+          aiMode={AIMode}
+          test={test}
+          selectedDifficulty={test.settings.difficulty}
+          passWords={(w) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              words: {
+                ...prevTest.words,
+                attemptedWords: 1,
+                wordList: w,
+              },
+            }));
+          }}
+          passCorrectLetters={(l) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              words: {
+                ...prevTest.words,
+                correctLetters: l,
+              },
+            }));
+          }}
+          passIncorrectLetters={(l) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              words: {
+                ...prevTest.words,
+                incorrectLetters: l,
+              },
+            }));
+          }}
+          onTextLoaded={() => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              state: 0,
+            }));
+          }}
+          onTextStarted={() => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              state: 1,
+            }));
+          }}
+          onTextFinished={() => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              state: 3,
+            }));
+          }}
+          passEventLog={(e) => {
+            setTest((prevTest) => ({
+              ...prevTest,
+              timestamp: e[0].timestamp,
+              eventLog: e,
+            }));
+          }}
+          onFocus={() => {}}
+          onFocusLost={() => {}}
+        />
+      </div>
+      {user.username === "guest" && (
         <div
           style={{
             display: "flex",
-            alignSelf: "center",
             justifyContent: "center",
-            transition: "all .15s ease-out",
+            marginTop: "1rem",
           }}
         >
-          <TextArea
-            user={user}
-            aiMode={AIMode}
-            test={test}
-            selectedDifficulty={test.settings.difficulty} // Use the correct field
-            passWords={(w) => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  attemptedWords: 1,
-                  wordList: w,
-                },
-              }));
-            }}
-            passCorrectLetters={(l) => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  correctLetters: l,
-                },
-              }));
-            }}
-            passIncorrectLetters={(l) => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  incorrectLetters: l,
-                },
-              }));
-            }}
-            onTextLoaded={() => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                state: 0,
-              }));
-            }}
-            onTextStarted={() => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                state: 1,
-              }));
-            }}
-            onTextFinished={() => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                state: 3,
-              }));
-            }}
-            passEventLog={(e) => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                timestamp: e[0].timestamp,
-                eventLog: e,
-              }));
-            }}
-            onFocus={() => {}}
-            onFocusLost={() => {}}
-          />
+          In order to save your test you need to log in
         </div>
-      </>
-      {user.username === "guest" ? (
-        <div style={{ display: "flex" }}>
-          {" "}
-          in order to save your test you need to log-in
-        </div>
-      ) : null}
+      )}
     </div>
   );
 };
