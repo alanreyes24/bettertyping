@@ -1,6 +1,3 @@
-Here's the full CSS code without any comments:
-
-```
 .modal__container {
   transition: all 0.15s ease;
   display: flex;
@@ -77,4 +74,8 @@ Here's the full CSS code without any comments:
   color: #fff;
   margin-top: 0.5rem;
 }
-```
+
+.modal__close a {
+  text-decoration: none;
+  color: inherit;
+}

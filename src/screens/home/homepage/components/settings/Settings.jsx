@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./SettingsStyles.css";
 
 function Settings({ hideModal, passSettings }) {
@@ -9,6 +9,8 @@ function Settings({ hideModal, passSettings }) {
     testWordCount: 50,
     testDifficulty: "normal",
   });
+
+  const modalRef = useRef(null);
 
   useEffect(() => {
     passSettings({
@@ -42,8 +44,29 @@ function Settings({ hideModal, passSettings }) {
     }));
   };
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (modalRef.current && !modalRef.current.contains(event.target)) {
+        setSettings((prevSettings) => ({
+          ...prevSettings,
+          modalVisible: false,
+        }));
+      }
+    };
+
+    if (settings.modalVisible) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [settings.modalVisible]);
+
   return settings.modalVisible ? (
-    <div className="modal__container">
+    <div className="modal__container" ref={modalRef}>
       <div className="modal__subcontainer">
         <div className="modal__title" style={{ alignSelf: "center" }}>
           type
@@ -181,13 +204,6 @@ function Settings({ hideModal, passSettings }) {
           </div>
         </div>
       )}
-
-      <div
-        className="modal__close"
-        style={{ alignSelf: "center", color: "#FF5757" }}
-      >
-        <a onClick={toggleModalVisibility}>close</a>
-      </div>
     </div>
   ) : (
     <a onClick={toggleModalVisibility}>
