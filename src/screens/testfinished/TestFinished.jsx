@@ -1,5 +1,3 @@
-// TestFinished.j
-
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Scatter } from "react-chartjs-2";
@@ -16,6 +14,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
+import "./TestFinished.css";
 
 ChartJS.register(
   CategoryScale,
@@ -30,19 +29,12 @@ ChartJS.register(
 
 function TestFinished(user) {
   const location = useLocation();
-  const { AIMode } = location.state || {};
-
   const [mostRecentTest, setMostRecentTest] = useState(null);
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
   useEffect(() => {
-    console.log("Aimode:", AIMode);
-  }, []);
-  const retrieveMostRecentChartData = async (AIMode) => {
-    console.log();
-    if (!AIMode) {
-      console.log("regular");
+    const fetchDataAndLog = async () => {
       const response = await axios.get(
         "http://localhost:3090/test/userMostRecentTest",
         {
@@ -50,27 +42,12 @@ function TestFinished(user) {
         }
       );
       setMostRecentTest(response.data);
-    } else if (AIMode) {
-      const response = await axios.get(
-        "http://localhost:3090/ai/mostRecentTest",
-        {
-          withCredentials: true,
-        }
-      );
-      setMostRecentTest(response.data);
-    }
-  };
-
-  useEffect(() => {
-    const fetchDataAndLog = async () => {
-      await retrieveMostRecentChartData(AIMode);
     };
 
     fetchDataAndLog();
   }, []);
 
   useEffect(() => {
-    // not really necessary but good to have just in case
     if (mostRecentTest) {
       setTrueWPMArray(mostRecentTest.words.trueWPMArray);
       setRawWPMArray(mostRecentTest.words.rawWPMArray);
@@ -80,7 +57,7 @@ function TestFinished(user) {
   const wpmData = {
     datasets: [
       {
-        label: "true wpm",
+        label: "True WPM",
         data: trueWPMArray,
         cubicInterpolationMode: "monotone",
         backgroundColor: "rgba(255, 255, 255, 0.2)",
@@ -94,7 +71,7 @@ function TestFinished(user) {
         pointHoverBorderColor: "rgba(255, 255, 255, 1)",
       },
       {
-        label: "raw wpm",
+        label: "Raw WPM",
         data: rawWPMArray,
         cubicInterpolationMode: "monotone",
         showLine: true,
@@ -142,21 +119,30 @@ function TestFinished(user) {
         passLoggedIn={() => {}}
         passLogout={() => {}}
         user={user}
-        AIMode={AIMode}
       />
-      <div
-        style={{
-          width: "100vw",
-          height: "100vh",
-          backgroundColor: AIMode ? "#80C080" : "#ADD8E6",
-        }}
-      >
-        {AIMode && <div> AI Test: </div>}
-        <div>{mostRecentTest?.username}</div>
-        <div>{mostRecentTest?.results.rawWPM}</div>
-        <div>{mostRecentTest?.results.trueWPM}</div>
-        <div>{`AI Mode: ${AIMode}`}</div>
-        <div style={{ width: "95vw", height: "50vh" }}>
+      <div className="test-finished-container">
+        <div className="test-finished-header">
+          {mostRecentTest?.username}'s Test Results
+        </div>
+        <div className="test-finished-results">
+          <div>
+            <span className="test-finished-label">Raw WPM:</span>{" "}
+            {mostRecentTest?.results.rawWPM}
+          </div>
+          <div>
+            <span className="test-finished-label">True WPM:</span>{" "}
+            {mostRecentTest?.results.trueWPM}
+          </div>
+          <div>
+            <span className="test-finished-label">Correct Only WPM:</span>{" "}
+            {mostRecentTest?.results.correctOnlyWPM}
+          </div>
+          <div>
+            <span className="test-finished-label">Accuracy:</span>{" "}
+            {mostRecentTest?.results.accuracy}%
+          </div>
+        </div>
+        <div className="test-finished-chart">
           <Scatter data={wpmData} options={options} />
         </div>
       </div>
