@@ -1,33 +1,27 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "../../components/header/Header";
-import "./LeaderBoard.css";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
+import "./LeaderBoard.css";
 
 function LeaderBoard({ user, handleUserChange, handleLogout }) {
-  const [loading, setLoading] = useState(true); // eventually change loading into a cool component that has a cool spiny wheel and such
-
+  const [loading, setLoading] = useState(true);
   const [displayTimedTests, setDisplayTimedTests] = useState(true);
   const [displayAllTimeTests, setDisplayAllTimeTests] = useState(true);
 
-  // all-time timed tests
   const [pulledTests15AllTime, setPulledTests15AllTime] = useState([]);
   const [pulledTests30AllTime, setPulledTests30AllTime] = useState([]);
   const [pulledTests60AllTime, setPulledTests60AllTime] = useState([]);
 
-  // daily timed tests
   const [pulledTests15Daily, setPulledTests15Daily] = useState([]);
   const [pulledTests30Daily, setPulledTests30Daily] = useState([]);
   const [pulledTests60Daily, setPulledTests60Daily] = useState([]);
 
-  // all-time word tests
   const [pulledTestsWord25AllTime, setPulledTestsWords25AllTime] = useState([]);
   const [pulledTestsWord50AllTime, setPulledTestsWords50AllTime] = useState([]);
   const [pulledTestsWord100AllTime, setPulledTestsWords100AllTime] = useState(
     []
   );
 
-  // daily word tests
   const [pulledTestsWord25Daily, setPulledTestsWords25Daily] = useState([]);
   const [pulledTestsWord50Daily, setPulledTestsWords50Daily] = useState([]);
   const [pulledTestsWord100Daily, setPulledTestsWords100Daily] = useState([]);
@@ -111,12 +105,11 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
       }
     } catch (error) {
       console.error("Error fetching rankings:", error.response);
-      console.log(error);
     }
   }
 
   useEffect(() => {
-    setLoading(false); // maybe i should just turn all the calls for the data into one big function then setLoading(false) at the end of that funciton
+    setLoading(false);
   }, [pulledTestsWord100AllTime]);
 
   const calculateTimeUntilMidnight = () => {
@@ -159,22 +152,52 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     : pulledTestsWord100Daily;
 
   return (
-    <div style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        overflow: "hidden",
+        backgroundColor: "#273564",
+      }}
+    >
       <HeaderWrapper
         passLoggedIn={handleUserChange}
         passLogout={handleLogout}
         user={user}
       />
-      <div> Time Until Reset: {remainingTime}</div>
-      <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
-        Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
-      </button>
-      <button onClick={() => setDisplayAllTimeTests(!displayAllTimeTests)}>
-        Switch Between All-Time and Daily
-      </button>
 
-      <div>{displayAllTimeTests ? "all-time" : "daily"}</div>
+      {/* Container to center the timer and mode indicator */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          margin: "20px 0",
+        }}
+      >
+        {/* Display the timer only if it's daily mode */}
+        {!displayAllTimeTests && (
+          <div style={{ fontSize: "2rem", color: "#fff" }}>
+            Time Until Reset: {remainingTime}
+          </div>
+        )}
+        <div style={{ fontSize: "2rem", color: "#fff" }}>
+          {displayAllTimeTests ? "all-time" : "daily"}
+        </div>
+      </div>
 
+      {/* Buttons for switching modes */}
+      <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
+        <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
+          Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
+        </button>
+        <button onClick={() => setDisplayAllTimeTests(!displayAllTimeTests)}>
+          Switch Between All-Time and Daily
+        </button>
+      </div>
+
+      {/* Leaderboard Content */}
       {loading ? (
         "loading..."
       ) : (
@@ -199,9 +222,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                     <div style={{ textAlign: "center" }}>
                       true WPM: {test.results.trueWPM}
                     </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
-                    </div>
                   </div>
                 ))}
               </div>
@@ -223,9 +243,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                     <div style={{ textAlign: "center" }}>
                       true WPM: {test.results.trueWPM}
                     </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
-                    </div>
                   </div>
                 ))}
               </div>
@@ -246,9 +263,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                     </div>
                     <div style={{ textAlign: "center" }}>
                       true WPM: {test.results.trueWPM}
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
                     </div>
                   </div>
                 ))}
@@ -276,9 +290,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                     <div style={{ textAlign: "center" }}>
                       true WPM: {test.results.trueWPM}
                     </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
-                    </div>
                   </div>
                 ))}
               </div>
@@ -300,9 +311,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                     <div style={{ textAlign: "center" }}>
                       true WPM: {test.results.trueWPM}
                     </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
-                    </div>
                   </div>
                 ))}
               </div>
@@ -323,9 +331,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                     </div>
                     <div style={{ textAlign: "center" }}>
                       true WPM: {test.results.trueWPM}
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      accuracy: {test.results.accuracy}
                     </div>
                   </div>
                 ))}

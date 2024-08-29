@@ -39,7 +39,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   return (
     <div
       style={{
-        backgroundColor: AIMode ? "#80C080" : "#ADD8E6",
+        backgroundColor: AIMode ? "#80C080" : "#273564",
       }}
     >
       <div className="header">

@@ -16,7 +16,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
           width: "100vw",
           height: "100vh",
           overflow: "hidden",
-          backgroundColor: "#ADD8E6",
+          backgroundColor: "#273564",
         }}
       >
         <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>

@@ -1,7 +1,7 @@
 :root {
   color: rgba(255, 255, 255, 0.87);
   /* background: linear-gradient(#25335e, #344984); */
-  background: #add8e6;
+  background: white;
   margin: 0;
   display: flex;
   max-width: 100vw;
