@@ -29,7 +29,7 @@ const Test = ({ user, AIMode }) => {
 
   const sendAITestToBackend = async () => {
     try {
-      await axios.post("http://localhost:3090/ai/test", test, {
+      await axios.post("${process.env.REACT_APP_API_URL}/ai/test", test, {
         withCredentials: true,
       });
     } catch (error) {
