@@ -32,30 +32,22 @@ function History({ user, handleUserChange, handleLogout }) {
         }
       );
 
-      if (response.data.length === 0) {
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        setAllUserTests(response.data);
+        setCurrentlySelectedTest(response.data[0]);
+
+        setTrueWPMArray(response.data[0].words.trueWPMArray);
+        setRawWPMArray(response.data[0].words.rawWPMArray);
+
+        setCurrentTestDate(convertTimestampToTime(response.data[0].timestamp));
+      } else {
         setUserHasTakenTests(false);
-        setLoading(false);
-        return;
       }
-
-      setAllUserTests(response.data);
-      setCurrentlySelectedTest(response.data[0]);
-
-      setTrueWPMArray(response.data[0].words.trueWPMArray);
-      setRawWPMArray(response.data[0].words.rawWPMArray);
-
-      setCurrentTestDate(convertTimestampToTime(response.data[0].timestamp));
 
       setLoading(false);
     } catch (error) {
       console.log(error);
-
-      if (
-        error.response &&
-        error.response.data === "No tests found for this user."
-      ) {
-        setUserHasTakenTests(false);
-      }
+      setUserHasTakenTests(false);
       setLoading(false);
     }
   }
@@ -187,25 +179,33 @@ function History({ user, handleUserChange, handleLogout }) {
 
       <div className="history-container">
         <div className="history-content-scrollable">
-          {allUserTests.map((test, index) => (
-            <div
-              key={index}
-              className="card"
-              onClick={() => handleTestClick(index)}
-            >
-              <div>{convertTimestampToTime(allUserTests[index].timestamp)}</div>
-              <div>WPM: {test.results.trueWPM}</div>
-              <div className="details">
-                <div>Length: {(test.settings.length || 0) / 10}</div>
-                <div>Accuracy: {test.results.accuracy}%</div>
-                <div>Word difficulty: {test.settings.difficulty}</div>
+          {Array.isArray(allUserTests) && allUserTests.length > 0 ? (
+            allUserTests.map((test, index) => (
+              <div
+                key={index}
+                className="card"
+                onClick={() => handleTestClick(index)}
+              >
+                <div>
+                  {convertTimestampToTime(allUserTests[index].timestamp)}
+                </div>
+                <div>WPM: {test.results.trueWPM}</div>
+                <div className="details">
+                  <div>Length: {(test.settings.length || 0) / 10}</div>
+                  <div>Accuracy: {test.results.accuracy}%</div>
+                  <div>Word difficulty: {test.settings.difficulty}</div>
+                </div>
               </div>
+            ))
+          ) : (
+            <div className="no-tests-message">
+              You need to take a test to have history displayed.
             </div>
-          ))}
+          )}
         </div>
 
-        <div className="test-display">
-          {currentlySelectedTest && (
+        {currentlySelectedTest && (
+          <div className="test-display">
             <div className="test-info">
               <div>
                 <strong>Type:</strong> {currentlySelectedTest.settings.type}
@@ -230,11 +230,11 @@ function History({ user, handleUserChange, handleLogout }) {
                 {currentlySelectedTest.settings.difficulty}
               </div>
             </div>
-          )}
-          <div style={{ width: "100%", height: "60%", marginTop: "20px" }}>
-            <Scatter data={wpmData} options={options} />
+            <div style={{ width: "100%", height: "60%", marginTop: "20px" }}>
+              <Scatter data={wpmData} options={options} />
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );
