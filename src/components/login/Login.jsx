@@ -17,7 +17,7 @@ function Login({ loginVisible, passLoggedIn }) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3090/auth/login",
+        "${process.env.REACT_APP_API_URL}/auth/login",
         {
           username,
           password,
@@ -41,10 +41,13 @@ function Login({ loginVisible, passLoggedIn }) {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3090/auth/signup", {
-        username,
-        password,
-      });
+      const response = await axios.post(
+        "${process.env.REACT_APP_API_URL}/auth/signup",
+        {
+          username,
+          password,
+        }
+      );
       setShowRegister(false);
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");

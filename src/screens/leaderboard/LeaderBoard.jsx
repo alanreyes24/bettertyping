@@ -48,7 +48,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   async function retrieveTimeTestRankings(duration, timeFrame) {
     try {
       const response = await axios.get(
-        `http://localhost:3090/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`
+        "${process.env.REACT_APP_API_URL}/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}"
       );
       if (timeFrame === "all-time") {
         if (duration === 15) {
@@ -79,7 +79,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   async function retrieveWordTestRankings(count, timeFrame) {
     try {
       const response = await axios.get(
-        `http://localhost:3090/test/wordRankings?count=${count}&timeFrame=${timeFrame}`
+        "${process.env.REACT_APP_API_URL}/test/wordRankings?count=${count}&timeFrame=${timeFrame}"
       );
       if (timeFrame === "all-time") {
         if (count === 25) {

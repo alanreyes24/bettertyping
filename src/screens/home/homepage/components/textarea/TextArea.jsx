@@ -50,7 +50,7 @@ function TextArea({
   async function retrieveAIWordList() {
     try {
       const response = await axios.get(
-        "http://localhost:3090/ai/getAIWordList",
+        "${process.env.REACT_APP_API_URL}/ai/getAIWordList",
         { withCredentials: true }
       );
       if (response.status >= 200 && response.status < 300) {

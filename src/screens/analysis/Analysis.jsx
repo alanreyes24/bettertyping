@@ -17,9 +17,12 @@ function Analysis({ user, handleUserChange, handleLogout }) {
   const [isLoading, setIsLoading] = useState(false);
 
   async function getAnalysis() {
-    const response = await axios.get("http://localhost:3090/ai/getAnalysis", {
-      withCredentials: true,
-    });
+    const response = await axios.get(
+      "${process.env.REACT_APP_API_URL}/ai/getAnalysis",
+      {
+        withCredentials: true,
+      }
+    );
     setAnalysisJson(response.data);
     setIsLoading(false);
   }

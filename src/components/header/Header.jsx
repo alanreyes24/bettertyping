@@ -25,7 +25,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   async function logUserOut() {
     try {
       await axios.post(
-        "http://localhost:3090/auth/logout",
+        "${process.env.REACT_APP_API_URL}/auth/logout",
         {},
         { withCredentials: true }
       );
@@ -44,7 +44,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
     >
       <div className="header">
         <div className="logo">
-          <Link to="/">type.ac</Link>
+          <Link to="/">bettertyping</Link>
         </div>
 
         {AIMode && <div> AI TEST MODE </div>}

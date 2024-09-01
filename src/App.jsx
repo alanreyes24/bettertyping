@@ -20,7 +20,7 @@ function App() {
   async function checkUserTokenValid() {
     try {
       const response = await axios.get(
-        "http://localhost:3090/auth/tokenCheck",
+        "${process.env.REACT_APP_API_URL}/auth/tokenCheck",
         {
           withCredentials: true,
         }

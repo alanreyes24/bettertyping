@@ -25,9 +25,12 @@ function History({ user, handleUserChange, handleLogout }) {
 
   async function retrieveAllTestsByUser() {
     try {
-      let response = await axios.get("http://localhost:3090/test/allByUser", {
-        withCredentials: true,
-      });
+      let response = await axios.get(
+        "${process.env.REACT_APP_API_URL}/test/allByUser",
+        {
+          withCredentials: true,
+        }
+      );
 
       setAllUserTests(response.data);
       setCurrentlySelectedTest(response.data[0]);
