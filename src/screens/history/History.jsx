@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Scatter } from "react-chartjs-2"; // Ensure this import is correct
+import { Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import "./History.css";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
@@ -26,11 +26,17 @@ function History({ user, handleUserChange, handleLogout }) {
   async function retrieveAllTestsByUser() {
     try {
       let response = await axios.get(
-        "${process.env.REACT_APP_API_URL}/test/allByUser",
+        `${process.env.REACT_APP_API_URL}/test/allByUser`,
         {
           withCredentials: true,
         }
       );
+
+      if (response.data.length === 0) {
+        setUserHasTakenTests(false);
+        setLoading(false);
+        return;
+      }
 
       setAllUserTests(response.data);
       setCurrentlySelectedTest(response.data[0]);
@@ -74,6 +80,21 @@ function History({ user, handleUserChange, handleLogout }) {
           <div className="progress"></div>
         </div>
       </div>
+    );
+  }
+
+  if (!userHasTakenTests) {
+    return (
+      <>
+        <HeaderWrapper
+          passLoggedIn={handleUserChange}
+          passLogout={handleLogout}
+          user={user}
+        />
+        <div className="error-message">
+          You need to take a test in order to use this page
+        </div>
+      </>
     );
   }
 
@@ -163,12 +184,6 @@ function History({ user, handleUserChange, handleLogout }) {
         passLogout={handleLogout}
         user={user}
       />
-
-      {!userHasTakenTests && (
-        <div className="error-message">
-          You need to take a test in order to use this page
-        </div>
-      )}
 
       <div className="history-container">
         <div className="history-content-scrollable">
