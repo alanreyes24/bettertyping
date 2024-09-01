@@ -122,23 +122,23 @@ function TestFinished(user) {
       />
       <div className="test-finished-container">
         <div className="test-finished-header">
-          {mostRecentTest?.username}'s Test Results
+          {mostRecentTest?.username}'s test results
         </div>
         <div className="test-finished-results">
           <div>
-            <span className="test-finished-label">Raw WPM:</span>{" "}
+            <span className="test-finished-label">raw WPM:</span>{" "}
             {mostRecentTest?.results.rawWPM}
           </div>
           <div>
-            <span className="test-finished-label">True WPM:</span>{" "}
+            <span className="test-finished-label">true WPM:</span>{" "}
             {mostRecentTest?.results.trueWPM}
           </div>
           <div>
-            <span className="test-finished-label">Correct Only WPM:</span>{" "}
+            <span className="test-finished-label">correct only WPM:</span>{" "}
             {mostRecentTest?.results.correctOnlyWPM}
           </div>
           <div>
-            <span className="test-finished-label">Accuracy:</span>{" "}
+            <span className="test-finished-label">accuracy:</span>{" "}
             {mostRecentTest?.results.accuracy}%
           </div>
         </div>

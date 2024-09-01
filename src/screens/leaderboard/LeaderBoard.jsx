@@ -132,24 +132,24 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   }, []);
 
   const currentTests15 = displayAllTimeTests
-    ? pulledTests15AllTime
-    : pulledTests15Daily;
+    ? pulledTests15AllTime.slice(0, 10)
+    : pulledTests15Daily.slice(0, 10);
   const currentTests30 = displayAllTimeTests
-    ? pulledTests30AllTime
-    : pulledTests30Daily;
+    ? pulledTests30AllTime.slice(0, 10)
+    : pulledTests30Daily.slice(0, 10);
   const currentTests60 = displayAllTimeTests
-    ? pulledTests60AllTime
-    : pulledTests60Daily;
+    ? pulledTests60AllTime.slice(0, 10)
+    : pulledTests60Daily.slice(0, 10);
 
   const currentTestsWord25 = displayAllTimeTests
-    ? pulledTestsWord25AllTime
-    : pulledTestsWord25Daily;
+    ? pulledTestsWord25AllTime.slice(0, 10)
+    : pulledTestsWord25Daily.slice(0, 10);
   const currentTestsWord50 = displayAllTimeTests
-    ? pulledTestsWord50AllTime
-    : pulledTestsWord50Daily;
+    ? pulledTestsWord50AllTime.slice(0, 10)
+    : pulledTestsWord50Daily.slice(0, 10);
   const currentTestsWord100 = displayAllTimeTests
-    ? pulledTestsWord100AllTime
-    : pulledTestsWord100Daily;
+    ? pulledTestsWord100AllTime.slice(0, 10)
+    : pulledTestsWord100Daily.slice(0, 10);
 
   return (
     <div
@@ -166,178 +166,226 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
         user={user}
       />
 
-      {/* Container to center the timer and mode indicator */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          margin: "20px 0",
-        }}
-      >
-        {/* Display the timer only if it's daily mode */}
-        {!displayAllTimeTests && (
-          <div style={{ fontSize: "2rem", color: "#fff" }}>
-            Time Until Reset: {remainingTime}
-          </div>
-        )}
-        <div style={{ fontSize: "2rem", color: "#fff" }}>
-          {displayAllTimeTests ? "all-time" : "daily"}
-        </div>
-      </div>
-
-      {/* Buttons for switching modes */}
-      <div style={{ display: "flex", justifyContent: "center", gap: "10px" }}>
-        <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
-          Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
-        </button>
-        <button onClick={() => setDisplayAllTimeTests(!displayAllTimeTests)}>
-          Switch Between All-Time and Daily
-        </button>
-      </div>
-
-      {/* Leaderboard Content */}
       {loading ? (
-        "loading..."
-      ) : (
-        <div className="leaderboard">
-          <div
-            style={{ display: displayTimedTests ? "flex" : "none" }}
-            className="leaderboard-container"
-          >
-            <div className="leaderboard-section">
-              <div>15 Seconds Tests</div>
-              <div className="leaderboard-list">
-                {currentTests15.map((test, index) => (
-                  <div key={index} className="leaderboard-item">
-                    <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}
-                    >
-                      {index + 1}:
-                      <div style={{ marginLeft: "0.25rem" }}>
-                        {test.username}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="leaderboard-section">
-              <div>30 Seconds Tests</div>
-              <div className="leaderboard-list">
-                {currentTests30.map((test, index) => (
-                  <div key={index} className="leaderboard-item">
-                    <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}
-                    >
-                      {index + 1}:
-                      <div style={{ marginLeft: "0.25rem" }}>
-                        {test.username}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="leaderboard-section">
-              <div>60 Seconds Tests</div>
-              <div className="leaderboard-list">
-                {currentTests60.map((test, index) => (
-                  <div key={index} className="leaderboard-item">
-                    <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}
-                    >
-                      {index + 1}:
-                      <div style={{ marginLeft: "0.25rem" }}>
-                        {test.username}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div
-            style={{ display: displayTimedTests ? "none" : "flex" }}
-            className="leaderboard-container"
-          >
-            <div className="leaderboard-section">
-              <div>25 Word Tests</div>
-              <div className="leaderboard-list">
-                {currentTestsWord25.map((test, index) => (
-                  <div key={index} className="leaderboard-item">
-                    <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}
-                    >
-                      {index + 1}:
-                      <div style={{ marginLeft: "0.25rem" }}>
-                        {test.username}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="leaderboard-section">
-              <div>50 Word Tests</div>
-              <div className="leaderboard-list">
-                {currentTestsWord50.map((test, index) => (
-                  <div key={index} className="leaderboard-item">
-                    <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}
-                    >
-                      {index + 1}:
-                      <div style={{ marginLeft: "0.25rem" }}>
-                        {test.username}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="leaderboard-section">
-              <div>100 Word Tests</div>
-              <div className="leaderboard-list">
-                {currentTestsWord100.map((test, index) => (
-                  <div key={index} className="leaderboard-item">
-                    <div
-                      style={{ display: "flex", flex: 1, textAlign: "center" }}
-                    >
-                      {index + 1}:
-                      <div style={{ marginLeft: "0.25rem" }}>
-                        {test.username}
-                      </div>
-                    </div>
-                    <div style={{ textAlign: "center" }}>
-                      true WPM: {test.results.trueWPM}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: "100vw",
+            height: "100vh",
+            backgroundColor: "#273564",
+            color: "#fff",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            fontSize: "2rem",
+            zIndex: 1000,
+          }}
+        >
+          Loading...
         </div>
+      ) : (
+        <>
+          {/* Container to center the timer and mode indicator */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+              margin: "20px 0",
+            }}
+          >
+            {!displayAllTimeTests && (
+              <div style={{ fontSize: "2rem", color: "#fff" }}>
+                Time Until Reset: {remainingTime}
+              </div>
+            )}
+            <div style={{ fontSize: "2rem", color: "#fff" }}>
+              {displayAllTimeTests ? "all-time" : "daily"}
+            </div>
+          </div>
+
+          {/* Buttons for switching modes */}
+          <div
+            style={{ display: "flex", justifyContent: "center", gap: "10px" }}
+          >
+            <button onClick={() => setDisplayTimedTests(!displayTimedTests)}>
+              Switch to {displayTimedTests ? "Word Tests" : "Timed Tests"}
+            </button>
+            <button
+              onClick={() => setDisplayAllTimeTests(!displayAllTimeTests)}
+            >
+              Switch Between All-Time and Daily
+            </button>
+          </div>
+
+          {/* Leaderboard Content */}
+          <div className="leaderboard">
+            <div
+              style={{ display: displayTimedTests ? "flex" : "none" }}
+              className="leaderboard-container"
+            >
+              <div className="leaderboard-section">
+                <div>15 Seconds Tests</div>
+                <div className="leaderboard-list">
+                  {currentTests15.map((test, index) => (
+                    <div key={index} className="leaderboard-item">
+                      <div
+                        style={{
+                          display: "flex",
+                          flex: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="leaderboard-section">
+                <div>30 Seconds Tests</div>
+                <div className="leaderboard-list">
+                  {currentTests30.map((test, index) => (
+                    <div key={index} className="leaderboard-item">
+                      <div
+                        style={{
+                          display: "flex",
+                          flex: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="leaderboard-section">
+                <div>60 Seconds Tests</div>
+                <div className="leaderboard-list">
+                  {currentTests60.map((test, index) => (
+                    <div key={index} className="leaderboard-item">
+                      <div
+                        style={{
+                          display: "flex",
+                          flex: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div
+              style={{ display: displayTimedTests ? "none" : "flex" }}
+              className="leaderboard-container"
+            >
+              <div className="leaderboard-section">
+                <div>25 Word Tests</div>
+                <div className="leaderboard-list">
+                  {currentTestsWord25.map((test, index) => (
+                    <div key={index} className="leaderboard-item">
+                      <div
+                        style={{
+                          display: "flex",
+                          flex: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="leaderboard-section">
+                <div>50 Word Tests</div>
+                <div className="leaderboard-list">
+                  {currentTestsWord50.map((test, index) => (
+                    <div key={index} className="leaderboard-item">
+                      <div
+                        style={{
+                          display: "flex",
+                          flex: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="leaderboard-section">
+                <div>100 Word Tests</div>
+                <div className="leaderboard-list">
+                  {currentTestsWord100.map((test, index) => (
+                    <div key={index} className="leaderboard-item">
+                      <div
+                        style={{
+                          display: "flex",
+                          flex: 1,
+                          textAlign: "center",
+                        }}
+                      >
+                        {index + 1}:
+                        <div style={{ marginLeft: "0.25rem" }}>
+                          {test.username}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: "center" }}>
+                        true WPM: {test.results.trueWPM}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
       )}
     </div>
   );

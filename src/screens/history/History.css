@@ -1,57 +1,75 @@
+:root {
+  --primary-blue: #273564;
+}
+
+body {
+  background-color: var(--primary-blue);
+}
+
 .history-container {
   display: flex;
   justify-content: space-between;
   padding: 20px;
 }
 
+.history-content-scrollable {
+  flex: 1;
+  height: calc(100vh - 100px);
+  overflow-y: auto;
+  margin-right: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
 .test-display {
-  margin: 20px;
-  width: 90vh;
-  height: 83vh;
+  flex: 2;
+  height: calc(100vh - 100px);
   background: #1d1c1c;
   box-shadow: rgba(0, 0, 0, 0.4) 10px 20px 30px,
     rgba(0, 0, 0, 0.3) 10px 1px 53px 3px, rgba(1, 0, 0, 0.2) 0px -1px 3px inset;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.5s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  font-weight: bolder;
   color: #fff;
-  margin-bottom: 20px; /* Add space between cards */
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  background-color: var(--primary-blue);
 }
 
-.history-content {
-  flex: 3;
-  height: calc(100vh - 100px); /* Adjust this value to fit your header height */
-  overflow-y: auto;
-  margin: 20px; /* Optional: add margin to give some spacing */
+.test-info {
+  text-align: left;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.test-info div {
+  margin: 5px 0;
+}
+
+.error-message {
+  color: #ff4f4f;
+  font-weight: bold;
+  text-align: center;
+  margin: 20px 0;
 }
 
 .card {
-  width: 600px;
-  height: 235px;
-  background: #1d1c1c;
-  box-shadow: rgba(0, 0, 0, 0.4) 10px 20px 30px,
-    rgba(0, 0, 0, 0.3) 10px 1px 53px 3px, rgba(1, 0, 0, 0.2) 0px -1px 3px inset;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.5s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  font-weight: bolder;
+  background: var(--primary-blue);
   color: #fff;
-  margin-bottom: 20px; /* Add space between cards */
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  text-align: left;
+}
+
+.details {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #ccc;
 }
 
 .card:hover {
-  transform: scale(1.021);
-}
-
-.card:active {
-  transform: scale(0.95) rotateZ(1.1deg);
+  background-color: #1c274d;
 }

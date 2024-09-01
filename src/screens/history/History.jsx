@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Scatter } from "react-chartjs-2";
+import { Scatter } from "react-chartjs-2"; // Ensure this import is correct
 import "chart.js/auto";
 import "./History.css";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
 
 function History({ user, handleUserChange, handleLogout }) {
   const [allUserTests, setAllUserTests] = useState([]);
-  const [allUserAITests, setAllUserAITests] = useState([]);
   const [userHasTakenTests, setUserHasTakenTests] = useState(true);
-  const [userHasTakenAITests, setUserHasTakenAITests] = useState(true);
   const [loading, setLoading] = useState(true);
   const [currentlySelectedTest, setCurrentlySelectedTest] = useState(null);
   const [currentTestDate, setCurrentTestDate] = useState(null);
-
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
 
@@ -54,41 +51,19 @@ function History({ user, handleUserChange, handleLogout }) {
     }
   }
 
-  async function retrieveAllAITestsByUser() {
-    try {
-      let response = await axios.get("http://localhost:3090/ai/allByUser", {
-        withCredentials: true,
-      });
-
-      setAllUserAITests(response.data);
-      setCurrentlySelectedTest(response.data[0]);
-
-      setTrueWPMArray(response.data[0].words.trueWPMArray);
-      setRawWPMArray(response.data[0].words.rawWPMArray);
-
-      setCurrentTestDate(convertTimestampToTime(response.data[0].timestamp));
-
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-
-      if (
-        error.response &&
-        error.response.data === "No tests found for this user."
-      ) {
-        setUserHasTakenAITests(false);
-      }
-      setLoading(false);
-    }
-  }
-
   useEffect(() => {
     retrieveAllTestsByUser();
-    retrieveAllAITestsByUser();
   }, []);
 
+  const handleTestClick = (index) => {
+    setCurrentlySelectedTest(allUserTests[index]);
+    setCurrentTestDate(convertTimestampToTime(allUserTests[index].timestamp));
+    setTrueWPMArray(allUserTests[index].words.trueWPMArray);
+    setRawWPMArray(allUserTests[index].words.rawWPMArray);
+  };
+
   if (loading) {
-    return <div>Loading...</div>; // Render a loading indicator while waiting for data
+    return <div>Loading...</div>;
   }
 
   const wpmData = {
@@ -97,7 +72,7 @@ function History({ user, handleUserChange, handleLogout }) {
         label: "true wpm",
         data: trueWPMArray,
         cubicInterpolationMode: "monotone",
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        backgroundColor: "rgba(13, 39, 185, 0.466)",
         showLine: true,
         fill: false,
         borderWidth: 1,
@@ -130,10 +105,20 @@ function History({ user, handleUserChange, handleLogout }) {
     plugins: {
       legend: {
         position: "top",
+        labels: {
+          color: "#fff",
+          font: {
+            size: 14,
+          },
+        },
       },
       title: {
         display: true,
-        text: "",
+        text: currentTestDate,
+        color: "#fff",
+        font: {
+          size: 18,
+        },
       },
     },
     maintainAspectRatio: false,
@@ -142,10 +127,20 @@ function History({ user, handleUserChange, handleLogout }) {
         type: "linear",
         ticks: {
           stepSize: 1,
+          color: "#fff",
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 0.1)",
         },
       },
       y: {
         type: "linear",
+        ticks: {
+          color: "#fff",
+        },
+        grid: {
+          color: "rgba(255, 255, 255, 0.1)",
+        },
       },
     },
   };
@@ -159,68 +154,60 @@ function History({ user, handleUserChange, handleLogout }) {
       />
 
       {!userHasTakenTests && (
-        <div>You need to take a test in order to use this page</div>
-      )}
-      {!userHasTakenAITests && (
-        <div>You need to take an AI test in order to use this page</div>
+        <div className="error-message">
+          You need to take a test in order to use this page
+        </div>
       )}
 
       <div className="history-container">
-        <div className="test-display">
-          <div> {currentTestDate} </div>
-          <div style={{ width: "95vw", height: "30vh" }}>
-            <Scatter data={wpmData} options={options} />
-          </div>
-        </div>
-
-        <div className="history-content">
-          <h2>Regular Tests</h2>
+        <div className="history-content-scrollable">
           {allUserTests.map((test, index) => (
-            <button
+            <div
               key={index}
               className="card"
-              onClick={() => {
-                setCurrentlySelectedTest(allUserTests[index]);
-                setCurrentTestDate(
-                  convertTimestampToTime(allUserTests[index].timestamp)
-                );
-                setTrueWPMArray(allUserTests[index].words.trueWPMArray);
-                setRawWPMArray(allUserTests[index].words.rawWPMArray);
-              }}
+              onClick={() => handleTestClick(index)}
             >
               <div>{convertTimestampToTime(allUserTests[index].timestamp)}</div>
-              <div>Type: {test.settings.type}</div>
-              <div>Length: {(test.settings.length || 0) / 10}</div>
-              <div>True WPM: {test.results.trueWPM}</div>
-              <div>Accuracy: {test.results.accuracy}%</div>
-              <div>Word difficulty: {test.settings.difficulty}</div>
-            </button>
-          ))}
-
-          <h2>AI Tests</h2>
-          {allUserAITests.map((test, index) => (
-            <button
-              key={index}
-              className="card"
-              onClick={() => {
-                setCurrentlySelectedTest(allUserAITests[index]);
-                setCurrentTestDate(
-                  convertTimestampToTime(allUserAITests[index].timestamp)
-                );
-                setTrueWPMArray(allUserAITests[index].words.trueWPMArray);
-                setRawWPMArray(allUserAITests[index].words.rawWPMArray);
-              }}
-            >
-              <div>
-                {convertTimestampToTime(allUserAITests[index].timestamp)}
+              <div>WPM: {test.results.trueWPM}</div>
+              <div className="details">
+                <div>Length: {(test.settings.length || 0) / 10}</div>
+                <div>Accuracy: {test.results.accuracy}%</div>
+                <div>Word difficulty: {test.settings.difficulty}</div>
               </div>
-              <div>Type: {test.settings.type}</div>
-              <div>Length: {(test.settings.length || 0) / 10}</div>
-              <div>True WPM: {test.results.trueWPM}</div>
-              <div>Accuracy: {test.results.accuracy}%</div>
-              <div>Word difficulty: {test.settings.difficulty}</div>
-            </button>
+            </div>
           ))}
+        </div>
+
+        <div className="test-display">
+          {currentlySelectedTest && (
+            <div className="test-info">
+              <div>
+                <strong>Type:</strong> {currentlySelectedTest.settings.type}
+              </div>
+              <div>
+                <strong>Length:</strong>{" "}
+                {(currentlySelectedTest.settings.length || 0) / 10}
+              </div>
+              <div>
+                <strong>True WPM:</strong>{" "}
+                {currentlySelectedTest.results.trueWPM}
+              </div>
+              <div>
+                <strong>Raw WPM:</strong> {currentlySelectedTest.results.rawWPM}
+              </div>
+              <div>
+                <strong>Accuracy:</strong>{" "}
+                {currentlySelectedTest.results.accuracy}%
+              </div>
+              <div>
+                <strong>Word difficulty:</strong>{" "}
+                {currentlySelectedTest.settings.difficulty}
+              </div>
+            </div>
+          )}
+          <div style={{ width: "100%", height: "60%", marginTop: "20px" }}>
+            <Scatter data={wpmData} options={options} />
+          </div>
         </div>
       </div>
     </>
