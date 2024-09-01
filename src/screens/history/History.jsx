@@ -63,7 +63,15 @@ function History({ user, handleUserChange, handleLogout }) {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="loading-container">
+        <div className="load">
+          <div className="progress"></div>
+          <div className="progress"></div>
+          <div className="progress"></div>
+        </div>
+      </div>
+    );
   }
 
   const wpmData = {
