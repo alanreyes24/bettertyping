@@ -4,7 +4,6 @@ import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../../../../AuthContext";
 
 const Test = ({ user, AIMode }) => {
   const navigate = useNavigate();
@@ -13,13 +12,10 @@ const Test = ({ user, AIMode }) => {
     navigate("/test-finished", { state: { AIMode } });
   };
 
-  useEffect(() => {
-    console.log("test AIMode:", AIMode);
-  }, [AIMode]);
-
   const sendTestToBackend = async () => {
     try {
-      await axios.post("${process.env.REACT_APP_API_URL}/test", test, {
+      console.log("SENDING!");
+      await axios.post(`${import.meta.env.VITE_API_URL}/test`, test, {
         withCredentials: true,
       });
     } catch (error) {
@@ -29,7 +25,7 @@ const Test = ({ user, AIMode }) => {
 
   const sendAITestToBackend = async () => {
     try {
-      await axios.post("${process.env.REACT_APP_API_URL}/ai/test", test, {
+      await axios.post(`${import.meta.env.VITE_API_URL}/ai/test`, test, {
         withCredentials: true,
       });
     } catch (error) {
@@ -211,7 +207,7 @@ const Test = ({ user, AIMode }) => {
         },
       }));
     }
-  }, [test.finished, trueWPMArray, rawWPMArray]);
+  }, [test.finished]);
 
   useEffect(() => {
     const handleTestCompletion = async () => {
@@ -322,7 +318,6 @@ const Test = ({ user, AIMode }) => {
               ...prevTest,
               words: {
                 ...prevTest.words,
-                attemptedWords: 1,
                 wordList: w,
               },
             }));
@@ -366,7 +361,7 @@ const Test = ({ user, AIMode }) => {
           passEventLog={(e) => {
             setTest((prevTest) => ({
               ...prevTest,
-              timestamp: e[0].timestamp,
+              timestamp: e[0]?.timestamp || Date.now(),
               eventLog: e,
             }));
           }}

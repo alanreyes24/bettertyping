@@ -17,7 +17,7 @@ function Login({ loginVisible, passLoggedIn }) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "${process.env.REACT_APP_API_URL}/auth/login",
+        `${import.meta.env.VITE_API_URL}/auth/login`,
         {
           username,
           password,
@@ -42,7 +42,7 @@ function Login({ loginVisible, passLoggedIn }) {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "${process.env.REACT_APP_API_URL}/auth/signup",
+        `${import.meta.env.VITE_API_URL}/auth/signup`,
         {
           username,
           password,

@@ -20,7 +20,7 @@ function App() {
   async function checkUserTokenValid() {
     try {
       const response = await axios.get(
-        "${process.env.REACT_APP_API_URL}/auth/tokenCheck",
+        `${import.meta.env.VITE_API_URL}/auth/tokenCheck`,
         {
           withCredentials: true,
         }

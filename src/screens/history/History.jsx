@@ -26,7 +26,7 @@ function History({ user, handleUserChange, handleLogout }) {
   async function retrieveAllTestsByUser() {
     try {
       let response = await axios.get(
-        `${process.env.REACT_APP_API_URL}/test/allByUser`,
+        `${import.meta.env.VITE_API_URL}/test/allByUser`,
         {
           withCredentials: true,
         }

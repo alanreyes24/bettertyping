@@ -18,7 +18,7 @@ function Analysis({ user, handleUserChange, handleLogout }) {
 
   async function getAnalysis() {
     const response = await axios.get(
-      "${process.env.REACT_APP_API_URL}/ai/getAnalysis",
+      `${import.meta.env.VITE_API_URL}/ai/getAnalysis`,
       {
         withCredentials: true,
       }

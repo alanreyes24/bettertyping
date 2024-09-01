@@ -22,8 +22,8 @@ function TextArea({
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
 
-  const [correctLetters, setCorrectLetters] = useState();
-  const [incorrectLetters, setIncorrectLetters] = useState();
+  const [correctLetters, setCorrectLetters] = useState({});
+  const [incorrectLetters, setIncorrectLetters] = useState({});
 
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   const [currentCorrectLetterArray, setCurrentCorrectLetterArray] = useState(
@@ -50,14 +50,12 @@ function TextArea({
   async function retrieveAIWordList() {
     try {
       const response = await axios.get(
-        "${process.env.REACT_APP_API_URL}/ai/getAIWordList",
+        `${import.meta.env.VITE_API_URL}/ai/getAIWordList`,
         { withCredentials: true }
       );
       if (response.status >= 200 && response.status < 300) {
         setAIWordList(response.data.practiceWords);
       } else {
-        console.log("hey");
-        setAIWordList("error", "uhh");
         console.error("Failed to retrieve AI word list:", response.statusText);
       }
     } catch (error) {
@@ -67,30 +65,35 @@ function TextArea({
 
   // CURSOR BLINKING
   useEffect(() => {
-    if (shouldUpdateCursor && test.state == 0) {
-      document.getElementById("cursor").classList.add("cursorBlink");
-    } else document.getElementById("cursor").classList.remove("cursorBlink");
+    const cursor = document.getElementById("cursor");
+    if (cursor) {
+      if (shouldUpdateCursor && test.state === 0) {
+        cursor.classList.add("cursorBlink");
+      } else {
+        cursor.classList.remove("cursorBlink");
+      }
+    }
   }, [shouldUpdateCursor, test.state]);
 
   //////// LETTER STATE HANDLING
   useEffect(() => {
-    if (test.state == 1) {
+    if (test.state === 1) {
       setTimeout(() => {
-        setCurrentLetterArrayIndexValue(currentLetterArrayIndexValue + 1);
+        setCurrentLetterArrayIndexValue((prev) => prev + 1);
       }, 1000);
-      setIncorrectLetters({
-        ...incorrectLetters,
+      setIncorrectLetters((prev) => ({
+        ...prev,
         [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
-      });
-      setCorrectLetters({
-        ...correctLetters,
+      }));
+      setCorrectLetters((prev) => ({
+        ...prev,
         [currentLetterArrayIndexValue]: currentCorrectLetterArray,
-      });
+      }));
     }
   }, [test.state, currentCorrectLetterArray, currentIncorrectLetterArray]);
 
   useEffect(() => {
-    if (test.state == 1) {
+    if (test.state === 1) {
       setCurrentIncorrectLetterArray([]);
       setCurrentCorrectLetterArray([]);
     }
@@ -98,42 +101,43 @@ function TextArea({
 
   useEffect(() => {
     if (
-      test.state == 1 &&
-      JSON.stringify(test.words.correctLetters) !=
+      test.state === 1 &&
+      JSON.stringify(test.words.correctLetters) !==
         JSON.stringify(correctLetters)
     ) {
       passCorrectLetters(correctLetters);
     }
-  }, [correctLetters, passCorrectLetters]);
+  }, [correctLetters, passCorrectLetters, test.state]);
 
   useEffect(() => {
     if (
-      test.state == 1 &&
-      JSON.stringify(test.words.incorrectLetters) !=
+      test.state === 1 &&
+      JSON.stringify(test.words.incorrectLetters) !==
         JSON.stringify(incorrectLetters)
     ) {
       passIncorrectLetters(incorrectLetters);
     }
-  }, [incorrectLetters, passIncorrectLetters]);
-  ////////
+  }, [incorrectLetters, passIncorrectLetters, test.state]);
 
   //// EVENT LOG PASSING
   useEffect(() => {
     if (
-      test.state == 3 &&
+      test.state === 3 &&
       test.finished &&
-      JSON.stringify(test.eventLog) != JSON.stringify(eventLog)
+      JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
     ) {
       passEventLog(eventLog);
     }
-  }, [eventLog, passEventLog]);
+  }, [eventLog, passEventLog, test.state, test.finished]);
 
   //////// UTIL FUNCTIONS
   const focusInput = () => {
-    document.getElementById("input").focus();
+    const input = document.getElementById("input");
+    if (input) {
+      input.focus();
+    }
     onFocus();
     setShouldUpdateCursor(true);
-    // setWordsLoaded(true);
   };
 
   const getOffset = (element) => {
@@ -143,36 +147,27 @@ function TextArea({
       top: rect.top + window.scrollY,
     };
   };
-  ////////
 
-  //////// WORD FUNCITONS
+  //////// WORD FUNCTIONS
   const wordMap = async (amount) => {
-    return new Promise(async (resolve) => {
-      // if there is a ai test word list use it, if not use the regular set of words
-      if (aiMode && AIWordList) {
-        await retrieveAIWordList();
-
-        resolve(
-          Array(amount)
-            .fill(false)
-            .map((_, i) => (
-              <div key={i} className="word">
-                <Word word={AIWordList[i % AIWordList.length]} key={i} />
-              </div>
-            ))
-        );
-      } else {
-        resolve(
-          Array(amount)
-            .fill(false)
-            .map((_, i) => (
-              <div key={i} className="word">
-                <Word selectedDifficulty={selectedDifficulty} key={i} />
-              </div>
-            ))
-        );
-      }
-    });
+    if (aiMode && AIWordList.length) {
+      await retrieveAIWordList();
+      return Array(amount)
+        .fill(false)
+        .map((_, i) => (
+          <div key={i} className="word">
+            <Word word={AIWordList[i % AIWordList.length]} />
+          </div>
+        ));
+    } else {
+      return Array(amount)
+        .fill(false)
+        .map((_, i) => (
+          <div key={i} className="word">
+            <Word selectedDifficulty={selectedDifficulty} />
+          </div>
+        ));
+    }
   };
 
   async function populateWordList(amount) {
@@ -181,98 +176,76 @@ function TextArea({
     setWordList(result);
     onTextLoaded();
   }
-  ////////
 
   //////// HANDLE USER INPUT
   const handleUserInput = (event) => {
-    let input = event.key;
-
-    let lastLetter =
-      document.getElementsByClassName("letter")[currentLetterIndex - 1];
-    let currentLetter =
+    const input = event.key;
+    const currentLetter =
       document.getElementsByClassName("letter")[currentLetterIndex];
-    let nextLetter =
+    const nextLetter =
       document.getElementsByClassName("letter")[currentLetterIndex + 1];
-
     const timestamp = Date.now() - startTime;
 
     if (!startTime) {
       setStartTime(Date.now());
     }
 
-    // LOG THE INTENEDED
+    // LOG THE INTENDED
     setEventLog((prevLog) => [
       ...prevLog,
       {
-        timestamp: timestamp,
+        timestamp,
         intended: currentLetter.textContent,
         typed: input,
       },
     ]);
+
     if (input !== "Backspace") {
-      setTextTyped(textTyped + input);
+      setTextTyped((prev) => prev + input);
 
-      if (input == currentLetter.textContent) {
-        if (currentLetter.textContent != " ") {
-          setCurrentLetterIndex(currentLetterIndex + 1);
-          setTotalCorrectLetters(totalCorrectLetters + 1);
-
-          //set array of letters to have all correct
-          setCurrentCorrectLetterArray([
-            ...currentCorrectLetterArray,
-            currentLetter.textContent,
-          ]);
-
-          //   passCorrectLetters(correctLetters);
-        } else if (currentLetter.textContent == " ") {
-          setCurrentCorrectLetterArray([
-            ...currentCorrectLetterArray,
-            currentLetter.textContent,
-          ]);
+      if (input === currentLetter.textContent) {
+        if (currentLetter.textContent !== " ") {
+          setCurrentCorrectLetterArray((prev) => [...prev, input]);
+          setTotalCorrectLetters((prev) => prev + 1);
+        } else {
+          setTotalCorrectWords((prev) => prev + 1);
+          setCurrentCorrectLetterArray((prev) => [...prev, input]);
           setTextTyped("");
-          setTotalCorrectWords(totalCorrectWords + 1);
-
-          //   passCorrectWords(totalCorrectWords);
         }
-
         currentLetter.classList.remove("incorrect");
-        currentLetter.classList.remove("next");
-        nextLetter.classList.add("next");
         currentLetter.classList.add("correct");
-        setCurrentLetterIndex(currentLetterIndex + 1);
-      } else if (
-        input != currentLetter.textContent &&
-        currentLetter.textContent != " "
-      ) {
+        if (nextLetter) nextLetter.classList.add("next");
+        setCurrentLetterIndex((prev) => prev + 1);
+      } else {
         currentLetter.classList.add("incorrect");
-        currentLetter.classList.remove("next");
-        nextLetter.classList.add("next");
-
-        setCurrentIncorrectLetterArray([...currentIncorrectLetterArray, input]);
-
-        setCurrentLetterIndex(currentLetterIndex + 1);
+        setCurrentIncorrectLetterArray((prev) => [...prev, input]);
+        if (nextLetter) nextLetter.classList.add("next");
+        setCurrentLetterIndex((prev) => prev + 1);
       }
 
-      //CHECKING IF LAST LETTER
+      // CHECK IF LAST LETTER
       if (
-        document.getElementsByClassName("letter").length ==
+        document.getElementsByClassName("letter").length ===
         currentLetterIndex + 2
       ) {
         onTextFinished();
       }
-    } else if (input === "Backspace" && lastLetter != undefined) {
-      lastLetter.classList.remove("correct");
-      currentLetter.classList.remove("next");
-      lastLetter.classList.remove("incorrect");
-      setCurrentLetterIndex(currentLetterIndex - 1);
-      setTextTyped(textTyped.slice(0, -1));
+    } else if (input === "Backspace") {
+      const lastLetter =
+        document.getElementsByClassName("letter")[currentLetterIndex - 1];
+      if (lastLetter) {
+        lastLetter.classList.remove("correct");
+        lastLetter.classList.remove("incorrect");
+      }
+      setCurrentLetterIndex((prev) => prev - 1);
+      setTextTyped((prev) => prev.slice(0, -1));
     }
   };
 
   //// PRE TEST WORD LOADING
   useEffect(() => {
     if (test.state <= 0) {
-      if (test.settings.type == "words") {
+      if (test.settings.type === "words") {
         populateWordList(test.settings.count);
       } else {
         populateWordList(50);
@@ -280,80 +253,47 @@ function TextArea({
     }
   }, [test.settings.type, test.settings.count, test.state]);
 
-  useEffect(() => {
-    const fetchAndSetWordList = async () => {
-      if (test.state <= 0) {
-        if (test.settings.type == "words") {
-          populateWordList(test.settings.count);
-        } else {
-          populateWordList(50);
-        }
-      }
-    };
-
-    fetchAndSetWordList().catch(console.error);
-  }, [selectedDifficulty]);
-
   ////LINE SHIFTING
-
   useEffect(() => {
-    if (test.state == 1) {
-      let currentLetter =
+    if (test.state === 1) {
+      const currentLetter =
         document.getElementsByClassName("letter")[currentLetterIndex - 1];
-      let nextLetter =
+      const nextLetter =
         document.getElementsByClassName("letter")[currentLetterIndex];
 
-      if (currentLetter != undefined && nextLetter != undefined) {
+      if (currentLetter && nextLetter) {
         if (getOffset(nextLetter).top > getOffset(currentLetter).top) {
-          setDeleteLines((d) => d + 1);
+          setDeleteLines((prev) => prev + 1);
         } else if (getOffset(nextLetter).top < getOffset(currentLetter).top) {
-          setDeleteLines((d) => d - 1);
+          setDeleteLines((prev) => prev - 1);
         }
       }
     }
   }, [currentLetterIndex, test.state]);
 
-  //extends the word list by amount
-  //TODO: someday make this extend only to size of box, no need for super long list that isnt even shown
+  // Extends the word list by amount
   function extendWordList(amount) {
-    //define temporary array of new words
     let wordArr = Array(amount)
       .fill(false)
       .map((_, i) => (
-        //key has + wordlist.length because react elements must have unique keys
         <div key={i + wordList.length} className="word">
-          <Word
-            selectedDifficulty={selectedDifficulty}
-            key={i + wordList.length}
-          />
+          <Word selectedDifficulty={selectedDifficulty} />
         </div>
       ));
-    //define temp array of old words
-    let arr = [...wordList];
-    //for all new words, add to old words
-    for (let i = 0; i < wordArr.length; i++) {
-      arr.push(wordArr[i]);
-    }
-    //set new word list
-    setWordList(arr);
+    setWordList((prev) => [...prev, ...wordArr]);
   }
-  //if test is running
-  if (test.state == 1) {
-    // if not a words test, extend word list when run out of words!
-    if (test.settings.type != "words") {
-      if (totalCorrectWords >= wordList.length - 30) {
-        extendWordList(50);
-      }
+
+  if (test.state === 1 && test.settings.type !== "words") {
+    if (totalCorrectWords >= wordList.length - 30) {
+      extendWordList(50);
     }
   }
 
-  if (test.state == 3 && test.words.attemptedWords == 0) {
-    let arr = [];
-
-    for (let i = 0; i < totalCorrectWords; i++) {
-      arr.push(document.getElementsByClassName("word")[i].textContent);
-    }
-
+  if (test.state === 3 && test.words.attemptedWords === 0) {
+    const arr = Array.from(
+      { length: totalCorrectWords },
+      (_, i) => document.getElementsByClassName("word")[i].textContent
+    );
     passWords(arr);
   }
 
@@ -378,40 +318,28 @@ function TextArea({
         data-enable-grammarly="false"
         list="autocompleteOff"
         onKeyDown={(event) => {
-          //if test isnt started yet, tell test we have started the text input!
           if (
-            test.state == 0 &&
-            document.getElementsByClassName("letter").length != undefined
+            test.state === 0 &&
+            document.getElementsByClassName("letter").length
           ) {
             onTextStarted();
             setShouldUpdateCursor(true);
             handleUserInput(event);
-          } else if (
-            test.state == 1 &&
-            document.getElementsByClassName("letter").length != undefined
-          ) {
+          } else if (test.state === 1) {
             handleUserInput(event);
           }
         }}
         style={{ opacity: 0, height: 0, width: 0 }}
-      ></input>
-      <div style={{}} className="type__container">
+      />
+      <div className="type__container">
         <div
-          onClick={() => {
-            focusInput();
-
-            if (document.getElementsByClassName("letter").length != undefined) {
-              document
-                .getElementsByClassName("letter")[0]
-                .classList.add("next");
-            }
-          }}
+          onClick={focusInput}
           className="type__box"
           style={{
             marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
           }}
         >
-          {wordsLoaded ? wordList : <></>}
+          {wordsLoaded ? wordList : null}
         </div>
       </div>
     </>

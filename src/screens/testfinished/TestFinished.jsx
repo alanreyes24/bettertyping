@@ -36,7 +36,7 @@ function TestFinished(user) {
   useEffect(() => {
     const fetchDataAndLog = async () => {
       const response = await axios.get(
-        "${process.env.REACT_APP_API_URL}/test/userMostRecentTest",
+        `${import.meta.env.VITE_API_URL}/test/userMostRecentTest`,
         {
           withCredentials: true,
         }
