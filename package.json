@@ -8,7 +8,7 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "start": "vite preview --port $PORT"
+    "start": "vite preview --port $PORT --host"
   },
   "dependencies": {
     "@google/generative-ai": "^0.12.0",
