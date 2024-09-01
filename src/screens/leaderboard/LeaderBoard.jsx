@@ -48,7 +48,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   async function retrieveTimeTestRankings(duration, timeFrame) {
     try {
       const response = await axios.get(
-        "${process.env.REACT_APP_API_URL}/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}"
+        `${process.env.REACT_APP_API_URL}/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`
       );
       if (timeFrame === "all-time") {
         if (duration === 15) {
@@ -79,7 +79,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   async function retrieveWordTestRankings(count, timeFrame) {
     try {
       const response = await axios.get(
-        "${process.env.REACT_APP_API_URL}/test/wordRankings?count=${count}&timeFrame=${timeFrame}"
+        `${process.env.REACT_APP_API_URL}/test/wordRankings?count=${count}&timeFrame=${timeFrame}`
       );
       if (timeFrame === "all-time") {
         if (count === 25) {
@@ -126,25 +126,59 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     return () => clearInterval(interval);
   }, []);
 
-  const currentTests15 = displayAllTimeTests
-    ? pulledTests15AllTime.slice(0, 10)
-    : pulledTests15Daily.slice(0, 10);
-  const currentTests30 = displayAllTimeTests
-    ? pulledTests30AllTime.slice(0, 10)
-    : pulledTests30Daily.slice(0, 10);
-  const currentTests60 = displayAllTimeTests
-    ? pulledTests60AllTime.slice(0, 10)
-    : pulledTests60Daily.slice(0, 10);
+  const currentTests15 = Array.isArray(
+    displayAllTimeTests ? pulledTests15AllTime : pulledTests15Daily
+  )
+    ? (displayAllTimeTests ? pulledTests15AllTime : pulledTests15Daily).slice(
+        0,
+        10
+      )
+    : [];
 
-  const currentTestsWord25 = displayAllTimeTests
-    ? pulledTestsWord25AllTime.slice(0, 10)
-    : pulledTestsWord25Daily.slice(0, 10);
-  const currentTestsWord50 = displayAllTimeTests
-    ? pulledTestsWord50AllTime.slice(0, 10)
-    : pulledTestsWord50Daily.slice(0, 10);
-  const currentTestsWord100 = displayAllTimeTests
-    ? pulledTestsWord100AllTime.slice(0, 10)
-    : pulledTestsWord100Daily.slice(0, 10);
+  const currentTests30 = Array.isArray(
+    displayAllTimeTests ? pulledTests30AllTime : pulledTests30Daily
+  )
+    ? (displayAllTimeTests ? pulledTests30AllTime : pulledTests30Daily).slice(
+        0,
+        10
+      )
+    : [];
+
+  const currentTests60 = Array.isArray(
+    displayAllTimeTests ? pulledTests60AllTime : pulledTests60Daily
+  )
+    ? (displayAllTimeTests ? pulledTests60AllTime : pulledTests60Daily).slice(
+        0,
+        10
+      )
+    : [];
+
+  const currentTestsWord25 = Array.isArray(
+    displayAllTimeTests ? pulledTestsWord25AllTime : pulledTestsWord25Daily
+  )
+    ? (displayAllTimeTests
+        ? pulledTestsWord25AllTime
+        : pulledTestsWord25Daily
+      ).slice(0, 10)
+    : [];
+
+  const currentTestsWord50 = Array.isArray(
+    displayAllTimeTests ? pulledTestsWord50AllTime : pulledTestsWord50Daily
+  )
+    ? (displayAllTimeTests
+        ? pulledTestsWord50AllTime
+        : pulledTestsWord50Daily
+      ).slice(0, 10)
+    : [];
+
+  const currentTestsWord100 = Array.isArray(
+    displayAllTimeTests ? pulledTestsWord100AllTime : pulledTestsWord100Daily
+  )
+    ? (displayAllTimeTests
+        ? pulledTestsWord100AllTime
+        : pulledTestsWord100Daily
+      ).slice(0, 10)
+    : [];
 
   return (
     <div
