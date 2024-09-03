@@ -12,7 +12,6 @@ bettertyping is a minimalist, feature-rich typing test website created in collab
 - **frontend**: built with react, leveraging vite for fast builds and development. the frontend is optimized for performance and provides a smooth, interactive user experience.
 - **backend**: powered by node.js and express.js, with mongodb for data storage. the backend handles user authentication, test data processing, and real-time analytics.
 - **deployment**: hosted on railway, ensuring high availability and scalability.
-- **environment**: configurable via environment variables, such as `REACT_APP_API_URL`, allowing for flexibility in development and deployment environments.
 
 ## development roadmap  🛤️
 - **leaderboard integration**: compete with friends and the global community with a leaderboard feature that tracks the top typists in various test modes.
