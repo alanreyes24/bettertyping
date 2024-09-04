@@ -50,10 +50,8 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
         {AIMode && <div> AI TEST MODE </div>}
 
         {user.username === "guest" && !AIMode ? (
-          <div
-            style={{ fontSize: "clamp(1rem, 2vw, 1.5rem)", fontWeight: "bold" }}
-          >
-            guest mode
+          <div style={{ fontSize: "clamp(0.625rem, 1vw, 1rem)" }}>
+            make an account to save your tests!
           </div>
         ) : user.username && !AIMode ? (
           <div> welcome, {user.username} </div>

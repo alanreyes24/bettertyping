@@ -2,8 +2,31 @@ import React, { useState, useEffect } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
+import { Scatter } from "react-chartjs-2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Filler,
+  Tooltip,
+  Legend,
+} from "chart.js";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Filler,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const Test = ({ user, AIMode }) => {
   const navigate = useNavigate();
@@ -216,7 +239,9 @@ const Test = ({ user, AIMode }) => {
       } else if (user.username !== "guest" && AIMode) {
         await sendAITestToBackend();
       }
-      handleEndTestRedirect();
+      if (user.username != "guest") {
+        handleEndTestRedirect();
+      }
     };
 
     if (test.state === 3 && test.finished && test.eventLog.length !== 0) {
@@ -257,6 +282,65 @@ const Test = ({ user, AIMode }) => {
     return 0;
   };
 
+  const wpmData = {
+    datasets: [
+      {
+        label: "True WPM",
+        data: trueWPMArray,
+        cubicInterpolationMode: "monotone",
+        backgroundColor: "rgba(255, 255, 255, 0.2)",
+        showLine: true,
+        fill: false,
+        borderWidth: 1,
+        borderColor: "rgba(255, 255, 255, 1)",
+        pointBackgroundColor: "rgba(255, 255, 255, 1)",
+        pointBorderColor: "#000",
+        pointHoverBackgroundColor: "#000",
+        pointHoverBorderColor: "rgba(255, 255, 255, 1)",
+      },
+      {
+        label: "Raw WPM",
+        data: rawWPMArray,
+        cubicInterpolationMode: "monotone",
+        showLine: true,
+        fill: true,
+        borderWidth: 1,
+        backgroundColor: "rgba(0, 0, 0, 0.2)",
+        borderColor: "rgba(0, 0, 0, 1)",
+        pointBackgroundColor: "rgba(0, 0, 0, 1)",
+        pointBorderColor: "#fff",
+        pointHoverBackgroundColor: "#fff",
+        pointHoverBorderColor: "rgba(0, 0, 0, 1)",
+      },
+    ],
+  };
+
+  const options = {
+    animation: false,
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "top",
+      },
+      title: {
+        display: true,
+        text: "",
+      },
+    },
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: "linear",
+        ticks: {
+          stepSize: 1,
+        },
+      },
+      y: {
+        type: "linear",
+      },
+    },
+  };
+
   return (
     <div style={{ width: "100%", height: "100%" }}>
       <div
@@ -264,7 +348,7 @@ const Test = ({ user, AIMode }) => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "5rem",
+          marginTop: "3rem",
         }}
       >
         {hideSettings || AIMode ? (
@@ -298,7 +382,13 @@ const Test = ({ user, AIMode }) => {
           />
         )}
       </div>
-      <div style={{ justifyContent: "center", alignSelf: "center" }}>
+      <div
+        style={{
+          justifyContent: "center",
+          alignSelf: "center",
+          marginBottom: "2rem",
+        }}
+      >
         <Timer test={test} />
       </div>
       <div
@@ -314,31 +404,37 @@ const Test = ({ user, AIMode }) => {
           test={test}
           selectedDifficulty={test.settings.difficulty}
           passWords={(w) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              words: {
-                ...prevTest.words,
-                wordList: w,
-              },
-            }));
+            setTimeout(() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  wordList: w,
+                },
+              }));
+            }, 0);
           }}
           passCorrectLetters={(l) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              words: {
-                ...prevTest.words,
-                correctLetters: l,
-              },
-            }));
+            setTimeout(() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  correctLetters: l,
+                },
+              }));
+            }, 0);
           }}
           passIncorrectLetters={(l) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              words: {
-                ...prevTest.words,
-                incorrectLetters: l,
-              },
-            }));
+            setTimeout(() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  incorrectLetters: l,
+                },
+              }));
+            }, 0);
           }}
           onTextLoaded={() => {
             setTest((prevTest) => ({
@@ -359,11 +455,13 @@ const Test = ({ user, AIMode }) => {
             }));
           }}
           passEventLog={(e) => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              timestamp: e[0]?.timestamp || Date.now(),
-              eventLog: e,
-            }));
+            setTimeout(() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                timestamp: e[0]?.timestamp || Date.now(),
+                eventLog: e,
+              }));
+            }, 0);
           }}
           onFocus={() => {}}
           onFocusLost={() => {}}
@@ -374,10 +472,49 @@ const Test = ({ user, AIMode }) => {
           style={{
             display: "flex",
             justifyContent: "center",
-            marginTop: "1rem",
+            alignItems: "center",
+            flexDirection: "column",
+            height: "50vh",
+            margin: "0 auto",
           }}
         >
-          In order to save your test you need to log in
+          {test.finished && wpmData && options && (
+            <div>
+              <div
+                style={{
+                  width: "80rem",
+                  height: "20rem",
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <Scatter data={wpmData} options={options} />
+              </div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "2rem",
+                  marginTop: "1rem",
+                }}
+              >
+                <div>
+                  <span>raw WPM:</span> {test?.results.rawWPM}
+                </div>
+                <div>
+                  <span>true WPM:</span> {test?.results.trueWPM}
+                </div>
+                <div>
+                  <span>correct only WPM:</span> {test?.results.correctOnlyWPM}
+                </div>
+                <div>
+                  <span>accuracy:</span> {test?.results.accuracy}%
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

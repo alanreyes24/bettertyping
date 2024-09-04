@@ -10,6 +10,7 @@
   max-width: 40rem;
   min-height: 15rem;
   max-height: 15rem;
+  margin: 2rem;
 }
 
 .modal__subcontainer {

@@ -63,7 +63,6 @@ function TextArea({
     }
   }
 
-  // CURSOR BLINKING
   useEffect(() => {
     const cursor = document.getElementById("cursor");
     if (cursor) {
@@ -75,7 +74,6 @@ function TextArea({
     }
   }, [shouldUpdateCursor, test.state]);
 
-  //////// LETTER STATE HANDLING
   useEffect(() => {
     if (test.state === 1) {
       setTimeout(() => {
@@ -105,7 +103,9 @@ function TextArea({
       JSON.stringify(test.words.correctLetters) !==
         JSON.stringify(correctLetters)
     ) {
-      passCorrectLetters(correctLetters);
+      setTimeout(() => {
+        passCorrectLetters(correctLetters);
+      }, 0);
     }
   }, [correctLetters, passCorrectLetters, test.state]);
 
@@ -115,22 +115,24 @@ function TextArea({
       JSON.stringify(test.words.incorrectLetters) !==
         JSON.stringify(incorrectLetters)
     ) {
-      passIncorrectLetters(incorrectLetters);
+      setTimeout(() => {
+        passIncorrectLetters(incorrectLetters);
+      }, 0);
     }
   }, [incorrectLetters, passIncorrectLetters, test.state]);
 
-  //// EVENT LOG PASSING
   useEffect(() => {
     if (
       test.state === 3 &&
       test.finished &&
       JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
     ) {
-      passEventLog(eventLog);
+      setTimeout(() => {
+        passEventLog(eventLog);
+      }, 0);
     }
   }, [eventLog, passEventLog, test.state, test.finished]);
 
-  //////// UTIL FUNCTIONS
   const focusInput = () => {
     const input = document.getElementById("input");
     if (input) {
@@ -148,7 +150,6 @@ function TextArea({
     };
   };
 
-  //////// WORD FUNCTIONS
   const wordMap = async (amount) => {
     if (aiMode && AIWordList.length) {
       await retrieveAIWordList();
@@ -177,7 +178,6 @@ function TextArea({
     onTextLoaded();
   }
 
-  //////// HANDLE USER INPUT
   const handleUserInput = (event) => {
     const input = event.key;
     const currentLetter =
@@ -190,7 +190,6 @@ function TextArea({
       setStartTime(Date.now());
     }
 
-    // LOG THE INTENDED
     setEventLog((prevLog) => [
       ...prevLog,
       {
@@ -223,7 +222,6 @@ function TextArea({
         setCurrentLetterIndex((prev) => prev + 1);
       }
 
-      // CHECK IF LAST LETTER
       if (
         document.getElementsByClassName("letter").length ===
         currentLetterIndex + 2
@@ -242,7 +240,6 @@ function TextArea({
     }
   };
 
-  //// PRE TEST WORD LOADING
   useEffect(() => {
     if (test.state <= 0) {
       if (test.settings.type === "words") {
@@ -253,7 +250,6 @@ function TextArea({
     }
   }, [test.settings.type, test.settings.count, test.state]);
 
-  ////LINE SHIFTING
   useEffect(() => {
     if (test.state === 1) {
       const currentLetter =
@@ -271,7 +267,6 @@ function TextArea({
     }
   }, [currentLetterIndex, test.state]);
 
-  // Extends the word list by amount
   function extendWordList(amount) {
     let wordArr = Array(amount)
       .fill(false)
@@ -294,7 +289,9 @@ function TextArea({
       { length: totalCorrectWords },
       (_, i) => document.getElementsByClassName("word")[i].textContent
     );
-    passWords(arr);
+    setTimeout(() => {
+      passWords(arr);
+    }, 0);
   }
 
   return (
