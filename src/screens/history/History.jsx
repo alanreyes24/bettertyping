@@ -84,7 +84,7 @@ function History({ user, handleUserChange, handleLogout }) {
           user={user}
         />
         <div className="error-message">
-          You need to take a test in order to use this page
+          you need an account and have taken a test to use this page!
         </div>
       </>
     );

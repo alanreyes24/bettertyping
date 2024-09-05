@@ -47,10 +47,12 @@ body {
 }
 
 .error-message {
+  font-size: 40px;
   color: #ff4f4f;
   font-weight: bold;
   text-align: center;
-  margin: 20px 0;
+  align-items: center;
+  margin-top: 300px;
 }
 
 .card {
