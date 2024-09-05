@@ -396,6 +396,7 @@ const Test = ({ user, AIMode }) => {
           display: "flex",
           justifyContent: "center",
           transition: "all .15s ease-out",
+          marginBottom: "2rem",
         }}
       >
         <TextArea
@@ -482,6 +483,16 @@ const Test = ({ user, AIMode }) => {
             <div>
               <div
                 style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  fontWeight: "bold",
+                  marginTop: "2rem",
+                }}
+              >
+                make an account to save your tests!
+              </div>
+              <div
+                style={{
                   width: "80rem",
                   height: "20rem",
                   display: "flex",
@@ -498,19 +509,21 @@ const Test = ({ user, AIMode }) => {
                   alignItems: "center",
                   gap: "2rem",
                   marginTop: "1rem",
+                  marginBottom: "3rem",
                 }}
               >
                 <div>
-                  <span>raw WPM:</span> {test?.results.rawWPM}
+                  <span>raw WPM:</span> <b>{test?.results.rawWPM}</b>
                 </div>
                 <div>
-                  <span>true WPM:</span> {test?.results.trueWPM}
+                  <span>true WPM:</span> <b>{test?.results.trueWPM}</b>
                 </div>
                 <div>
-                  <span>correct only WPM:</span> {test?.results.correctOnlyWPM}
+                  <span>correct only WPM:</span>{" "}
+                  <b>{test?.results.correctOnlyWPM}</b>
                 </div>
                 <div>
-                  <span>accuracy:</span> {test?.results.accuracy}%
+                  <span>accuracy:</span> <b>{test?.results.accuracy}%</b>
                 </div>
               </div>
             </div>
