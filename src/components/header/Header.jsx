@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Login from "../login/Login";
 import "./Header.css";
 
@@ -9,6 +9,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const [isTestFinished, setIsTestFinished] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate(); // Hook to programmatically navigate
 
   useEffect(() => {
     if (user.username && user.username !== "guest") {
@@ -36,6 +37,16 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
     }
   }
 
+  // Handle home button click
+  function handleHomeClick(e) {
+    if (location.pathname === "/") {
+      e.preventDefault();
+      window.location.reload();
+    } else {
+      navigate("/");
+    }
+  }
+
   return (
     <div
       style={{
@@ -44,21 +55,20 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
     >
       <div className="header">
         <div className="logo">
-          <Link to="/">bettertyping</Link>
+          <a href="/" onClick={handleHomeClick}>
+            bettertyping
+          </a>{" "}
+          {/* Use the home click handler */}
         </div>
 
-        {AIMode && <div> AI TEST MODE </div>}
-
-        {user.username === "guest" && !AIMode ? (
-          <div style={{ fontSize: "clamp(0.625rem, 1vw, 1rem)" }}>
-            make an account to save your tests!
-          </div>
-        ) : user.username && !AIMode ? (
-          <div> welcome, {user.username} </div>
-        ) : null}
+        <div className="center-message">
+          {userLoggedIn && !AIMode && (
+            <div className="welcome-message">welcome, {user.username}</div>
+          )}
+        </div>
 
         <div className="button-container">
-          <Link to="/">
+          <Link to="/" onClick={handleHomeClick}>
             <button className="button">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -87,16 +97,16 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
                 <path
                   d="M14.2718 10.445L18 2M9.31612 10.6323L5 2M12.7615 10.0479L8.835 2M14.36 2L13.32 4.5M6 16C6 19.3137 8.68629 22 12 22C15.3137 22 18 19.3137 18 16C18 12.6863 15.3137 10 12 10C8.68629 10 6 12.6863 6 16Z"
                   stroke="#ffffff"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
                 <path
                   d="M10.5 15L12.5 13.5V18.5"
                   stroke="#ffffff"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 />
               </svg>
             </button>
