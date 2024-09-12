@@ -1,3 +1,20 @@
+/* General Page Styling */
+.leaderboard-page {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-color: #273564;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Leaderboard Styling */
+.leaderboard {
+  flex: 1;
+  overflow-y: auto;
+  padding-top: 20px; /* Added padding to move the leaderboard higher */
+}
+
 .leaderboard-container {
   display: flex;
   flex-direction: row;
@@ -5,49 +22,60 @@
   width: 100%;
 }
 
+.leaderboard-section {
+  margin: 0 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.section-title {
+  font-size: 1.5em;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
 .leaderboard-list {
   list-style: none;
   padding: 10px;
+  overflow-y: auto;
 }
 
 .leaderboard-item {
   display: flex;
+  justify-content: space-between;
+  align-items: center;
   background-color: rgba(255, 255, 255, 0.1);
   padding: 0.75rem;
   margin-bottom: 0.75rem;
   border-radius: 0.4rem;
-  font-size: 1.2em;
-  width: 25rem;
+  font-size: 1.1em;
 }
 
-.leaderboard {
-  background-color: #273564;
-  padding: 2rem;
-  color: white;
+.leaderboard-rank {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  width: 100vw;
 }
 
-@media (min-width: 640px) and (orientation: portrait) {
-  .leaderboard {
-    display: flex;
-    background-color: #273564;
+.leaderboard-username {
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.leaderboard-wpm {
+  font-size: 0.9em;
+  color: #ccc;
+}
+
+/* Media Queries */
+@media (max-width: 768px) {
+  .leaderboard-container {
+    flex-direction: column;
+    align-items: center;
   }
-}
 
-@media (min-width: 768px) and (orientation: portrait) {
-  .leaderboard {
-    display: flex;
-    background-color: #273564;
-  }
-}
-
-@media (min-width: 1024px) and (orientation: portrait) {
-  .leaderboard {
-    display: flex;
-    background-color: #273564;
+  .leaderboard-section {
+    width: 90%;
+    margin-bottom: 20px;
   }
 }
