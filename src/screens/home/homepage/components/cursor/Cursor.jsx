@@ -44,15 +44,7 @@ function Cursor({ shouldUpdate, currentLetter }) {
     return (
         <div
             id="cursor"
-            className="cursor"
-            style={{
-                marginLeft: "0.4rem",
-                backgroundColor: "white",
-                height: "1.75rem",
-                width: "0.1rem",
-                transition: "all .15s ease-out",
-                position: "absolute",
-            }}
+            className="cursor ml-2 bg-white w-[0.1rem] h-7 transition-all absolute "
         />
     );
 }

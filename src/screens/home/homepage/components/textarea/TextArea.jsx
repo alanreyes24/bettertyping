@@ -101,7 +101,7 @@ function TextArea({
     if (
       test.state === 1 &&
       JSON.stringify(test.words.correctLetters) !==
-        JSON.stringify(correctLetters)
+      JSON.stringify(correctLetters)
     ) {
       setTimeout(() => {
         passCorrectLetters(correctLetters);
@@ -113,7 +113,7 @@ function TextArea({
     if (
       test.state === 1 &&
       JSON.stringify(test.words.incorrectLetters) !==
-        JSON.stringify(incorrectLetters)
+      JSON.stringify(incorrectLetters)
     ) {
       setTimeout(() => {
         passIncorrectLetters(incorrectLetters);
@@ -161,13 +161,18 @@ function TextArea({
           </div>
         ));
     } else {
-      return Array(amount)
+
+
+
+      let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
           <div key={i} className="word">
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
+
+      return arr
     }
   };
 
@@ -328,14 +333,15 @@ function TextArea({
         }}
         style={{ opacity: 0, height: 0, width: 0 }}
       />
-      <div className="type__container">
+      <div className="border rounded-md min-w-[55%] max-w-[55%] h-40 px-8 py-4 overflow-hidden ">
         <div
           onClick={focusInput}
-          className="type__box"
+          className=""
           style={{
             marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
           }}
         >
+
           {wordsLoaded ? wordList : null}
         </div>
       </div>

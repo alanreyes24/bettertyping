@@ -32,7 +32,7 @@ const Test = ({ user, AIMode }) => {
   const navigate = useNavigate();
 
   const handleEndTestRedirect = () => {
-    navigate("/test-finished", { state: { AIMode } });
+    // navigate("/test-finished", { state: { AIMode } });
   };
 
   const sendTestToBackend = async () => {
@@ -342,28 +342,12 @@ const Test = ({ user, AIMode }) => {
   };
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "3rem",
-        }}
-      >
+    <div className="w-full h-full">
+      {/* SETTINGS MODAL */}
+      {/* <div className="flex justify-center items-center mt-12">
         {hideSettings || AIMode ? (
           <div
-            style={{
-              display: "flex",
-              alignSelf: "center",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "15px",
-              padding: "1rem",
-              width: "20rem",
-              minHeight: "1rem",
-              maxHeight: "1rem",
-            }}
+            className="flex self-center items-center justify-center border-white p-4 w-36"
           />
         ) : (
           <Settings
@@ -381,24 +365,11 @@ const Test = ({ user, AIMode }) => {
             }}
           />
         )}
-      </div>
-      <div
-        style={{
-          justifyContent: "center",
-          alignSelf: "center",
-          marginBottom: "2rem",
-        }}
-      >
+      </div> */}
+      <div className="justify-center self-center mb-8">
         <Timer test={test} />
       </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          transition: "all .15s ease-out",
-          marginBottom: "2rem",
-        }}
-      >
+      <div className="flex justify-center ">
         <TextArea
           user={user}
           aiMode={AIMode}
@@ -464,11 +435,11 @@ const Test = ({ user, AIMode }) => {
               }));
             }, 0);
           }}
-          onFocus={() => {}}
-          onFocusLost={() => {}}
+          onFocus={() => { }}
+          onFocusLost={() => { }}
         />
       </div>
-      {user.username === "guest" && (
+      {/* {user.username === "guest" && (
         <div
           style={{
             display: "flex",
@@ -529,7 +500,7 @@ const Test = ({ user, AIMode }) => {
             </div>
           )}
         </div>
-      )}
+      )} */}
     </div>
   );
 };
