@@ -301,48 +301,50 @@ function TextArea({
 
   return (
     <>
-      <Cursor
-        shouldUpdate={shouldUpdateCursor}
-        currentLetter={currentLetterIndex}
-      />
-      <input
-        onBlur={() => {
-          setShouldUpdateCursor(false);
-          onFocusLost();
-        }}
-        id="input"
-        autoComplete="off"
-        autoCapitalize="off"
-        autoCorrect="off"
-        type="text"
-        data-gramm="false"
-        data-gramm_editor="false"
-        data-enable-grammarly="false"
-        list="autocompleteOff"
-        onKeyDown={(event) => {
-          if (
-            test.state === 0 &&
-            document.getElementsByClassName("letter").length
-          ) {
-            onTextStarted();
-            setShouldUpdateCursor(true);
-            handleUserInput(event);
-          } else if (test.state === 1) {
-            handleUserInput(event);
-          }
-        }}
-        style={{ opacity: 0, height: 0, width: 0 }}
-      />
-      <div className="border rounded-md min-w-[55%] max-w-[55%] h-40 px-8 py-4 overflow-hidden ">
-        <div
-          onClick={focusInput}
-          className=""
-          style={{
-            marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
+      <div>
+        <Cursor
+          shouldUpdate={shouldUpdateCursor}
+          currentLetter={currentLetterIndex}
+        />
+        <input
+          onBlur={() => {
+            setShouldUpdateCursor(false);
+            onFocusLost();
           }}
-        >
+          id="input"
+          autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          type="text"
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
+          list="autocompleteOff"
+          onKeyDown={(event) => {
+            if (
+              test.state === 0 &&
+              document.getElementsByClassName("letter").length
+            ) {
+              onTextStarted();
+              setShouldUpdateCursor(true);
+              handleUserInput(event);
+            } else if (test.state === 1) {
+              handleUserInput(event);
+            }
+          }}
+          style={{ opacity: 0, height: 0, width: 0 }}
+        />
+        <div className="border rounded-lg w-full h-40 px-5 py-4 overflow-hidden bg-secondary ">
+          <div
+            onClick={focusInput}
+            className=""
+            style={{
+              marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
+            }}
+          >
 
-          {wordsLoaded ? wordList : null}
+            {wordsLoaded ? wordList : null}
+          </div>
         </div>
       </div>
     </>

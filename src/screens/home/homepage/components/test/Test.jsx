@@ -17,6 +17,15 @@ import {
   Legend,
 } from "chart.js";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -342,7 +351,45 @@ const Test = ({ user, AIMode }) => {
   };
 
   return (
-    <div className="w-full h-full">
+    <>
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold">Timed, 30 Seconds</h2>
+          <p className="text-muted-foreground">Type as many words as you can in 30 seconds.</p>
+        </div>
+        <div className="flex items-center gap-2">
+
+
+
+          <Select onValueChange={(value) => {
+            console.log(value)
+          }} defaultValue="timed">
+            <SelectTrigger id="status" aria-label="Select Type">
+              <SelectValue placeholder="Select Test" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="timed">Timed</SelectItem>
+              <SelectItem value="words">Words</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select defaultValue="30">
+            <SelectTrigger id="status" aria-label="Select Length">
+              <SelectValue placeholder="Select Length" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="15">15 Seconds</SelectItem>
+              <SelectItem value="30">30 Seconds</SelectItem>
+              <SelectItem value="60">60 Seconds</SelectItem>
+            </SelectContent>
+          </Select>
+
+
+        </div>
+
+      </div>
+
+
       {/* SETTINGS MODAL */}
       {/* <div className="flex justify-center items-center mt-12">
         {hideSettings || AIMode ? (
@@ -366,8 +413,8 @@ const Test = ({ user, AIMode }) => {
           />
         )}
       </div> */}
-      <div className="justify-center self-center mb-8">
-        <Timer test={test} />
+      <div className="justify-center self-center">
+        {/* <Timer test={test} /> */}
       </div>
       <div className="flex justify-center ">
         <TextArea
@@ -501,7 +548,7 @@ const Test = ({ user, AIMode }) => {
           )}
         </div>
       )} */}
-    </div>
+    </>
   );
 };
 

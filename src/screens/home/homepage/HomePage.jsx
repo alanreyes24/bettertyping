@@ -4,6 +4,21 @@ import HeaderWrapper from "../../../components/header/HeaderWrapper";
 import Test from "./components/test/Test";
 import Landing from "./components/landing/Landing";
 
+"use client"
+
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
+
+import { Badge } from "@/components/ui/badge"
+
+const chartData = [
+  { second: "1", RawWPM: 186, TrueWPM: 80 },
+  { second: "2", RawWPM: 305, TrueWPM: 200 },
+  { second: "3", RawWPM: 237, TrueWPM: 120 },
+  { second: "4", RawWPM: 73, TrueWPM: 190 },
+  { second: "5", RawWPM: 209, TrueWPM: 130 },
+  { second: "6", RawWPM: 214, TrueWPM: 140 },
+]
+
 function HomePage({ user, handleUserChange, handleLogout }) {
   return (
     <>
@@ -14,97 +29,180 @@ function HomePage({ user, handleUserChange, handleLogout }) {
       />
       <div className="bg-background w-full h-full">
         <div className="flex flex-1 flex-col">
-          <div className="container mx-auto my-24 max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              <div className="flex flex-col items-start justify-center">
-                <h1 className="text-4xl font-bold tracking-tight text-foreground">Unlock Your Typing Potential</h1>
-                <p className="mt-4 text-muted-foreground">
-                  Better Typing is an AI-powered typing test that helps you improve your typing speed and accuracy. By
-                  analyzing your typing patterns, our AI can provide personalized feedback and recommendations to help you
-                  become a more efficient typist.
-                </p>
-                <div className="mt-8 flex flex-col items-start gap-4">
-                  <a
-                    href="#"
-                    className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  >
-                    Take a Sample Test
-                  </a>
-                  <a
-                    href="#"
-                    className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  >
-                    Learn More
-                  </a>
-                </div>
-              </div>
-
-              {/* SOMETHING HERE */}
-              <div className="flex flex-col items-start justify-center">
 
 
-
-              </div>
-            </div>
-
-            <div className="container grid items-center gap-12 my-32">
-              <div>
-                <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">What Our Users Say</h2>
-                <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Hear from our satisfied users about how our AI typing test has helped them improve their skills.
-                </p>
-              </div>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <div className="flex items-center space-x-4">
-                    <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                      <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">MO</span>
-                    </span>
-                    <div>
-                      <h4 className="text-sm font-semibold">Miles Oncken</h4>
-                      <p className="text-xs text-muted-foreground">Software Developer</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-muted-foreground">
-                    "Better Typing has increased my WPM by over 30 in the last six months of development. It's amazing how powerful this tool really is!"
-                  </p>
-                </div>
-                <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <div className="flex items-center space-x-4">
-                    <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                      <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">AR</span>
-                    </span>
-                    <div>
-                      <h4 className="text-sm font-semibold">Alan Reyes</h4>
-                      <p className="text-xs text-muted-foreground">Software Engineer</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-muted-foreground">
-                    "I was struggling with my typing skills, but the AI typing test has helped me improve my speed and
-                    accuracy. It's been an lifesaver for my job!"
-                  </p>
-                </div>
-                <div className="rounded-lg border bg-background p-6 shadow-sm">
-                  <div className="flex items-center space-x-4">
-                    <span className="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full">
-                      <span className="flex h-full w-full items-center justify-center rounded-full bg-muted">S</span>
-                    </span>
-                    <div>
-                      <h4 className="text-sm font-semibold">Seven</h4>
-                      <p className="text-xs text-muted-foreground">Customer Service Representative</p>
-                    </div>
-                  </div>
-                  <p className="mt-4 text-muted-foreground">
-                    "The AI typing test has been an invaluable tool for me. It's helped me improve my typing speed and
-                    accuracy, which has made me more efficient in my job."
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* INTRO */}
+          <div className="space-y-4 justify-center text-center self-center mt-16">
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">Test Your Typing Speed</h1>
+            <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
+              Take a short typing test and we will match you with an individualized AI program to improve your skils!
+            </p>
           </div>
 
 
-          <div className="container mx-auto my-12 max-w-7xl px-4 sm:px-6 lg:px-8">
+
+
+          {/* TEST AREA */}
+          <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-5xl rounded-lg border bg-card p-6 shadow-sm">
+            <Test user={user} AIMode={false} />
+          </div>
+
+
+
+
+
+          {/* REPORT */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 max-w-7xl mt-16 gap-6 mx-auto">
+
+            {/* GRAPH */}
+            <div className="w-full mx-auto rounded-lg border bg-card p-6 shadow-sm">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-bold">WPM Graph</h2>
+                <p className="text-muted-foreground">Track your WPM over the length of the test. </p>
+
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart
+                  data={chartData}
+                  margin={{
+                    top: 10,
+                    right: 30,
+                    left: 0,
+                    bottom: 0,
+                  }}
+                >
+                  <CartesianGrid vertical={false} />
+                  <XAxis
+                    dataKey="second"
+                    tickLine={true}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickFormatter={(value) => value.slice(0, 3)}
+                  />
+                  <YAxis
+                    tickLine={false}
+                    axisLine={false}
+                    tickMargin={8}
+                    tickCount={3}
+                  />
+                  <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--secondary))', border: 0, borderRadius: "0.5rem" }} wrapperStyle={{ color: "white", borderRadius: "2rem" }} />
+                  <Area
+                    type="monotone"
+                    dataKey="TrueWPM"
+                    stackId="1"
+                    stroke="hsl(143, 100%, 51%)"
+                    fill="hsl(143, 100%, 51%)"
+                    fillOpacity={0.1}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="RawWPM"
+                    stackId="1"
+                    stroke="hsl(34, 100%, 47%"
+                    fill="hsl(34, 100%, 47%"
+                    fillOpacity={0.1}
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+
+            </div>
+
+
+            {/* STATISTICS */}
+            <div className="w-full mx-auto rounded-lg border bg-card p-6 h shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-bold">Statistics</h2>
+                  <p className="text-muted-foreground">Review your typing performance and get insights.</p>
+                </div>
+                {/* <div className="flex items-center gap-2">
+                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                    View Report
+                  </button>
+                </div> */}
+              </div>
+
+              <div className="mt-6">
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Words Per Minute</h3>
+                      <p className="text-muted-foreground">Your average typing speed</p>
+                    </div>
+
+                    <div className="text-4xl font-bold flex flex-col-reverse text-center justify-end">  <Badge className="bg-amber-300 h-6 w-32 justify-center">Top 0.1%</Badge>142.8</div>
+
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Accuracy</h3>
+                      <p className="text-muted-foreground">Your typing accuracy</p>
+                    </div>
+                    <div className="text-4xl font-bold flex-col-reverse text-center flex justify-center">  <Badge className="bg-green-400 h-6 w-32 justify-center ">Above Average</Badge>92%</div>
+                  </div>
+
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Mistakes</h3>
+                      <p className="text-muted-foreground">Number of mistakes made</p>
+                    </div>
+                    <div className="text-4xl font-bold flex flex-col-reverse text-center justify-center">  <Badge className="bg-red-400 h-6  w-32 justify-center">Below Average</Badge>12</div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full mx-auto rounded-lg border bg-card p-6 h shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-bold">Statistics</h2>
+                  <p className="text-muted-foreground">Review your typing performance and get insights.</p>
+                </div>
+                {/* <div className="flex items-center gap-2">
+                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
+                    View Report
+                  </button>
+                </div> */}
+              </div>
+
+              <div className="mt-6">
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Words Per Minute</h3>
+                      <p className="text-muted-foreground">Your average typing speed</p>
+                    </div>
+
+                    <div className="text-4xl font-bold flex flex-col-reverse text-center justify-end">  <Badge className="bg-amber-300 h-6 w-32 justify-center">Top 0.1%</Badge>142.8</div>
+
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Accuracy</h3>
+                      <p className="text-muted-foreground">Your typing accuracy</p>
+                    </div>
+                    <div className="text-4xl font-bold flex-col-reverse text-center flex justify-center">  <Badge className="bg-green-400 h-6 w-32 justify-center ">Above Average</Badge>92%</div>
+                  </div>
+
+
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h3 className="text-lg font-medium">Mistakes</h3>
+                      <p className="text-muted-foreground">Number of mistakes made</p>
+                    </div>
+                    <div className="text-4xl font-bold flex flex-col-reverse text-center justify-center">  <Badge className="bg-red-400 h-6  w-32 justify-center">Below Average</Badge>12</div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+          {/* <div className="container mx-auto my-12 max-w-7xl px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold tracking-tight text-foreground mb-6">Pricing</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
@@ -162,8 +260,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                 </div>
               </div>
             </div>
-          </div>
-          {/* <Test user={user} AIMode={false} /> */}
+          </div> */}
         </div>
       </div>
     </>
