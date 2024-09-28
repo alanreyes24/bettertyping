@@ -334,7 +334,7 @@ function TextArea({
           }}
           style={{ opacity: 0, height: 0, width: 0 }}
         />
-        <div className="border rounded-lg w-full h-40 px-5 py-4 overflow-hidden bg-secondary ">
+        <div className="rounded-lg w-full h-44 overflow-hidden ">
           <div
             onClick={focusInput}
             className=""

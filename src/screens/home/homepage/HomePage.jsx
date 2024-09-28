@@ -16,7 +16,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const chartData = [
   { second: "1", RawWPM: 186, TrueWPM: 80 },
@@ -35,35 +43,46 @@ function HomePage({ user, handleUserChange, handleLogout }) {
         passLogout={handleLogout}
         user={user}
       />
-      <div className='bg-background w-full h-full'>
-        <div className='flex flex-1 flex-col'>
+      <div className="bg-background w-full h-full">
+        <div className="flex flex-1 flex-col">
+
+
           {/* INTRO */}
-          <div className='space-y-4 justify-center text-center self-center mt-16'>
-            <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
+          <div className="space-y-4 justify-center text-center self-center mt-16">
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
               Test Your Typing Speed
             </h1>
-            <p className='max-w-2xl self-center text-muted-foreground md:text-xl/relaxed'>
+            <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
               Take a short typing test and we will match you with an
               individualized AI program to improve your skils!
             </p>
           </div>
 
           {/* TEST AREA */}
-          <div className='w-full mt-16 mx-auto max-w-3xl lg:max-w-5xl rounded-lg border bg-card p-6 shadow-sm'>
+          <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm mb-64">
             <Test user={user} AIMode={false} />
           </div>
 
+          <div className="space-y-4 justify-center text-center self-center mt-32">
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+              Analysis
+            </h1>
+            <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
+              An in depth look at your typing test. For a more detailed report, use our AI tool!
+            </p>
+          </div>
+
           {/* REPORT */}
-          <div className='max-w-3xl lg:max-w-5xl grid grid-cols-2 lg:grid-cols-3 mt-16 gap-6 mx-auto'>
+          <div className="max-w-3xl lg:max-w-6xl grid grid-cols-2 lg:grid-cols-5 mt-6 gap-6 mx-auto">
             {/* GRAPH */}
-            <div className='w-full col-span-2 mx-auto rounded-lg border bg-card p-6 shadow-sm'>
-              <div className='space-y-1'>
-                <h2 className='text-2xl font-bold'>WPM Graph</h2>
-                <p className='text-muted-foreground'>
-                  Track your WPM over the length of the test.{" "}
+            <div className="w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-bold">Words Per Minute</h2>
+                <p className="text-muted-foreground">
+                  Track your WPM over the length of the test.
                 </p>
               </div>
-              <ResponsiveContainer width='100%' height={300}>
+              <ResponsiveContainer width="100%" height={300}>
                 <AreaChart
                   data={chartData}
                   margin={{
@@ -71,10 +90,11 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                     right: 30,
                     left: 0,
                     bottom: 0,
-                  }}>
+                  }}
+                >
                   <CartesianGrid vertical={false} />
                   <XAxis
-                    dataKey='second'
+                    dataKey="second"
                     tickLine={true}
                     axisLine={false}
                     tickMargin={8}
@@ -95,19 +115,19 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                     wrapperStyle={{ color: "white", borderRadius: "2rem" }}
                   />
                   <Area
-                    type='monotone'
-                    dataKey='TrueWPM'
-                    stackId='1'
-                    stroke='hsl(143, 100%, 51%)'
-                    fill='hsl(143, 100%, 51%)'
+                    type="monotone"
+                    dataKey="TrueWPM"
+                    stackId="1"
+                    stroke="hsl(143, 100%, 51%)"
+                    fill="hsl(143, 100%, 51%)"
                     fillOpacity={0.1}
                   />
                   <Area
-                    type='monotone'
-                    dataKey='RawWPM'
-                    stackId='1'
-                    stroke='hsl(34, 100%, 47%)'
-                    fill='hsl(34, 100%, 47%)'
+                    type="monotone"
+                    dataKey="RawWPM"
+                    stackId="1"
+                    stroke="hsl(34, 100%, 47%)"
+                    fill="hsl(34, 100%, 47%)"
                     fillOpacity={0.1}
                   />
                 </AreaChart>
@@ -115,11 +135,11 @@ function HomePage({ user, handleUserChange, handleLogout }) {
             </div>
 
             {/* STATISTICS */}
-            <div className='w-full mx-auto rounded-lg border bg-card p-6 h shadow-sm'>
-              <div className='flex items-center justify-between'>
-                <div className='space-y-1'>
-                  <h2 className='text-2xl font-bold'>Statistics</h2>
-                  <p className='text-muted-foreground'>
+            <div className="w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-bold">Statistics</h2>
+                  <p className="text-muted-foreground">
                     Review your typing performance and get insights.
                   </p>
                 </div>
@@ -130,47 +150,49 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                 </div> */}
               </div>
 
-              <div className='mt-6'>
-                <div className='grid gap-4'>
-                  <div className='flex items-center justify-between'>
+              <div className="mt-6">
+                <div className="grid gap-4">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h3 className='text-lg font-medium'>Words Per Minute</h3>
-                      <p className='text-muted-foreground'>
+                      <h3 className="text-lg font-medium">Words Per Minute</h3>
+                      <p className="text-xs text-muted-foreground">
                         Your average typing speed
                       </p>
                     </div>
 
-                    <div className='text-4xl font-bold flex flex-col-reverse text-center justify-end'>
-                      <div className='bg-amber-300 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
+                    <div className="text-3xl font-bold flex flex-col-reverse text-center justify-end">
+                      <div className="bg-amber-300 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                         Top 0.1%
                       </div>
                       142.8
                     </div>
                   </div>
-                  <div className='flex items-center justify-between'>
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h3 className='text-lg font-medium'>Accuracy</h3>
-                      <p className='text-muted-foreground'>
-                        Your typing accuracy
+                      <h3 className="text-xl lg:text-lg font-medium">
+                        Accuracy
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        Percentage of correct letters
                       </p>
                     </div>
-                    <div className='text-4xl font-bold flex-col-reverse text-center flex justify-center'>
-                      <div className='bg-green-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
+                    <div className="text-4xl font-bold flex-col-reverse text-center flex justify-center">
+                      <div className="bg-green-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                         Above Average
                       </div>
                       92%
                     </div>
                   </div>
 
-                  <div className='flex items-center justify-between'>
+                  <div className="flex items-center justify-between">
                     <div>
-                      <h3 className='text-lg font-medium'>Mistakes</h3>
-                      <p className='text-muted-foreground'>
+                      <h3 className="text-lg font-medium">Mistakes</h3>
+                      <p className="text-xs text-muted-foreground">
                         Number of mistakes made
                       </p>
                     </div>
-                    <div className='text-4xl font-bold flex flex-col-reverse text-center justify-center'>
-                      <div className='bg-red-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
+                    <div className="text-4xl font-bold flex flex-col-reverse text-center justify-center">
+                      <div className="bg-red-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
                         Below Average
                       </div>
                       12
@@ -180,136 +202,204 @@ function HomePage({ user, handleUserChange, handleLogout }) {
               </div>
             </div>
 
-            <div className='w-full mx-auto rounded-lg border bg-card p-6 h shadow-sm'>
-              <div className='flex items-center justify-between'>
-                <div className='space-y-1'>
-                  <h2 className='text-2xl font-bold'>Statistics</h2>
-                  <p className='text-muted-foreground'>
-                    Review your typing performance and get insights.
+            {/* HEATMAP */}
+
+            <div className="w-full mx-auto col-span-2 lg:col-span-5 rounded-lg border bg-card p-6 h shadow-sm space-y-4 justify-center flex flex-col">
+              <div className="space-y-1">
+                <h2 className="text-2xl font-bold">Heatmap</h2>
+                <div className="flex items-center justify-between">
+                  <p className="text-muted-foreground">
+                    A dynamic map of your keystrokes. Hover over a key to see
+                    detailed statistics
+                  </p>
+
+                  <div className="">
+                    <Select
+                      onValueChange={(value) => {
+                        console.log(value);
+                      }}
+                      defaultValue="qwerty"
+                    >
+                      <SelectTrigger id="status" aria-label="Select Layout">
+                        <SelectValue placeholder="Select Layout" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="qwerty">Qwerty</SelectItem>
+                        <SelectItem value="dvorak">Dvorak</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+
+              {/* KEYBOARD */}
+              <div>
+                <div className="grid text-white gap-3 font-bold grid-rows-3 mt-2">
+                  <div className="flex flex-row space-x-4 justify-center">
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      Q
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      W
+                    </div>
+                    <div className="bg-[#ff6753f0] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      E
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      R
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      T
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      Y
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      U
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      I
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      O
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      P
+                    </div>
+                  </div>
+                  <div className="flex flex-row space-x-4 justify-center">
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      A
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      S
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      D
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      F
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      G
+                    </div>
+                    <div className="bg-[#ff6753f0] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      H
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      J
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      K
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      L
+                    </div>
+                  </div>
+                  <div className="flex flex-row -ml-16 space-x-4 justify-center">
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      Z
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      X
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      C
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      V
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      B
+                    </div>
+                    <div className="bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      N
+                    </div>
+                    <div className="bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105">
+                      M
+                    </div>
+                  </div>
+                </div>
+                {/* ATLAS / MEANINGS */}
+                <div className="flex flex-row space-x-8 justify-center mt-2">
+                  <div className="flex text-lg text-muted-foreground">
+                    <div className="w-4 h-4 border bg-[#ff675310] self-center mr-2"></div>
+                    Low &lt; 2
+                  </div>
+                  <div className="flex text-lg text-muted-foreground">
+                    <div className="w-4 h-4 border bg-[#ff675340] self-center mr-2"></div>
+                    Medium 3-5
+                  </div>
+                  <div className="flex text-lg text-muted-foreground">
+                    <div className="w-4 h-4 border bg-[#ff6753f0] self-center mr-2"></div>
+                    High &gt; 6
+                  </div>
+                </div>
+              </div>
+
+              <div className="w-64 self-center">
+                <Select
+                  onValueChange={(value) => {
+                    console.log(value);
+                  }}
+                  defaultValue="incorrect"
+                >
+                  <SelectTrigger id="heatmap" aria-label="Select Filter">
+                    <SelectValue placeholder="Select Filter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="incorrect">Incorrect Letters</SelectItem>
+                    <SelectItem value="correct">Correct Letters</SelectItem>
+
+                    <SelectItem value="largest">Largest Delay</SelectItem>
+                    <SelectItem value="smallest">Smallest Delay</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* MISTAKES */}
+            <div className="w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm">
+              <div className="flex items-center justify-between">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-bold">Mistakes</h2>
+                  <p className="text-muted-foreground">
+                    List of all word errors
                   </p>
                 </div>
-                {/* <div className="flex items-center gap-2">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3">
-                    View Report
-                  </button>
-                </div> */}
               </div>
 
-              <div className='mt-6'>
-                <div className='grid gap-4'>
-                  <div className='flex items-center justify-between'>
-                    <div>
-                      <h3 className='text-lg font-medium'>Words Per Minute</h3>
-                      <p className='text-muted-foreground'>
-                        Your average typing speed
-                      </p>
-                    </div>
 
-                    <div className='text-4xl font-bold flex flex-col-reverse text-center justify-end'>
-                      {" "}
-                      <Badge className='bg-amber-300 h-6 w-32 justify-center'>
-                        Top 0.1%
-                      </Badge>
-                      142.8
-                    </div>
-                  </div>
-                  <div className='flex items-center justify-between'>
-                    <div>
-                      <h3 className='text-lg font-medium'>Accuracy</h3>
-                      <p className='text-muted-foreground'>
-                        Your typing accuracy
-                      </p>
-                    </div>
-                    <div className='text-4xl font-bold flex-col-reverse text-center flex justify-center'>
-                      {" "}
-                      <Badge className='bg-green-400 h-6 w-32 justify-center '>
-                        Above Average
-                      </Badge>
-                      92%
-                    </div>
-                  </div>
+              {/* header */}
+              <div className="grid grid-cols-3 gap-4 border-b mt-4 text-center">
 
-                  <div className='flex items-center justify-between'>
-                    <div>
-                      <h3 className='text-lg font-medium'>Mistakes</h3>
-                      <p className='text-muted-foreground'>
-                        Number of mistakes made
-                      </p>
-                    </div>
-                    <div className='text-4xl font-bold flex flex-col-reverse text-center justify-center'>
-                      {" "}
-                      <Badge className='bg-red-400 h-6  w-32 justify-center'>
-                        Below Average
-                      </Badge>
-                      12
-                    </div>
-                  </div>
+                <div className="text-lg font-medium">Word</div>
+                <div className="text-lg font-medium">Typed</div>
+                <div className="text-lg font-medium">Count</div>
+              </div>
+
+              {/* list */}
+              <ScrollArea className="h-64">
+                <div className="grid grid-cols-3 gap-2 text-center">
+                  <div>our</div>
+                  <div >uor</div>
+
+                  <div>124ms</div>
+                  <div>given</div>
+                  <div>givn</div>
+                  <div>204ms</div>
+
                 </div>
-              </div>
+
+              </ScrollArea>
+
             </div>
+
+
           </div>
-
-          {/* <div className="container mx-auto my-12 max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground mb-6">Pricing</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-                <div className="flex flex-col space-y-1.5 p-6">
-                  <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Free</h3>
-                  <p className="text-sm text-muted-foreground">1 AI test per day</p>
-                </div>
-                <div className="p-6">
-                  <div className="grid gap-4">
-                    <div className="flex items-center justify-between">
-                      <span>AI Tests per Day</span>
-                      <span>1</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Advanced Analytics</span>
-                      <span>Not Included</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Catered Tests</span>
-                      <span>Not Included</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center p-6">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-                    Sign Up for Free
-                  </button>
-                </div>
-              </div>
-              <div className="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
-                <div className="flex flex-col space-y-1.5 p-6">
-                  <h3 className="whitespace-nowrap text-2xl font-semibold leading-none tracking-tight">Paid</h3>
-                  <p className="text-sm text-muted-foreground">Up to 30 AI tests per day</p>
-                </div>
-                <div className="p-6">
-                  <div className="grid gap-4">
-                    <div className="flex items-center justify-between">
-                      <span>AI Tests per Day</span>
-                      <span>Up to 30</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Advanced Analytics</span>
-                      <span>Included</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span>Catered Tests</span>
-                      <span>Included</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center p-6">
-                  <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full">
-                    Subscribe
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div> */}
         </div>
-      </div>
+      </div >
+
     </>
   );
 }
