@@ -16,7 +16,7 @@ function TextArea({
   onTextLoaded,
   onTextStarted,
   onFocus,
-  onFocusLost,
+  isFocused,
   test,
 }) {
   const [wordList, setWordList] = useState([]);
@@ -183,8 +183,25 @@ function TextArea({
     onTextLoaded();
   }
 
+  useEffect(() => {
+    if (isFocused) {
+      console.log('in')
+      if (test.state != 0) {
+        console.log('deep')
+        setWordList([])
+        setWordsLoaded(false)
+        populateWordList(50)
+      }
+    }
+  }, [isFocused, test.state])
+
   const handleUserInput = (event) => {
+
     const input = event.key;
+
+    if (input == "Shift")
+      return;
+
     const currentLetter =
       document.getElementsByClassName("letter")[currentLetterIndex];
     const nextLetter =
@@ -309,7 +326,6 @@ function TextArea({
         <input
           onBlur={() => {
             setShouldUpdateCursor(false);
-            onFocusLost();
           }}
           id="input"
           autoComplete="off"
@@ -343,7 +359,7 @@ function TextArea({
             }}
           >
 
-            {wordsLoaded ? wordList : null}
+            {wordsLoaded ? wordList : <>hi</>}
           </div>
         </div>
       </div>

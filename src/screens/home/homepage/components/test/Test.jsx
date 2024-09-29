@@ -5,6 +5,7 @@ import Settings from "../settings/Settings";
 import { Scatter } from "react-chartjs-2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { LoginForm } from "../loginpopup/LoginPopup";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -23,8 +24,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-
+} from "@/components/ui/select";
 
 ChartJS.register(
   CategoryScale,
@@ -43,6 +43,13 @@ const Test = ({ user, AIMode }) => {
   const handleEndTestRedirect = () => {
     // navigate("/test-finished", { state: { AIMode } });
   };
+
+
+  // called if user changes settings during the test
+  const cancelTest = () => {
+    setResetWords(true)
+
+  }
 
   const sendTestToBackend = async () => {
     try {
@@ -66,10 +73,12 @@ const Test = ({ user, AIMode }) => {
   };
 
   const [hideSettings, setHideSettings] = useState(false);
+  const [resetWords, setResetWords] = useState(false);
+
 
   const [test, setTest] = useState({
     userID: "",
-    username: "aaaa",
+    username: "guest",
     testID: 0,
     state: -1,
     finished: false,
@@ -352,46 +361,66 @@ const Test = ({ user, AIMode }) => {
 
   return (
     <>
-      <div className="flex items-center justify-between">
-        <div className="space-y-1">
-          <h2 className="text-2xl font-bold">Timed, 30 Seconds</h2>
-          <p className="text-muted-foreground">Type as many words as you can in 30 seconds.</p>
-        </div>
-        <div className="flex items-center gap-2">
-
-
-
-          <Select onValueChange={(value) => {
-            console.log(value)
-          }} defaultValue="timed">
-            <SelectTrigger id="status" aria-label="Select Type">
-              <SelectValue placeholder="Select Test" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="timed">Timed</SelectItem>
-              <SelectItem value="words">Words</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select defaultValue="30">
-            <SelectTrigger id="status" aria-label="Select Length">
-              <SelectValue placeholder="Select Length" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="15">15 Seconds</SelectItem>
-              <SelectItem value="30">30 Seconds</SelectItem>
-              <SelectItem value="60">60 Seconds</SelectItem>
-            </SelectContent>
-          </Select>
-
-
-        </div>
-
+      {/* INTRO */}
+      <div className="space-y-4 justify-center text-center self-center mt-16">
+        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+          Test Your Typing Speed
+        </h1>
+        <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
+          Take a short typing test and we will match you with an individualized
+          AI program to improve your skils!
+        </p>
       </div>
 
+      {/* TEST */}
+      <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm  bg-card p-6 border">
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
+            {test.state === 1 ? <Timer test={test} /> :
 
-      {/* SETTINGS MODAL */}
-      {/* <div className="flex justify-center items-center mt-12">
+
+              <><h2 className="text-2xl font-bold">Timed, 30 Seconds</h2><p className="text-muted-foreground">
+                Type as many words as you can in 30 seconds.
+              </p></>}
+
+
+
+          </div>
+          <div className="flex items-center gap-2">
+            <Select
+              onValueChange={(value) => {
+                console.log(value);
+              }}
+              defaultValue="timed"
+            >
+              <SelectTrigger onFocus={(e) => {
+                cancelTest()
+              }} id="status" aria-label="Select Type">
+                <SelectValue placeholder="Select Test" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="timed">Timed</SelectItem>
+                <SelectItem value="words">Words</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select defaultValue="30">
+              <SelectTrigger onFocus={(e) => {
+                cancelTest()
+              }} id="status" aria-label="Select Length">
+                <SelectValue placeholder="Select Length" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="15">15 Seconds</SelectItem>
+                <SelectItem value="30">30 Seconds</SelectItem>
+                <SelectItem value="60">60 Seconds</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* SETTINGS MODAL */}
+        {/* <div className="flex justify-center items-center mt-12">
         {hideSettings || AIMode ? (
           <div
             className="flex self-center items-center justify-center border-white p-4 w-36"
@@ -413,141 +442,81 @@ const Test = ({ user, AIMode }) => {
           />
         )}
       </div> */}
-      <div className="justify-center self-center">
-        {/* <Timer test={test} /> */}
-      </div>
-      <div className="flex justify-center ">
-        <TextArea
-          user={user}
-          aiMode={AIMode}
-          test={test}
-          selectedDifficulty={test.settings.difficulty}
-          passWords={(w) => {
-            setTimeout(() => {
+
+
+
+        <div className="flex justify-center m-4 ">
+          {<TextArea
+            user={user}
+            aiMode={AIMode}
+            test={test}
+            selectedDifficulty={test.settings.difficulty}
+            passWords={(w) => {
+              setTimeout(() => {
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  words: {
+                    ...prevTest.words,
+                    wordList: w,
+                  },
+                }));
+              }, 0);
+            }}
+            passCorrectLetters={(l) => {
+              setTimeout(() => {
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  words: {
+                    ...prevTest.words,
+                    correctLetters: l,
+                  },
+                }));
+              }, 0);
+            }}
+            passIncorrectLetters={(l) => {
+              setTimeout(() => {
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  words: {
+                    ...prevTest.words,
+                    incorrectLetters: l,
+                  },
+                }));
+              }, 0);
+            }}
+            onTextLoaded={() => {
               setTest((prevTest) => ({
                 ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  wordList: w,
-                },
+                state: 0,
               }));
-            }, 0);
-          }}
-          passCorrectLetters={(l) => {
-            setTimeout(() => {
+            }}
+            onTextStarted={() => {
               setTest((prevTest) => ({
                 ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  correctLetters: l,
-                },
+                state: 1,
               }));
-            }, 0);
-          }}
-          passIncorrectLetters={(l) => {
-            setTimeout(() => {
+            }}
+            onTextFinished={() => {
               setTest((prevTest) => ({
                 ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  incorrectLetters: l,
-                },
+                state: 3,
               }));
-            }, 0);
-          }}
-          onTextLoaded={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 0,
-            }));
-          }}
-          onTextStarted={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 1,
-            }));
-          }}
-          onTextFinished={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 3,
-            }));
-          }}
-          passEventLog={(e) => {
-            setTimeout(() => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                timestamp: e[0]?.timestamp || Date.now(),
-                eventLog: e,
-              }));
-            }, 0);
-          }}
-          onFocus={() => { }}
-          onFocusLost={() => { }}
-        />
-      </div>
-      {/* {user.username === "guest" && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            height: "50vh",
-            margin: "0 auto",
-          }}
-        >
-          {test.finished && wpmData && options && (
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  marginTop: "2rem",
-                }}
-              >
-                make an account to save your tests!
-              </div>
-              <div
-                style={{
-                  width: "80rem",
-                  height: "20rem",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Scatter data={wpmData} options={options} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "2rem",
-                  marginTop: "1rem",
-                  marginBottom: "3rem",
-                }}
-              >
-                <div>
-                  <span>raw WPM:</span> <b>{test?.results.rawWPM}</b>
-                </div>
-                <div>
-                  <span>true WPM:</span> <b>{test?.results.trueWPM}</b>
-                </div>
-                <div>
-                  <span>correct only WPM:</span>{" "}
-                  <b>{test?.results.correctOnlyWPM}</b>
-                </div>
-                <div>
-                  <span>accuracy:</span> <b>{test?.results.accuracy}%</b>
-                </div>
-              </div>
-            </div>
-          )}
+            }}
+            passEventLog={(e) => {
+              setTimeout(() => {
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  timestamp: e[0]?.timestamp || Date.now(),
+                  eventLog: e,
+                }));
+              }, 0);
+            }}
+            onFocus={() => { }}
+            isFocused={resetWords}
+          />}
+
         </div>
-      )} */}
+      </div>
     </>
   );
 };

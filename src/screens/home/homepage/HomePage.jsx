@@ -47,21 +47,11 @@ function HomePage({ user, handleUserChange, handleLogout }) {
         <div className="flex flex-1 flex-col">
 
 
-          {/* INTRO */}
-          <div className="space-y-4 justify-center text-center self-center mt-16">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-              Test Your Typing Speed
-            </h1>
-            <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
-              Take a short typing test and we will match you with an
-              individualized AI program to improve your skils!
-            </p>
-          </div>
 
-          {/* TEST AREA */}
-          <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm mb-64">
-            <Test user={user} AIMode={false} />
-          </div>
+
+          {/* TEST */}
+          <Test user={user} AIMode={false} />
+
 
           <div className="space-y-4 justify-center text-center self-center mt-32">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
