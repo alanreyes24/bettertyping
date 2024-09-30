@@ -512,6 +512,11 @@ const Test = ({ user, AIMode }) => {
               }, 0);
             }}
             onFocus={() => { }}
+            reset={resetWords}
+            onReset={() => {
+
+              setResetWords(false)
+            }}
           />
 
         </div>

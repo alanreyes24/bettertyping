@@ -17,7 +17,8 @@ function TextArea({
   onTextStarted,
   onFocus,
   test,
-  reset
+  reset,
+  onReset
 }) {
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
@@ -96,15 +97,23 @@ function TextArea({
 
     // extend word list
     if (test.state === 1 && test.settings.type !== "words") {
-      if ((currentLetterIndex / 5) >= wordList.length - 30) {
+      if ((currentLetterIndex / 5) >= wordList.length - 30 && !reset) {
         console.log("extending")
         console.log(wordList.length)
         extendWordList(30);
       }
     }
 
+    if (reset) {
+      setWordList([])
+      setCorrectLetters([])
+      setCurrentLetterArrayIndexValue([])
+      console.log(reset)
+      onReset()
+    }
 
-  }, [test.settings.type, test.settings.count, test.state, currentLetterIndex, wordList]);
+
+  }, [test.settings.type, test.settings.count, test.state, currentLetterIndex, wordList, reset]);
 
   // track letters for errors by second
   useEffect(() => {
@@ -296,7 +305,7 @@ function TextArea({
       ) {
         onTextFinished();
       }
-    } else if (input === "Backspace") {
+    } else if (input === "Backspace" && currentLetterIndex > 0) {
       const lastLetter =
         document.getElementsByClassName("letter")[currentLetterIndex - 1];
       if (lastLetter) {
