@@ -47,6 +47,7 @@ const Test = ({ user, AIMode }) => {
 
   // called if user changes settings during the test
   const cancelTest = () => {
+
     setResetWords(true)
 
   }
@@ -74,7 +75,6 @@ const Test = ({ user, AIMode }) => {
 
   const [hideSettings, setHideSettings] = useState(false);
   const [resetWords, setResetWords] = useState(false);
-
 
   const [test, setTest] = useState({
     userID: "",
@@ -446,7 +446,7 @@ const Test = ({ user, AIMode }) => {
 
 
         <div className="flex justify-center m-4 ">
-          {<TextArea
+          <TextArea
             user={user}
             aiMode={AIMode}
             test={test}
@@ -512,8 +512,7 @@ const Test = ({ user, AIMode }) => {
               }, 0);
             }}
             onFocus={() => { }}
-            isFocused={resetWords}
-          />}
+          />
 
         </div>
       </div>

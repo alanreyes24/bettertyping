@@ -46,12 +46,8 @@ function HomePage({ user, handleUserChange, handleLogout }) {
       <div className="bg-background w-full h-full">
         <div className="flex flex-1 flex-col">
 
-
-
-
           {/* TEST */}
           <Test user={user} AIMode={false} />
-
 
           <div className="space-y-4 justify-center text-center self-center mt-32">
             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
