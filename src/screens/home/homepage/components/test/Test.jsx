@@ -85,7 +85,7 @@ const Test = ({ user, AIMode }) => {
     settings: {
       type: "time",
       length: 300,
-      count: 50,
+      count: 0,
       difficulty: "normal",
     },
     timer: {
@@ -102,6 +102,8 @@ const Test = ({ user, AIMode }) => {
   const [resetWords, setResetWords] = useState(false);
   const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [rawWPMArray, setRawWPMArray] = useState([]);
+  const [settingValue, setSettingValue] = useState(2);
+  const [typeValue, setTypeValue] = useState("time");
 
   // TODO: MOVE TO STATE 3
 
@@ -188,56 +190,19 @@ const Test = ({ user, AIMode }) => {
 
   // TRY AND MAKE ALL FIT IN ONE USEEFFECT (might not need at all???)
   useEffect(() => {
-
-    console.log(test)
-
-
+    console.log(test);
 
     // HANDLE TIMER
-
-
   }, []);
 
   // ON TEST LOAD (state -1)
-  //TODO: FEST USER
+  //TODO: FEST USER?
   if (test.state === -1) {
-    console.log("test loading")
-    // setResetWords(false)
-    //wipe test except for settings and user
-    setTest((prevTest) => ({
-      userID: "",
-      username: "guest",
-      testID: 0,
-      state: 0,
-      finished: false,
-      words: {
-        wordList: [],
-        attemptedWords: 0,
-        correctLetters: [],
-        incorrectLetters: [],
-        trueWPMArray: [],
-        rawWPMArray: [],
-      },
-      settings: {
-        type: "time",
-        length: 300,
-        count: 50,
-        difficulty: "normal",
-      },
-      timer: {
-        timeLeft: test.settings.length,
-        isActive: false,
-        timerGoesUp: false,
-      },
-      results: {},
-      eventLog: [],
-      timestamp: 0,
-    }))
+    //test
   }
 
   if (test.state === 1) {
     if (test.settings.type === "time" && test.timer.timeLeft > 0) {
-
       //TIMER CODE
       var interval = 100; // ms
       var expected = Date.now() + interval;
@@ -248,25 +213,33 @@ const Test = ({ user, AIMode }) => {
         var dt = Date.now() - expected;
         if (dt > interval) {
           // THIS IS BAD
-          console.log("something strange happened, timer not working")
+          console.log("something strange happened, timer not working");
         }
 
         //DECREMENT TIMER
-        console.log("DECREMENT")
+        console.log("DECREMENT");
         setTest((prevTest) => ({
           ...prevTest,
           timer: {
             timeLeft: prevTest.timer.timeLeft - 1,
-          }
+          },
         }));
+
+        // if (test.state === 1 && !test.finished) {
+        //   setTimeout(() => {
+        //     setTrueWPMArray((prevArray) => [
+        //       ...prevArray,
+        //       calculateWPMs("trueWPM"),
+        //     ]);
+        //     setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
+        //   }, 1000);
+        // }
 
         expected += interval;
         let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
 
-
-        clearTimeout(timeout)
-        clearTimeout(other)
-
+        clearTimeout(timeout);
+        clearTimeout(other);
       }
     }
   }
@@ -482,85 +455,115 @@ const Test = ({ user, AIMode }) => {
       </div>
 
       {/* TEST */}
-      <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm  bg-card p-6 border">
+      <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
+
+        {/* SETTINGS AND TIMER*/}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
             {test.state === 1 ? (
               <Timer test={test} />
             ) : (
               <>
-                <h2 className="text-2xl font-bold">Timed, 30 Seconds</h2>
+                <h2 className="text-2xl font-bold">
+                  {test.settings.type == "time"
+                    ? "Timed, "
+                    : "Count, " + test.settings.count}
+                  {test.settings.type == "time"
+                    ? test.settings.length / 10 + " Seconds"
+                    : " Words"}
+                </h2>
                 <p className="text-muted-foreground">
                   Type as many words as you can in 30 seconds.
                 </p>
               </>
             )}
           </div>
+
+
           <div className="flex items-center gap-2">
+
             <Select
               onValueChange={(value) => {
+                cancelTest();
                 console.log(value);
+                setTypeValue(value)
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  settings: {
+                    ...prevTest.settings,
+                    type: value,
+                    length: value == "time" ? settingValue == 1 ? 150 : settingValue == 2 ? 300 : 600 : 0,
+                    count: settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
+                  },
+                  timer: {
+                    ...prevTest.timer,
+                    timeLeft: value == "time" ? settingValue == 1 ? 150 : settingValue == 2 ? 300 : 600 : 0,
+                    timerGoesUp: value == "time" ? false : true
+                  }
+                }));
               }}
-              defaultValue="timed"
+              defaultValue="time"
             >
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="status"
+                id="type"
                 aria-label="Select Type"
               >
                 <SelectValue placeholder="Select Test" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="timed">Timed</SelectItem>
+                <SelectItem value="time">Timed</SelectItem>
                 <SelectItem value="words">Words</SelectItem>
               </SelectContent>
             </Select>
 
-            <Select defaultValue="30">
+            <Select
+              onValueChange={(v) => {
+                setSettingValue(v)
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  settings: {
+                    ...prevTest.settings,
+                    type: typeValue,
+                    length: v == 1 ? 150 : v == 2 ? 300 : 600,
+                    count: v == 1 ? 25 : v == 2 ? 50 : 100,
+                  },
+                  timer: {
+                    ...prevTest.timer,
+                    timeLeft: typeValue == "time" ? v == 1 ? 150 : v == 2 ? 300 : 600 : 0,
+                    timerGoesUp: typeValue == "time" ? false : true
+                  }
+                }));
+              }}
+              defaultValue={2}
+            >
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="status"
+                id="length"
                 aria-label="Select Length"
               >
                 <SelectValue placeholder="Select Length" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="15">15 Seconds</SelectItem>
-                <SelectItem value="30">30 Seconds</SelectItem>
-                <SelectItem value="60">60 Seconds</SelectItem>
+                <SelectItem value={1}>
+                  {test.settings.type == "time" ? "15 Seconds" : "25 Words"}
+                </SelectItem>
+                <SelectItem value={2}>
+                  {test.settings.type == "time" ? "30 Seconds" : "50 Words"}
+                </SelectItem>
+                <SelectItem value={3}>
+                  {test.settings.type == "time" ? "60 Seconds" : "100 Words"}
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
-        {/* SETTINGS MODAL */}
-        {/* <div className="flex justify-center items-center mt-12">
-        {hideSettings || AIMode ? (
-          <div
-            className="flex self-center items-center justify-center border-white p-4 w-36"
-          />
-        ) : (
-          <Settings
-            hideModal={hideSettings}
-            test={test}
-            passSettings={(newSettings) => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                timer: {
-                  ...prevTest.timer,
-                  timeLeft: newSettings.length,
-                },
-                settings: newSettings,
-              }));
-            }}
-          />
-        )}
-      </div> */}
-
+        {/* TEXT AREA */}
         <div className="flex justify-center m-4 ">
           <TextArea
             user={user}
@@ -631,9 +634,35 @@ const Test = ({ user, AIMode }) => {
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
+              //reset test
               setTest((prevTest) => ({
-                ...prevTest,
+                userID: "",
+                username: "guest",
+                testID: 0,
                 state: -1,
+                finished: false,
+                words: {
+                  wordList: [],
+                  attemptedWords: 0,
+                  correctLetters: [],
+                  incorrectLetters: [],
+                  trueWPMArray: [],
+                  rawWPMArray: [],
+                },
+                settings: {
+                  type: test.settings.type,
+                  length: test.settings.length,
+                  count: test.settings.count,
+                  difficulty: "normal",
+                },
+                timer: {
+                  timeLeft: typeValue == "time" ? settingValue == 1 ? 150 : settingValue == 2 ? 300 : 600 : 0,
+                  isActive: false,
+                  timerGoesUp: test.timer.timerGoesUp,
+                },
+                results: {},
+                eventLog: [],
+                timestamp: 0,
               }));
             }}
           />
