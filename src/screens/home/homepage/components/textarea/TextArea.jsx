@@ -69,7 +69,7 @@ function TextArea({
   useEffect(() => {
 
     // make words show up
-    if (test.state <= 0) {
+    if (test.state == -1) {
       if (test.settings.type === "words") {
         populateWordList(test.settings.count);
       } else {
@@ -98,8 +98,8 @@ function TextArea({
     // extend word list
     if (test.state === 1 && test.settings.type !== "words") {
       if ((currentLetterIndex / 5) >= wordList.length - 30 && !reset) {
-        console.log("extending")
-        console.log(wordList.length)
+        // console.log("extending")
+        // console.log(wordList.length)
         extendWordList(30);
       }
     }
@@ -107,8 +107,9 @@ function TextArea({
     if (reset) {
       setWordList([])
       setCorrectLetters([])
-      setCurrentLetterArrayIndexValue([])
-      console.log(reset)
+      setCurrentLetterArrayIndexValue(0)
+      setCurrentLetterIndex(0)
+      setDeleteLines(0)
       onReset()
     }
 
@@ -116,29 +117,29 @@ function TextArea({
   }, [test.settings.type, test.settings.count, test.state, currentLetterIndex, wordList, reset]);
 
   // track letters for errors by second
-  useEffect(() => {
-    if (test.state === 1) {
-      setTimeout(() => {
-        setCurrentLetterArrayIndexValue((prev) => prev + 1);
-      }, 1000);
-      setIncorrectLetters((prev) => ({
-        ...prev,
-        [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
-      }));
-      setCorrectLetters((prev) => ({
-        ...prev,
-        [currentLetterArrayIndexValue]: currentCorrectLetterArray,
-      }));
-    }
+  // useEffect(() => {
+  //   if (test.state === 1) {
+  //     setTimeout(() => {
+  //       setCurrentLetterArrayIndexValue((prev) => prev + 1);
+  //     }, 1000);
+  //     setIncorrectLetters((prev) => ({
+  //       ...prev,
+  //       [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
+  //     }));
+  //     setCorrectLetters((prev) => ({
+  //       ...prev,
+  //       [currentLetterArrayIndexValue]: currentCorrectLetterArray,
+  //     }));
+  //   }
 
-    if (test.state === 1) {
-      setCurrentIncorrectLetterArray([]);
-      setCurrentCorrectLetterArray([]);
-    }
-    console.log(currentCorrectLetterArray)
+  //   if (test.state === 1) {
+  //     setCurrentIncorrectLetterArray([]);
+  //     setCurrentCorrectLetterArray([]);
+  //   }
+  //   // console.log(currentCorrectLetterArray)
 
 
-  }, [currentLetterArrayIndexValue, test.state])
+  // }, [currentLetterArrayIndexValue, test.state])
 
 
   // cursor blinking 
@@ -153,45 +154,45 @@ function TextArea({
 
 
   // these next might not work without use effect, rewrite so they can
-  if (
-    test.state === 1 &&
-    JSON.stringify(test.words.correctLetters) !==
-    JSON.stringify(correctLetters)
-  ) {
-    setTimeout(() => {
-      passCorrectLetters(correctLetters);
-    }, 0);
-  }
+  // if (
+  //   test.state === 1 &&
+  //   JSON.stringify(test.words.correctLetters) !==
+  //   JSON.stringify(correctLetters)
+  // ) {
+  //   setTimeout(() => {
+  //     passCorrectLetters(correctLetters);
+  //   }, 0);
+  // }
 
-  if (
-    test.state === 1 &&
-    JSON.stringify(test.words.incorrectLetters) !==
-    JSON.stringify(incorrectLetters)
-  ) {
-    setTimeout(() => {
-      passIncorrectLetters(incorrectLetters);
-    }, 0);
-  }
+  // if (
+  //   test.state === 1 &&
+  //   JSON.stringify(test.words.incorrectLetters) !==
+  //   JSON.stringify(incorrectLetters)
+  // ) {
+  //   setTimeout(() => {
+  //     passIncorrectLetters(incorrectLetters);
+  //   }, 0);
+  // }
 
-  if (
-    test.state === 3 &&
-    test.finished &&
-    JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
-  ) {
-    setTimeout(() => {
-      passEventLog(eventLog);
-    }, 0);
-  }
+  // if (
+  //   test.state === 3 &&
+  //   test.finished &&
+  //   JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
+  // ) {
+  //   setTimeout(() => {
+  //     passEventLog(eventLog);
+  //   }, 0);
+  // }
 
-  if (test.state === 3 && test.words.attemptedWords === 0) {
-    const arr = Array.from(
-      { length: totalCorrectWords },
-      (_, i) => document.getElementsByClassName("word")[i].textContent
-    );
-    setTimeout(() => {
-      passWords(arr);
-    }, 0);
-  }
+  // if (test.state === 3 && test.words.attemptedWords === 0) {
+  //   const arr = Array.from(
+  //     { length: totalCorrectWords },
+  //     (_, i) => document.getElementsByClassName("word")[i].textContent
+  //   );
+  //   setTimeout(() => {
+  //     passWords(arr);
+  //   }, 0);
+  // }
 
   const focusInput = () => {
     const input = document.getElementById("input");
