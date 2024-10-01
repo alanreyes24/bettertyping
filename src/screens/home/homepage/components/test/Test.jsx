@@ -202,45 +202,45 @@ const Test = ({ user, AIMode }) => {
   }
 
   if (test.state === 1) {
-    if (test.settings.type === "time" && test.timer.timeLeft > 0) {
-      //TIMER CODE
-      var interval = 100; // ms
-      var expected = Date.now() + interval;
-      let timeout = setTimeout(step, interval);
+    //TIMER CODE
+    var interval = 100; // ms
+    var expected = Date.now() + interval;
+    let timeout = setTimeout(step, interval);
 
-      // eslint-disable-next-line no-inner-declarations
-      function step() {
-        var dt = Date.now() - expected;
-        if (dt > interval) {
-          // THIS IS BAD
-          console.log("something strange happened, timer not working");
-        }
+    // eslint-disable-next-line no-inner-declarations
+    function step() {
+      var dt = Date.now() - expected;
+      if (dt > interval) {
+        // THIS IS BAD
+        console.log("something strange happened, timer not working");
+      }
 
-        //DECREMENT TIMER
-        console.log("DECREMENT");
+      //DECREMENT TIMER
+      console.log("DECREMENT");
+
+      if (test.settings.type === "time" && test.timer.timeLeft > 0) {
         setTest((prevTest) => ({
           ...prevTest,
           timer: {
             timeLeft: prevTest.timer.timeLeft - 1,
           },
         }));
-
-        // if (test.state === 1 && !test.finished) {
-        //   setTimeout(() => {
-        //     setTrueWPMArray((prevArray) => [
-        //       ...prevArray,
-        //       calculateWPMs("trueWPM"),
-        //     ]);
-        //     setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
-        //   }, 1000);
-        // }
-
-        expected += interval;
-        let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
-
-        clearTimeout(timeout);
-        clearTimeout(other);
       }
+
+      if (test.settings.type === "words") {
+        setTest((prevTest) => ({
+          ...prevTest,
+          timer: {
+            timeLeft: prevTest.timer.timeLeft + 1,
+          },
+        }));
+      }
+
+      expected += interval;
+      let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
+
+      clearTimeout(timeout);
+      clearTimeout(other);
     }
   }
 
@@ -444,27 +444,26 @@ const Test = ({ user, AIMode }) => {
   return (
     <>
       {/* INTRO */}
-      <div className="space-y-4 justify-center text-center self-center mt-16">
-        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+      <div className='space-y-4 justify-center text-center self-center mt-16'>
+        <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
           Test Your Typing Speed
         </h1>
-        <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
+        <p className='max-w-2xl self-center text-muted-foreground md:text-xl/relaxed'>
           Take a short typing test and we will match you with an individualized
           AI program to improve your skils!
         </p>
       </div>
 
       {/* TEST */}
-      <div className="w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
-
+      <div className='w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border'>
         {/* SETTINGS AND TIMER*/}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
+        <div className='flex items-center justify-between'>
+          <div className='space-y-1'>
             {test.state === 1 ? (
               <Timer test={test} />
             ) : (
               <>
-                <h2 className="text-2xl font-bold">
+                <h2 className='text-2xl font-bold'>
                   {test.settings.type == "time"
                     ? "Timed, "
                     : "Count, " + test.settings.count}
@@ -472,56 +471,67 @@ const Test = ({ user, AIMode }) => {
                     ? test.settings.length / 10 + " Seconds"
                     : " Words"}
                 </h2>
-                <p className="text-muted-foreground">
+                <p className='text-muted-foreground'>
                   Type as many words as you can in 30 seconds.
                 </p>
               </>
             )}
           </div>
 
-
-          <div className="flex items-center gap-2">
-
+          <div className='flex items-center gap-2'>
             <Select
               onValueChange={(value) => {
                 cancelTest();
                 console.log(value);
-                setTypeValue(value)
+                setTypeValue(value);
                 setTest((prevTest) => ({
                   ...prevTest,
                   settings: {
                     ...prevTest.settings,
                     type: value,
-                    length: value == "time" ? settingValue == 1 ? 150 : settingValue == 2 ? 300 : 600 : 0,
-                    count: settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
+                    length:
+                      value == "time"
+                        ? settingValue == 1
+                          ? 150
+                          : settingValue == 2
+                          ? 300
+                          : 600
+                        : 0,
+                    count:
+                      settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
                   },
                   timer: {
                     ...prevTest.timer,
-                    timeLeft: value == "time" ? settingValue == 1 ? 150 : settingValue == 2 ? 300 : 600 : 0,
-                    timerGoesUp: value == "time" ? false : true
-                  }
+                    timeLeft:
+                      value == "time"
+                        ? settingValue == 1
+                          ? 150
+                          : settingValue == 2
+                          ? 300
+                          : 600
+                        : 0,
+                    timerGoesUp: value == "time" ? false : true,
+                  },
                 }));
               }}
-              defaultValue="time"
-            >
+              defaultValue='time'>
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="type"
-                aria-label="Select Type"
-              >
-                <SelectValue placeholder="Select Test" />
+                id='type'
+                aria-label='Select Type'>
+                <SelectValue placeholder='Select Test' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="time">Timed</SelectItem>
-                <SelectItem value="words">Words</SelectItem>
+                <SelectItem value='time'>Timed</SelectItem>
+                <SelectItem value='words'>Words</SelectItem>
               </SelectContent>
             </Select>
 
             <Select
               onValueChange={(v) => {
-                setSettingValue(v)
+                setSettingValue(v);
                 setTest((prevTest) => ({
                   ...prevTest,
                   settings: {
@@ -532,21 +542,26 @@ const Test = ({ user, AIMode }) => {
                   },
                   timer: {
                     ...prevTest.timer,
-                    timeLeft: typeValue == "time" ? v == 1 ? 150 : v == 2 ? 300 : 600 : 0,
-                    timerGoesUp: typeValue == "time" ? false : true
-                  }
+                    timeLeft:
+                      typeValue == "time"
+                        ? v == 1
+                          ? 150
+                          : v == 2
+                          ? 300
+                          : 600
+                        : 0,
+                    timerGoesUp: typeValue == "time" ? false : true,
+                  },
                 }));
               }}
-              defaultValue={2}
-            >
+              defaultValue={2}>
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="length"
-                aria-label="Select Length"
-              >
-                <SelectValue placeholder="Select Length" />
+                id='length'
+                aria-label='Select Length'>
+                <SelectValue placeholder='Select Length' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={1}>
@@ -564,7 +579,7 @@ const Test = ({ user, AIMode }) => {
         </div>
 
         {/* TEXT AREA */}
-        <div className="flex justify-center m-4 ">
+        <div className='flex justify-center m-4 '>
           <TextArea
             user={user}
             aiMode={AIMode}
@@ -630,7 +645,7 @@ const Test = ({ user, AIMode }) => {
                 }));
               }, 0);
             }}
-            onFocus={() => { }}
+            onFocus={() => {}}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
@@ -656,7 +671,14 @@ const Test = ({ user, AIMode }) => {
                   difficulty: "normal",
                 },
                 timer: {
-                  timeLeft: typeValue == "time" ? settingValue == 1 ? 150 : settingValue == 2 ? 300 : 600 : 0,
+                  timeLeft:
+                    typeValue == "time"
+                      ? settingValue == 1
+                        ? 150
+                        : settingValue == 2
+                        ? 300
+                        : 600
+                      : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,
                 },
