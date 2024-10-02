@@ -494,8 +494,8 @@ const Test = ({ user, AIMode }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     count:
                       settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
@@ -507,8 +507,8 @@ const Test = ({ user, AIMode }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: value == "time" ? false : true,
                   },
@@ -547,8 +547,8 @@ const Test = ({ user, AIMode }) => {
                         ? v == 1
                           ? 150
                           : v == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: typeValue == "time" ? false : true,
                   },
@@ -606,7 +606,9 @@ const Test = ({ user, AIMode }) => {
                   },
                 }));
               }, 0);
-            }}
+            }
+
+            }
             passIncorrectLetters={(l) => {
               setTimeout(() => {
                 setTest((prevTest) => ({
@@ -645,7 +647,7 @@ const Test = ({ user, AIMode }) => {
                 }));
               }, 0);
             }}
-            onFocus={() => {}}
+            onFocus={() => { }}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
@@ -676,8 +678,8 @@ const Test = ({ user, AIMode }) => {
                       ? settingValue == 1
                         ? 150
                         : settingValue == 2
-                        ? 300
-                        : 600
+                          ? 300
+                          : 600
                       : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,

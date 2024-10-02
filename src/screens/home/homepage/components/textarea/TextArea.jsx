@@ -113,6 +113,15 @@ function TextArea({
       onReset()
     }
 
+    if (
+      test.state === 1 &&
+      JSON.stringify(test.words.correctLetters) !==
+      JSON.stringify(correctLetters)
+    ) {
+
+      passCorrectLetters(correctLetters);
+    }
+
 
   }, [test.settings.type, test.settings.count, test.state, currentLetterIndex, wordList, reset]);
 
@@ -154,15 +163,8 @@ function TextArea({
 
 
   // these next might not work without use effect, rewrite so they can
-  // if (
-  //   test.state === 1 &&
-  //   JSON.stringify(test.words.correctLetters) !==
-  //   JSON.stringify(correctLetters)
-  // ) {
-  //   setTimeout(() => {
-  //     passCorrectLetters(correctLetters);
-  //   }, 0);
-  // }
+
+
 
   // if (
   //   test.state === 1 &&
