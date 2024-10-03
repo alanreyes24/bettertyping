@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,53 +10,119 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import "./LoginPopup.css";
+import axios from "axios";
 
 export const description =
   "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.";
 
 export function LoginForm() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [showRegister, setShowRegister] = useState(false);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/login`,
+        {
+          username,
+          password,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      //   let userID = response.data.userID;
+      let confirmedUsername = response.data.username;
+      console.log(confirmedUsername);
+      // await passLoggedIn(userID, confirmedUsername);
+      // setLoginVisible(false);
+    } catch (error) {
+      setError(error.response ? error.response.data : "An error occurred");
+      console.log(error.response ? error.response.data : error);
+    }
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/auth/signup`,
+        {
+          username,
+          password,
+        }
+      );
+      // setShowRegister(false);
+      console.log("Hello!");
+    } catch (error) {
+      setError(error.response ? error.response.data : "An error occurred");
+      console.error(
+        "Error registering:",
+        error.response ? error.response.data : error
+      );
+    }
+  };
+
   return (
     <Card className="mx-auto max-w-sm login-container">
       <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
+        <CardTitle className="text-2xl">Sign In</CardTitle>
         <CardDescription>
           Enter your email below to login to your account
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-            />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <a href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </a>
+      <form
+        className="login-form"
+        onSubmit={showRegister ? handleRegister : handleLogin}
+      >
+        <CardContent>
+          <div className="grid gap-4">
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="yourname@example.com"
+                onChange={(e) => setUsername(e.target.value)}
+                required
+              />
             </div>
-            <Input id="password" type="password" required />
+            <div className="grid gap-2">
+              <div className="flex items-center">
+                <Label htmlFor="password">Password</Label>
+              </div>
+              <Input
+                id="password"
+                type="password"
+                required
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <a href="#" className="ml-auto inline-block text-sm underline">
+              Forgot your password?
+            </a>
+            <Button className="login-button" type="submit">
+              {showRegister ? "Register" : "Login"}
+            </Button>
+            <Button variant="outline" className="w-full">
+              Login with Google
+            </Button>
           </div>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
-        </div>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <a href="#" className="underline">
-            Sign up
-          </a>
-        </div>
-      </CardContent>
+          <div className="mt-4 text-center text-sm">
+            Don&apos;t have an account?{" "}
+            <a
+              className="toggle-link"
+              onClick={() => setShowRegister(!showRegister)}
+            >
+              {showRegister ? "Login" : "Register"}
+            </a>
+          </div>
+        </CardContent>
+      </form>
     </Card>
   );
 }
