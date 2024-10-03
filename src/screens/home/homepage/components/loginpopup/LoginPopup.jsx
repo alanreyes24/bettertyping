@@ -15,7 +15,7 @@ import axios from "axios";
 export const description =
   "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.";
 
-export function LoginForm() {
+export function LoginForm({ sendUsernameToHeader }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -36,8 +36,7 @@ export function LoginForm() {
       );
 
       //   let userID = response.data.userID;
-      let confirmedUsername = response.data.username;
-      console.log(confirmedUsername);
+      sendUsernameToHeader(response.data.username);
       // await passLoggedIn(userID, confirmedUsername);
       // setLoginVisible(false);
     } catch (error) {
