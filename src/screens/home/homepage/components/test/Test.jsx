@@ -227,18 +227,20 @@ const Test = ({ user, AIMode }) => {
         }));
       }
 
-      if (test.settings.type === "words") {
-        setTest((prevTest) => ({
-          ...prevTest,
-          timer: {
-            timeLeft: prevTest.timer.timeLeft + 1,
-          },
-        }));
-      }
+      // if (test.settings.type === "words") {
+      //   setTest((prevTest) => ({
+      //     ...prevTest,
+      //     timer: {
+      //       timeLeft: prevTest.timer.timeLeft + 1,
+      //     },
+      //   }));
+      // }
 
       expected += interval;
       let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
 
+      console.log(timeout);
+      console.log(other);
       clearTimeout(timeout);
       clearTimeout(other);
     }
@@ -494,8 +496,8 @@ const Test = ({ user, AIMode }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                            ? 300
-                            : 600
+                          ? 300
+                          : 600
                         : 0,
                     count:
                       settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
@@ -507,8 +509,8 @@ const Test = ({ user, AIMode }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                            ? 300
-                            : 600
+                          ? 300
+                          : 600
                         : 0,
                     timerGoesUp: value == "time" ? false : true,
                   },
@@ -547,8 +549,8 @@ const Test = ({ user, AIMode }) => {
                         ? v == 1
                           ? 150
                           : v == 2
-                            ? 300
-                            : 600
+                          ? 300
+                          : 600
                         : 0,
                     timerGoesUp: typeValue == "time" ? false : true,
                   },
@@ -597,18 +599,17 @@ const Test = ({ user, AIMode }) => {
               }, 0);
             }}
             passCorrectLetters={(l) => {
-              setTimeout(() => {
-                setTest((prevTest) => ({
-                  ...prevTest,
-                  words: {
-                    ...prevTest.words,
-                    correctLetters: l,
-                  },
-                }));
-              }, 0);
-            }
-
-            }
+              console.log("yes");
+              // setTimeout(() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  correctLetters: l,
+                },
+              }));
+              // }, 0);
+            }}
             passIncorrectLetters={(l) => {
               setTimeout(() => {
                 setTest((prevTest) => ({
@@ -647,7 +648,7 @@ const Test = ({ user, AIMode }) => {
                 }));
               }, 0);
             }}
-            onFocus={() => { }}
+            onFocus={() => {}}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
@@ -678,8 +679,8 @@ const Test = ({ user, AIMode }) => {
                       ? settingValue == 1
                         ? 150
                         : settingValue == 2
-                          ? 300
-                          : 600
+                        ? 300
+                        : 600
                       : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,

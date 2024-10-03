@@ -18,7 +18,7 @@ function TextArea({
   onFocus,
   test,
   reset,
-  onReset
+  onReset,
 }) {
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
@@ -64,10 +64,7 @@ function TextArea({
     }
   }
 
-
-
   useEffect(() => {
-
     // make words show up
     if (test.state == -1) {
       if (test.settings.type === "words") {
@@ -76,7 +73,6 @@ function TextArea({
         populateWordList(50);
       }
     }
-
 
     // handle line shifting
     if (test.state === 1) {
@@ -94,10 +90,9 @@ function TextArea({
       }
     }
 
-
     // extend word list
     if (test.state === 1 && test.settings.type !== "words") {
-      if ((currentLetterIndex / 5) >= wordList.length - 30 && !reset) {
+      if (currentLetterIndex / 5 >= wordList.length - 30 && !reset) {
         // console.log("extending")
         // console.log(wordList.length)
         extendWordList(30);
@@ -105,25 +100,44 @@ function TextArea({
     }
 
     if (reset) {
-      setWordList([])
-      setCorrectLetters([])
-      setCurrentLetterArrayIndexValue(0)
-      setCurrentLetterIndex(0)
-      setDeleteLines(0)
-      onReset()
+      setWordList([]);
+      setCorrectLetters([]);
+      setCurrentLetterArrayIndexValue(0);
+      setCurrentLetterIndex(0);
+      setDeleteLines(0);
+      onReset();
+    }
+
+    if (test.state === 1) {
+      setTimeout(() => {
+        setCurrentLetterArrayIndexValue((prev) => prev + 1);
+      }, 1000);
+      setIncorrectLetters((prev) => ({
+        ...prev,
+        [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
+      }));
+      setCorrectLetters((prev) => ({
+        ...prev,
+        [currentLetterArrayIndexValue]: currentCorrectLetterArray,
+      }));
     }
 
     if (
-      test.state === 1 &&
+      test.state === 3 &&
       JSON.stringify(test.words.correctLetters) !==
-      JSON.stringify(correctLetters)
+        JSON.stringify(correctLetters)
     ) {
-
       passCorrectLetters(correctLetters);
     }
-
-
-  }, [test.settings.type, test.settings.count, test.state, currentLetterIndex, wordList, reset]);
+  }, [
+    test.settings.type,
+    test.settings.count,
+    test.state,
+    currentLetterIndex,
+    currentLetterArrayIndexValue,
+    wordList,
+    reset,
+  ]);
 
   // track letters for errors by second
   // useEffect(() => {
@@ -147,11 +161,9 @@ function TextArea({
   //   }
   //   // console.log(currentCorrectLetterArray)
 
-
   // }, [currentLetterArrayIndexValue, test.state])
 
-
-  // cursor blinking 
+  // cursor blinking
   const cursor = document.getElementById("cursor");
   if (cursor) {
     if (shouldUpdateCursor && test.state === 0) {
@@ -161,10 +173,7 @@ function TextArea({
     }
   }
 
-
   // these next might not work without use effect, rewrite so they can
-
-
 
   // if (
   //   test.state === 1 &&
@@ -219,7 +228,7 @@ function TextArea({
       return Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word word={AIWordList[i % AIWordList.length]} />
           </div>
         ));
@@ -227,7 +236,7 @@ function TextArea({
       let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
@@ -243,12 +252,11 @@ function TextArea({
     onTextLoaded();
   }
 
-
   function extendWordList(amount) {
     let wordArr = Array(amount)
       .fill(false)
       .map((_, i) => (
-        <div key={i + wordList.length} className="word">
+        <div key={i + wordList.length} className='word'>
           <Word selectedDifficulty={selectedDifficulty} />
         </div>
       ));
@@ -331,15 +339,15 @@ function TextArea({
           onBlur={() => {
             setShouldUpdateCursor(false);
           }}
-          id="input"
-          autoComplete="off"
-          autoCapitalize="off"
-          autoCorrect="off"
-          type="text"
-          data-gramm="false"
-          data-gramm_editor="false"
-          data-enable-grammarly="false"
-          list="autocompleteOff"
+          id='input'
+          autoComplete='off'
+          autoCapitalize='off'
+          autoCorrect='off'
+          type='text'
+          data-gramm='false'
+          data-gramm_editor='false'
+          data-enable-grammarly='false'
+          list='autocompleteOff'
           onKeyDown={(event) => {
             if (
               test.state === 0 &&
@@ -354,14 +362,13 @@ function TextArea({
           }}
           style={{ opacity: 0, height: 0, width: 0 }}
         />
-        <div className="rounded-lg w-full h-44 overflow-hidden ">
+        <div className='rounded-lg w-full h-44 overflow-hidden '>
           <div
             onClick={focusInput}
-            className=""
+            className=''
             style={{
               marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
-            }}
-          >
+            }}>
             {wordsLoaded ? wordList : <>hi</>}
           </div>
         </div>
