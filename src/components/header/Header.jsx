@@ -18,6 +18,9 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
 
   const handleUsernameFromLoginPopup = (username) => {
     setUsername(username);
+
+    // this function only runs when login was successful so I can set showLogin to false
+    setUserLoggedIn(true);
     setShowLogin(false);
   };
 
@@ -41,6 +44,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
         { withCredentials: true }
       );
       setUserLoggedIn(false);
+      setUsername("");
       passLogout();
     } catch (error) {
       console.log(error);
@@ -71,32 +75,56 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
         <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
           Leaderboard
         </button>
-        {/* <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
 
-          History
-        </button> */}
-        <button
-          className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-primary hover:bg-primary/90 hover:text-accent-foreground h-10 px-4 py-2"
-          onClick={() => setShowLogin(!showLogin)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="mr-2 h-4 w-4"
+        {!userLoggedIn && (
+          <button
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-primary hover:bg-primary/90 hover:text-accent-foreground h-10 px-4 py-2"
+            onClick={() => setShowLogin(!showLogin)}
           >
-            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-            <polyline points="10 17 15 12 10 7"></polyline>
-            <line x1="15" x2="3" y1="12" y2="12"></line>
-          </svg>
-          Sign In
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-2 h-4 w-4"
+            >
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" x2="3" y1="12" y2="12"></line>
+            </svg>
+            Sign In
+          </button>
+        )}
+
+        {userLoggedIn && (
+          <button
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-primary hover:bg-primary/90 hover:text-accent-foreground h-10 px-4 py-2"
+            onClick={logUserOut}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="mr-2 h-4 w-4"
+            >
+              <path d="M9 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" x2="3" y1="12" y2="12"></line>
+            </svg>
+            Sign Out
+          </button>
+        )}
       </div>
       {showLogin && (
         <LoginPopup sendUsernameToHeader={handleUsernameFromLoginPopup} />
