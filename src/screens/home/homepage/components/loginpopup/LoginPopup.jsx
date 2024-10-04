@@ -38,7 +38,6 @@ export function LoginForm({ sendUsernameToHeader }) {
       //   let userID = response.data.userID;
       sendUsernameToHeader(response.data.username);
       // await passLoggedIn(userID, confirmedUsername);
-      setShowRegister(false);
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");
       console.log(error.response ? error.response.data : error);
@@ -55,8 +54,7 @@ export function LoginForm({ sendUsernameToHeader }) {
           password,
         }
       );
-      // setShowRegister(false);
-      console.log("Hello!");
+      sendUsernameToHeader(response.data.username);
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");
       console.error(
