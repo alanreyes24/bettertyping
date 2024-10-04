@@ -18,6 +18,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
 
   const handleUsernameFromLoginPopup = (username) => {
     setUsername(username);
+    setShowLogin(false);
   };
 
   useEffect(() => {
