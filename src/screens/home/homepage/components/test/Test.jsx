@@ -227,20 +227,20 @@ const Test = ({ user, AIMode }) => {
         }));
       }
 
-      // if (test.settings.type === "words") {
-      //   setTest((prevTest) => ({
-      //     ...prevTest,
-      //     timer: {
-      //       timeLeft: prevTest.timer.timeLeft + 1,
-      //     },
-      //   }));
-      // }
+      if (test.settings.type === "words") {
+        setTest((prevTest) => ({
+          ...prevTest,
+          timer: {
+            timeLeft: prevTest.timer.timeLeft + 1,
+          },
+        }));
+      }
 
       expected += interval;
       let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
 
-      console.log(timeout);
-      console.log(other);
+      // console.log(timeout);
+      // console.log(other);
       clearTimeout(timeout);
       clearTimeout(other);
     }
