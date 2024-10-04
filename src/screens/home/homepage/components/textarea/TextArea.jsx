@@ -134,7 +134,6 @@ function TextArea({
     test.settings.count,
     test.state,
     currentLetterIndex,
-    currentLetterArrayIndexValue,
     wordList,
     reset,
   ]);
