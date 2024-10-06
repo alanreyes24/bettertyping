@@ -193,7 +193,7 @@ const Test = ({ user, AIMode }) => {
     console.log(test);
 
     // HANDLE TIMER
-  }, []);
+  }, [test.results]);
 
   // ON TEST LOAD (state -1)
   //TODO: FEST USER?
@@ -222,6 +222,7 @@ const Test = ({ user, AIMode }) => {
         setTest((prevTest) => ({
           ...prevTest,
           timer: {
+            ...prevTest.timer,
             timeLeft: prevTest.timer.timeLeft - 1,
           },
         }));
@@ -231,6 +232,7 @@ const Test = ({ user, AIMode }) => {
         setTest((prevTest) => ({
           ...prevTest,
           timer: {
+            ...prevTest.timer,
             timeLeft: prevTest.timer.timeLeft + 1,
           },
         }));
@@ -256,6 +258,42 @@ const Test = ({ user, AIMode }) => {
       ...prevTest,
       state: 3,
     }));
+  }
+
+  //WPM HANDLING
+  //need to make sure results is empty too but this for now
+  if (test.state == 3) {
+    let totalIncorrect = 0;
+    let totalCorrect = 0;
+
+    for (const value of Object.values(test.words.correctLetters)) {
+      totalCorrect += value.length;
+    }
+
+    for (const value of Object.values(test.words.incorrectLetters)) {
+      totalIncorrect += value.length;
+    }
+
+    // for (const key of Object.keys(test.words.correctLetters)) {
+    //   // console.log(key);
+    //   // test.words.correctLetters[key];
+    // }
+
+    const trueWPM =
+      (600 * ((totalCorrect - totalIncorrect) / 5)) /
+      (test.settings.length - test.timer.timeLeft);
+    const rawWPM =
+      (600 * ((totalCorrect + totalIncorrect) / 5)) /
+      (test.settings.length - test.timer.timeLeft);
+
+    console.log(totalCorrect);
+    console.log(totalIncorrect);
+    console.log(test.settings.length);
+    console.log(test.timer.timeLeft);
+
+    console.log(trueWPM.toFixed(2));
+    // setTrueWPMArray((prevArray) => [...prevArray, calculateWPMs("trueWPM")]);
+    // setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
   }
 
   // TODO: OLD TIMER
@@ -600,6 +638,7 @@ const Test = ({ user, AIMode }) => {
             }}
             passCorrectLetters={(l) => {
               console.log("yes");
+              console.log(l);
               // setTimeout(() => {
               setTest((prevTest) => ({
                 ...prevTest,
@@ -608,18 +647,20 @@ const Test = ({ user, AIMode }) => {
                   correctLetters: l,
                 },
               }));
-              // }, 0);
+              // }, 100);
             }}
             passIncorrectLetters={(l) => {
-              setTimeout(() => {
-                setTest((prevTest) => ({
-                  ...prevTest,
-                  words: {
-                    ...prevTest.words,
-                    incorrectLetters: l,
-                  },
-                }));
-              }, 0);
+              console.log("incorrect");
+
+              console.log(l);
+
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  incorrectLetters: l,
+                },
+              }));
             }}
             onTextLoaded={() => {
               setTest((prevTest) => ({
@@ -640,13 +681,11 @@ const Test = ({ user, AIMode }) => {
               }));
             }}
             passEventLog={(e) => {
-              setTimeout(() => {
-                setTest((prevTest) => ({
-                  ...prevTest,
-                  timestamp: e[0]?.timestamp || Date.now(),
-                  eventLog: e,
-                }));
-              }, 0);
+              setTest((prevTest) => ({
+                ...prevTest,
+                timestamp: e[0]?.timestamp || Date.now(),
+                eventLog: e,
+              }));
             }}
             onFocus={() => {}}
             reset={resetWords}
