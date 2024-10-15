@@ -37,14 +37,17 @@ ChartJS.register(
   Legend
 );
 
-const Test = ({ user, AIMode }) => {
+const Test = ({ user, AIMode, sendData }) => {
   const handleEndTestRedirect = () => {
     // navigate("/test-finished", { state: { AIMode } });
+    sendData(test);
   };
 
   // called if user changes settings during the test
   const cancelTest = () => {
     setResetWords(true);
+    setTrueWPMArray([]);
+    setRawWPMArray([]);
   };
 
   const sendTestToBackend = async () => {
@@ -104,21 +107,6 @@ const Test = ({ user, AIMode }) => {
   const [rawWPMArray, setRawWPMArray] = useState([]);
   const [settingValue, setSettingValue] = useState(2);
   const [typeValue, setTypeValue] = useState("time");
-
-  // TODO: MOVE TO STATE 3
-
-  // useEffect(() => {
-  //   if (
-  //     test.state <= 1 &&
-  //     test.timer.timeLeft === 0 &&
-  //     test.settings.type === "time"
-  //   ) {
-  //     setTest((prevTest) => ({
-  //       ...prevTest,
-  //       state: 3,
-  //     }));
-  //   }
-  // }, [test]);
 
   //TODO: finish test
 
@@ -188,64 +176,93 @@ const Test = ({ user, AIMode }) => {
   //   }
   // }, [test.state, user]);
 
-  // TRY AND MAKE ALL FIT IN ONE USEEFFECT (might not need at all???)
   useEffect(() => {
-    console.log(test);
-
     // HANDLE TIMER
-  }, [test.results]);
+
+    if (test.state === 1) {
+      //TIMER CODE
+      var interval = 100; // ms
+      var expected = Date.now() + interval;
+      let timeout = setTimeout(step, interval);
+
+      // eslint-disable-next-line no-inner-declarations
+      function step() {
+        var dt = Date.now() - expected;
+        if (dt > interval) {
+          // THIS IS BAD
+          console.log("something strange happened, timer not working");
+        }
+
+        //DECREMENT TIMER
+        console.log("DECREMENT");
+
+        if (test.settings.type === "time" && test.timer.timeLeft > 0) {
+          setTest((prevTest) => ({
+            ...prevTest,
+            timer: {
+              ...prevTest.timer,
+              timeLeft: prevTest.timer.timeLeft - 1,
+            },
+          }));
+        }
+
+        if (test.settings.type === "words") {
+          setTest((prevTest) => ({
+            ...prevTest,
+            timer: {
+              ...prevTest.timer,
+              timeLeft: prevTest.timer.timeLeft + 1,
+            },
+          }));
+        }
+
+        expected += interval;
+        let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
+
+        clearTimeout(timeout);
+        clearTimeout(other);
+      }
+    }
+
+    if (test.state == 3) {
+      handleEndTestRedirect();
+    }
+  }, [test.state, test.timer]);
+
+  //WPM LOGGING
+  useEffect(() => {
+    // console.log(test);
+
+    let totalCorrect = 0;
+    let totalIncorrect = 0;
+    for (const value of Object.values(test.words.correctLetters)) {
+      totalCorrect += value.length;
+    }
+    for (const value of Object.values(test.words.incorrectLetters)) {
+      totalIncorrect += value.length;
+    }
+
+    let trueWPM =
+      (600 * ((totalCorrect - totalIncorrect) / 5)) /
+      (test.settings.length - test.timer.timeLeft);
+
+    if (trueWPM > 0 && !isNaN(trueWPM)) {
+      setTrueWPMArray((prevArray) => [...prevArray, trueWPM.toFixed(2)]);
+    }
+
+    let rawWPM =
+      (600 * ((totalCorrect + totalIncorrect) / 5)) /
+      (test.settings.length - test.timer.timeLeft);
+
+    if (rawWPM > 0 && !isNaN(rawWPM)) {
+      setRawWPMArray((prevArray) => [...prevArray, rawWPM.toFixed(2)]);
+    }
+  }, [test.words.correctLetters]);
 
   // ON TEST LOAD (state -1)
   //TODO: FEST USER?
   if (test.state === -1) {
     //test
-  }
-
-  if (test.state === 1) {
-    //TIMER CODE
-    var interval = 100; // ms
-    var expected = Date.now() + interval;
-    let timeout = setTimeout(step, interval);
-
-    // eslint-disable-next-line no-inner-declarations
-    function step() {
-      var dt = Date.now() - expected;
-      if (dt > interval) {
-        // THIS IS BAD
-        console.log("something strange happened, timer not working");
-      }
-
-      //DECREMENT TIMER
-      console.log("DECREMENT");
-
-      if (test.settings.type === "time" && test.timer.timeLeft > 0) {
-        setTest((prevTest) => ({
-          ...prevTest,
-          timer: {
-            ...prevTest.timer,
-            timeLeft: prevTest.timer.timeLeft - 1,
-          },
-        }));
-      }
-
-      if (test.settings.type === "words") {
-        setTest((prevTest) => ({
-          ...prevTest,
-          timer: {
-            ...prevTest.timer,
-            timeLeft: prevTest.timer.timeLeft + 1,
-          },
-        }));
-      }
-
-      expected += interval;
-      let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
-
-      // console.log(timeout);
-      // console.log(other);
-      clearTimeout(timeout);
-      clearTimeout(other);
-    }
   }
 
   // CHECK FOR TIMER 0
@@ -254,120 +271,28 @@ const Test = ({ user, AIMode }) => {
     test.timer.timeLeft <= 0 &&
     test.settings.type === "time"
   ) {
+    const convertedTrueWPMArray = trueWPMArray.map((item, index) => ({
+      x: index,
+      y: parseFloat(item),
+    }));
+    const convertedRawWPMArray = rawWPMArray.map((item, index) => ({
+      x: index,
+      y: parseFloat(item),
+    }));
+
+    setTrueWPMArray(convertedTrueWPMArray);
+    setRawWPMArray(convertedRawWPMArray);
+
     setTest((prevTest) => ({
       ...prevTest,
       state: 3,
+      words: {
+        ...prevTest.words,
+        trueWPMArray: convertedTrueWPMArray,
+        rawWPMArray: convertedRawWPMArray,
+      },
     }));
   }
-
-  //WPM HANDLING
-  //need to make sure results is empty too but this for now
-  if (test.state == 3) {
-    let totalIncorrect = 0;
-    let totalCorrect = 0;
-
-    for (const value of Object.values(test.words.correctLetters)) {
-      totalCorrect += value.length;
-    }
-
-    for (const value of Object.values(test.words.incorrectLetters)) {
-      totalIncorrect += value.length;
-    }
-
-    // for (const key of Object.keys(test.words.correctLetters)) {
-    //   // console.log(key);
-    //   // test.words.correctLetters[key];
-    // }
-
-    const trueWPM =
-      (600 * ((totalCorrect - totalIncorrect) / 5)) /
-      (test.settings.length - test.timer.timeLeft);
-    const rawWPM =
-      (600 * ((totalCorrect + totalIncorrect) / 5)) /
-      (test.settings.length - test.timer.timeLeft);
-
-    console.log(totalCorrect);
-    console.log(totalIncorrect);
-    console.log(test.settings.length);
-    console.log(test.timer.timeLeft);
-
-    console.log(trueWPM.toFixed(2));
-    // setTrueWPMArray((prevArray) => [...prevArray, calculateWPMs("trueWPM")]);
-    // setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
-  }
-
-  // TODO: OLD TIMER
-  // if (test.state === 1) {
-  //   // setHideSettings(true);
-
-  //   if (test.settings.type === "time" && test.timer.timeLeft > 0) {
-  //     setTimeout(() => {
-  //       setTest((prevTest) => ({
-  //         ...prevTest,
-  //         timer: {
-  //           ...prevTest.timer,
-  //           timeLeft: prevTest.timer.timeLeft - 1,
-  //           timerGoesUp: false,
-  //         },
-  //       }));
-  //     }, 100);
-
-  //   } else if (test.settings.type === "words" && test.state === 1) {
-  //     setTimeout(() => {
-  //       if (test.state === 1) {
-  //         setTest((prevTest) => ({
-  //           ...prevTest,
-  //           timer: {
-  //             ...prevTest.timer,
-  //             timeLeft: prevTest.timer.timeLeft + 1,
-  //             timerGoesUp: true,
-  //           },
-  //         }));
-  //       }
-  //     }, 100);
-  //   }
-  // }
-
-  // TODO: array making
-
-  // useEffect(() => {
-  //   if (test.state === 1 && !test.finished) {
-  //     setTimeout(() => {
-  //       setTrueWPMArray((prevArray) => [
-  //         ...prevArray,
-  //         calculateWPMs("trueWPM"),
-  //       ]);
-  //       setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
-  //     }, 1000);
-  //   }
-  // }, [test.state, trueWPMArray]);
-
-  //TODO: graph making + array pushing
-
-  // useEffect(() => {
-  //   if (test.finished) {
-  //     const convertedTrueWPMArray = trueWPMArray.map((item, index) => ({
-  //       x: index,
-  //       y: parseFloat(item),
-  //     }));
-  //     const convertedRawWPMArray = rawWPMArray.map((item, index) => ({
-  //       x: index,
-  //       y: parseFloat(item),
-  //     }));
-
-  //     setTrueWPMArray(convertedTrueWPMArray);
-  //     setRawWPMArray(convertedRawWPMArray);
-
-  //     setTest((prevTest) => ({
-  //       ...prevTest,
-  //       words: {
-  //         ...prevTest.words,
-  //         trueWPMArray: convertedTrueWPMArray,
-  //         rawWPMArray: convertedRawWPMArray,
-  //       },
-  //     }));
-  //   }
-  // }, [test.finished]);
 
   // TODO: END TEST HANDLING
 
@@ -637,9 +562,6 @@ const Test = ({ user, AIMode }) => {
               }, 0);
             }}
             passCorrectLetters={(l) => {
-              console.log("yes");
-              console.log(l);
-              // setTimeout(() => {
               setTest((prevTest) => ({
                 ...prevTest,
                 words: {
@@ -647,13 +569,8 @@ const Test = ({ user, AIMode }) => {
                   correctLetters: l,
                 },
               }));
-              // }, 100);
             }}
             passIncorrectLetters={(l) => {
-              console.log("incorrect");
-
-              console.log(l);
-
               setTest((prevTest) => ({
                 ...prevTest,
                 words: {

@@ -66,15 +66,6 @@ function TextArea({
   }
 
   useEffect(() => {
-    // make words show up
-    if (test.state == -1) {
-      if (test.settings.type === "words") {
-        populateWordList(test.settings.count);
-      } else {
-        populateWordList(50);
-      }
-    }
-
     // handle line shifting
     if (test.state === 1) {
       const currentLetter =
@@ -88,6 +79,17 @@ function TextArea({
         } else if (getOffset(nextLetter).top < getOffset(currentLetter).top) {
           setDeleteLines((prev) => prev - 1);
         }
+      }
+    }
+  }, [currentLetterIndex, test.state]);
+
+  useEffect(() => {
+    // make words show up
+    if (test.state == -1) {
+      if (test.settings.type === "words") {
+        populateWordList(test.settings.count);
+      } else {
+        populateWordList(50);
       }
     }
 
@@ -140,17 +142,17 @@ function TextArea({
     }
 
     if (
-      test.state === 3 &&
+      test.state === 1 &&
       JSON.stringify(test.words.incorrectLetters) !==
         JSON.stringify(incorrectLetters)
     ) {
-      console.log(incorrectLetters);
+      // console.log(incorrectLetters);
 
       passIncorrectLetters(incorrectLetters);
     }
 
     if (
-      test.state === 3 &&
+      test.state === 1 &&
       JSON.stringify(test.words.correctLetters) !==
         JSON.stringify(correctLetters)
     ) {
