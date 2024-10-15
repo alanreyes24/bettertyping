@@ -17,17 +17,10 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
 import { ScrollArea } from "@/components/ui/scroll-area";
+import Heatmap from "./components/heatmap/Heatmap";
 
-// let chartData = [
+// let charttest = [
 //   { second: "1", RawWPM: 186, TrueWPM: 80 },
 //   { second: "2", RawWPM: 305, TrueWPM: 200 },
 //   { second: "3", RawWPM: 237, TrueWPM: 120 },
@@ -37,11 +30,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 // ];
 
 function HomePage({ user, handleUserChange, handleLogout }) {
-  const [chartData, setChartData] = useState([
+  const [charttest, setCharttest] = useState([
     { x: 0, y: 30 },
     { x: 1, y: 42 },
   ]);
-  const [data, setData] = useState({ nothing: "no" });
+  const [test, setTest] = useState({});
 
   return (
     <>
@@ -55,9 +48,9 @@ function HomePage({ user, handleUserChange, handleLogout }) {
           {/* TEST */}
           <Test
             user={user}
-            sendData={(data) => {
-              setData(data);
-              setChartData(data.words.chartData);
+            sendData={(test) => {
+              setTest(test);
+              setCharttest(test.words.charttest);
             }}
             AIMode={false}
           />
@@ -84,7 +77,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
               </div>
               <ResponsiveContainer width='100%' height={300}>
                 <AreaChart
-                  data={chartData}
+                  test={charttest}
                   margin={{
                     top: 10,
                     right: 30,
@@ -93,7 +86,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   }}>
                   <CartesianGrid strokeDasharray='3 3' vertical={false} />
                   <XAxis
-                    dataKey='second'
+                    testKey='second'
                     tickLine={false}
                     axisLine={false}
                     tickMargin={2}
@@ -102,7 +95,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   {/* <YAxis /> */}
                   <YAxis
                     // type='number'
-                    domain={["dataMin", "dataMax + 25"]}
+                    domain={["testMin", "testMax + 25"]}
                     tickLine={false}
                     axisLine={false}
 
@@ -119,7 +112,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   />
                   <Area
                     type='monotone'
-                    dataKey='TrueWPM'
+                    testKey='TrueWPM'
                     stackId='1'
                     stroke='hsl(143, 100%, 51%)'
                     fill='hsl(143, 100%, 51%)'
@@ -127,7 +120,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   />
                   <Area
                     type='monotone'
-                    dataKey='RawWPM'
+                    testKey='RawWPM'
                     stackId='0'
                     stroke='hsl(20, 100%, 47%)'
                     fill='hsl(34, 100%, 47%)'
@@ -167,8 +160,8 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       <div className='bg-amber-300 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                         Top 0.1%
                       </div>
-                      {data.results != undefined
-                        ? data.results.TrueWPM
+                      {test.results != undefined
+                        ? test.results.TrueWPM
                         : 142.82}
                     </div>
                   </div>
@@ -185,8 +178,8 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       <div className='bg-green-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                         Above Average
                       </div>
-                      {data.results != undefined
-                        ? data.results.Accuracy
+                      {test.results != undefined
+                        ? test.results.Accuracy
                         : 98.85}
                       %
                     </div>
@@ -203,7 +196,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       <div className='bg-red-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                         Below Average
                       </div>
-                      {data.results != undefined ? data.results.Mistakes : 11}
+                      {test.results != undefined ? test.results.Mistakes : 11}
                     </div>
                   </div>
                 </div>
@@ -211,158 +204,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
             </div>
 
             {/* HEATMAP */}
-
-            <div className='w-full mx-auto col-span-2 lg:col-span-5 rounded-lg border bg-card p-6 h shadow-sm space-y-4 justify-center flex flex-col'>
-              <div className='space-y-1'>
-                <h2 className='text-2xl font-bold'>Heatmap</h2>
-                <div className='flex items-center justify-between'>
-                  <p className='text-muted-foreground'>
-                    A dynamic map of your keystrokes. Hover over a key to see
-                    detailed statistics
-                  </p>
-
-                  <div className=''>
-                    <Select
-                      onValueChange={(value) => {
-                        console.log(value);
-                      }}
-                      defaultValue='qwerty'>
-                      <SelectTrigger id='status' aria-label='Select Layout'>
-                        <SelectValue placeholder='Select Layout' />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value='qwerty'>Qwerty</SelectItem>
-                        <SelectItem value='dvorak'>Dvorak</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </div>
-
-              {/* KEYBOARD */}
-              <div>
-                <div className='grid text-white gap-3 font-bold grid-rows-3 mt-2'>
-                  <div className='flex flex-row space-x-4 justify-center'>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      Q
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      W
-                    </div>
-                    <div className='bg-[#ff6753f0] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      E
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      R
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      T
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      Y
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      U
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      I
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      O
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      P
-                    </div>
-                  </div>
-                  <div className='flex flex-row space-x-4 justify-center'>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      A
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      S
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      D
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      F
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      G
-                    </div>
-                    <div className='bg-[#ff6753f0] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      H
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      J
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      K
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      L
-                    </div>
-                  </div>
-                  <div className='flex flex-row -ml-16 space-x-4 justify-center'>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      Z
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      X
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      C
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      V
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      B
-                    </div>
-                    <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      N
-                    </div>
-                    <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-                      M
-                    </div>
-                  </div>
-                </div>
-                {/* ATLAS / MEANINGS */}
-                <div className='flex flex-row space-x-8 justify-center mt-2'>
-                  <div className='flex text-lg text-muted-foreground'>
-                    <div className='w-4 h-4 border bg-[#ff675310] self-center mr-2'></div>
-                    Low &lt; 2
-                  </div>
-                  <div className='flex text-lg text-muted-foreground'>
-                    <div className='w-4 h-4 border bg-[#ff675340] self-center mr-2'></div>
-                    Medium 3-5
-                  </div>
-                  <div className='flex text-lg text-muted-foreground'>
-                    <div className='w-4 h-4 border bg-[#ff6753f0] self-center mr-2'></div>
-                    High &gt; 6
-                  </div>
-                </div>
-              </div>
-
-              <div className='w-64 self-center'>
-                <Select
-                  onValueChange={(value) => {
-                    console.log(value);
-                  }}
-                  defaultValue='incorrect'>
-                  <SelectTrigger id='heatmap' aria-label='Select Filter'>
-                    <SelectValue placeholder='Select Filter' />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value='incorrect'>Incorrect Letters</SelectItem>
-                    <SelectItem value='correct'>Correct Letters</SelectItem>
-
-                    <SelectItem value='largest'>Largest Delay</SelectItem>
-                    <SelectItem value='smallest'>Smallest Delay</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+            <Heatmap test={test} />
 
             {/* MISTAKES */}
             <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
