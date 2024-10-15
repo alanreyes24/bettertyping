@@ -41,6 +41,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
     { x: 0, y: 30 },
     { x: 1, y: 42 },
   ]);
+  const [data, setData] = useState({ nothing: "no" });
 
   return (
     <>
@@ -55,8 +56,8 @@ function HomePage({ user, handleUserChange, handleLogout }) {
           <Test
             user={user}
             sendData={(data) => {
-              console.log(data.words.trueWPMArray);
-              setChartData(data.words.trueWPMArray);
+              setData(data);
+              setChartData(data.words.chartData);
             }}
             AIMode={false}
           />
@@ -90,19 +91,23 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                     left: 0,
                     bottom: 0,
                   }}>
-                  <CartesianGrid vertical={false} />
+                  <CartesianGrid strokeDasharray='3 3' vertical={false} />
                   <XAxis
-                    dataKey='x'
-                    tickLine={true}
-                    axisLine={false}
-                    tickMargin={8}
-                    tickFormatter={(value) => value}
-                  />
-                  <YAxis
+                    dataKey='second'
                     tickLine={false}
                     axisLine={false}
-                    tickMargin={8}
-                    tickCount={3}
+                    tickMargin={2}
+                    tickFormatter={(value) => value + 1}
+                  />
+                  {/* <YAxis /> */}
+                  <YAxis
+                    // type='number'
+                    domain={["dataMin", "dataMax + 25"]}
+                    tickLine={false}
+                    axisLine={false}
+
+                    // tickMargin={8}
+                    // tickCount={8}
                   />
                   <Tooltip
                     contentStyle={{
@@ -114,17 +119,17 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   />
                   <Area
                     type='monotone'
-                    dataKey='y'
+                    dataKey='TrueWPM'
                     stackId='1'
                     stroke='hsl(143, 100%, 51%)'
                     fill='hsl(143, 100%, 51%)'
-                    fillOpacity={0.1}
+                    fillOpacity={0.15}
                   />
                   <Area
                     type='monotone'
                     dataKey='RawWPM'
-                    stackId='1'
-                    stroke='hsl(34, 100%, 47%)'
+                    stackId='0'
+                    stroke='hsl(20, 100%, 47%)'
                     fill='hsl(34, 100%, 47%)'
                     fillOpacity={0.1}
                   />
@@ -162,7 +167,9 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       <div className='bg-amber-300 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                         Top 0.1%
                       </div>
-                      142.8
+                      {data.results != undefined
+                        ? data.results.TrueWPM
+                        : 142.82}
                     </div>
                   </div>
                   <div className='flex items-center justify-between'>
@@ -178,7 +185,10 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       <div className='bg-green-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                         Above Average
                       </div>
-                      92%
+                      {data.results != undefined
+                        ? data.results.Accuracy
+                        : 98.85}
+                      %
                     </div>
                   </div>
 
@@ -193,7 +203,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       <div className='bg-red-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                         Below Average
                       </div>
-                      12
+                      {data.results != undefined ? data.results.Mistakes : 11}
                     </div>
                   </div>
                 </div>

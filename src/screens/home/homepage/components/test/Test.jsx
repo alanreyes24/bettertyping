@@ -46,8 +46,7 @@ const Test = ({ user, AIMode, sendData }) => {
   // called if user changes settings during the test
   const cancelTest = () => {
     setResetWords(true);
-    setTrueWPMArray([]);
-    setRawWPMArray([]);
+    setChartData([]);
   };
 
   const sendTestToBackend = async () => {
@@ -82,8 +81,9 @@ const Test = ({ user, AIMode, sendData }) => {
       attemptedWords: 0,
       correctLetters: [],
       incorrectLetters: [],
-      trueWPMArray: [],
-      rawWPMArray: [],
+      chartData: [],
+      // trueWPMArray: [],
+      // rawWPMArray: [],
     },
     settings: {
       type: "time",
@@ -103,8 +103,9 @@ const Test = ({ user, AIMode, sendData }) => {
 
   const [hideSettings, setHideSettings] = useState(false);
   const [resetWords, setResetWords] = useState(false);
-  const [trueWPMArray, setTrueWPMArray] = useState([]);
-  const [rawWPMArray, setRawWPMArray] = useState([]);
+  // const [trueWPMArray, setTrueWPMArray] = useState([]);
+  const [chartData, setChartData] = useState([]);
+
   const [settingValue, setSettingValue] = useState(2);
   const [typeValue, setTypeValue] = useState("time");
 
@@ -233,31 +234,53 @@ const Test = ({ user, AIMode, sendData }) => {
   useEffect(() => {
     // console.log(test);
 
-    let totalCorrect = 0;
-    let totalIncorrect = 0;
-    for (const value of Object.values(test.words.correctLetters)) {
-      totalCorrect += value.length;
-    }
-    for (const value of Object.values(test.words.incorrectLetters)) {
-      totalIncorrect += value.length;
-    }
+    if (test.timer.timeLeft % 10 == 0 && test.state == 1) {
+      let totalCorrect = 0;
+      let totalIncorrect = 0;
+      for (const value of Object.values(test.words.correctLetters)) {
+        totalCorrect += value.length;
+      }
+      for (const value of Object.values(test.words.incorrectLetters)) {
+        totalIncorrect += value.length;
+      }
 
-    let trueWPM =
-      (600 * ((totalCorrect - totalIncorrect) / 5)) /
-      (test.settings.length - test.timer.timeLeft);
+      let trueWPM =
+        (600 * ((totalCorrect - totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
 
-    if (trueWPM > 0 && !isNaN(trueWPM)) {
-      setTrueWPMArray((prevArray) => [...prevArray, trueWPM.toFixed(2)]);
+      let rawWPM =
+        (600 * ((totalCorrect + totalIncorrect) / 5)) /
+        (test.settings.length - test.timer.timeLeft);
+
+      const accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
+
+      if (
+        trueWPM > 0 &&
+        !isNaN(trueWPM) &&
+        rawWPM > 0 &&
+        !isNaN(rawWPM) &&
+        accuracy >= 0
+      ) {
+        setTest((prevTest) => ({
+          ...prevTest,
+          results: {
+            TrueWPM: trueWPM.toFixed(2) * 1,
+            RawWPM: rawWPM.toFixed(2) * 1,
+            Accuracy: accuracy.toFixed(2) * 1,
+            Mistakes: totalIncorrect,
+          },
+        }));
+        setChartData((prevArray) => [
+          ...prevArray,
+          {
+            second: prevArray.length + 1,
+            TrueWPM: trueWPM.toFixed(2) * 1,
+            RawWPM: rawWPM.toFixed(2) * 1,
+          },
+        ]);
+      }
     }
-
-    let rawWPM =
-      (600 * ((totalCorrect + totalIncorrect) / 5)) /
-      (test.settings.length - test.timer.timeLeft);
-
-    if (rawWPM > 0 && !isNaN(rawWPM)) {
-      setRawWPMArray((prevArray) => [...prevArray, rawWPM.toFixed(2)]);
-    }
-  }, [test.words.correctLetters]);
+  }, [test.timer.timeLeft]);
 
   // ON TEST LOAD (state -1)
   //TODO: FEST USER?
@@ -271,25 +294,12 @@ const Test = ({ user, AIMode, sendData }) => {
     test.timer.timeLeft <= 0 &&
     test.settings.type === "time"
   ) {
-    const convertedTrueWPMArray = trueWPMArray.map((item, index) => ({
-      x: index,
-      y: parseFloat(item),
-    }));
-    const convertedRawWPMArray = rawWPMArray.map((item, index) => ({
-      x: index,
-      y: parseFloat(item),
-    }));
-
-    setTrueWPMArray(convertedTrueWPMArray);
-    setRawWPMArray(convertedRawWPMArray);
-
     setTest((prevTest) => ({
       ...prevTest,
       state: 3,
       words: {
         ...prevTest.words,
-        trueWPMArray: convertedTrueWPMArray,
-        rawWPMArray: convertedRawWPMArray,
+        chartData: chartData,
       },
     }));
   }
@@ -347,38 +357,38 @@ const Test = ({ user, AIMode, sendData }) => {
     return 0;
   };
 
-  const wpmData = {
-    datasets: [
-      {
-        label: "True WPM",
-        data: trueWPMArray,
-        cubicInterpolationMode: "monotone",
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        showLine: true,
-        fill: false,
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 1)",
-        pointBackgroundColor: "rgba(255, 255, 255, 1)",
-        pointBorderColor: "#000",
-        pointHoverBackgroundColor: "#000",
-        pointHoverBorderColor: "rgba(255, 255, 255, 1)",
-      },
-      {
-        label: "Raw WPM",
-        data: rawWPMArray,
-        cubicInterpolationMode: "monotone",
-        showLine: true,
-        fill: true,
-        borderWidth: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.2)",
-        borderColor: "rgba(0, 0, 0, 1)",
-        pointBackgroundColor: "rgba(0, 0, 0, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(0, 0, 0, 1)",
-      },
-    ],
-  };
+  // const wpmData = {
+  //   datasets: [
+  //     {
+  //       label: "True WPM",
+  //       data: trueWPMArray,
+  //       cubicInterpolationMode: "monotone",
+  //       backgroundColor: "rgba(255, 255, 255, 0.2)",
+  //       showLine: true,
+  //       fill: false,
+  //       borderWidth: 1,
+  //       borderColor: "rgba(255, 255, 255, 1)",
+  //       pointBackgroundColor: "rgba(255, 255, 255, 1)",
+  //       pointBorderColor: "#000",
+  //       pointHoverBackgroundColor: "#000",
+  //       pointHoverBorderColor: "rgba(255, 255, 255, 1)",
+  //     },
+  //     {
+  //       label: "Raw WPM",
+  //       data: rawWPMArray,
+  //       cubicInterpolationMode: "monotone",
+  //       showLine: true,
+  //       fill: true,
+  //       borderWidth: 1,
+  //       backgroundColor: "rgba(0, 0, 0, 0.2)",
+  //       borderColor: "rgba(0, 0, 0, 1)",
+  //       pointBackgroundColor: "rgba(0, 0, 0, 1)",
+  //       pointBorderColor: "#fff",
+  //       pointHoverBackgroundColor: "#fff",
+  //       pointHoverBorderColor: "rgba(0, 0, 0, 1)",
+  //     },
+  //   ],
+  // };
 
   const options = {
     animation: false,
@@ -620,8 +630,9 @@ const Test = ({ user, AIMode, sendData }) => {
                   attemptedWords: 0,
                   correctLetters: [],
                   incorrectLetters: [],
-                  trueWPMArray: [],
-                  rawWPMArray: [],
+                  chartData: [],
+                  // trueWPMArray: [],
+                  // rawWPMArray: [],
                 },
                 settings: {
                   type: test.settings.type,
