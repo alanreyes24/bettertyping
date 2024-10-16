@@ -65,62 +65,60 @@ export function LoginForm({ sendUsernameToHeader }) {
   };
 
   return (
-    <Card className="mx-auto max-w-sm login-container">
-      <CardHeader>
-        <CardTitle className="text-2xl">Sign In</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-      </CardHeader>
-      <form
-        className="login-form"
-        onSubmit={showRegister ? handleRegister : handleLogin}
-      >
-        <CardContent>
-          <div className="grid gap-4">
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="yourname@example.com"
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
-            </div>
-            <div className="grid gap-2">
-              <div className="flex items-center">
-                <Label htmlFor="password">Password</Label>
+    <>
+      <div className='absolute top-0 left-0 bg-[#19191980] w-full h-[100vh] blur-sm -z-10'></div>
+      <Card className='mx-auto max-w-sm login-container border rounded-lg blur-none'>
+        <CardHeader>
+          <CardTitle className='text-2xl'>Sign In</CardTitle>
+          <CardDescription>
+            Enter your email below to login to your account
+          </CardDescription>
+        </CardHeader>
+        <form
+          className='login-form'
+          onSubmit={showRegister ? handleRegister : handleLogin}>
+          <CardContent>
+            <div className='grid gap-4'>
+              <div className='grid gap-2'>
+                <Label htmlFor='email'>Email</Label>
+                <Input
+                  id='email'
+                  type='email'
+                  placeholder='yourname@example.com'
+                  onChange={(e) => setUsername(e.target.value)}
+                  required
+                />
               </div>
-              <Input
-                id="password"
-                type="password"
-                required
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className='grid gap-2'>
+                <div className='flex items-center'>
+                  <Label htmlFor='password'>Password</Label>
+                </div>
+                <Input
+                  id='password'
+                  type='password'
+                  required
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+              </div>
+              <a href='#' className='mx-auto inline-block text-sm underline'>
+                Forgot your password?
+              </a>
+              <Button className='login-button' type='submit'>
+                {showRegister ? "Register" : "Login"}
+              </Button>
             </div>
-            <a href="#" className="ml-auto inline-block text-sm underline">
-              Forgot your password?
-            </a>
-            <Button className="login-button" type="submit">
-              {showRegister ? "Register" : "Login"}
-            </Button>
-            <Button variant="outline" className="w-full">
-              Login with Google
-            </Button>
-          </div>
-          <div className="mt-4 text-center text-sm">
-            Don&apos;t have an account?{" "}
-            <a
-              className="toggle-link"
-              onClick={() => setShowRegister(!showRegister)}
-            >
-              {showRegister ? "Login" : "Register"}
-            </a>
-          </div>
-        </CardContent>
-      </form>
-    </Card>
+            <div className='mt-4 text-center text-sm'>
+              Don&apos;t have an account?{" "}
+              <a
+                className='toggle-link'
+                onClick={() => setShowRegister(!showRegister)}>
+                {showRegister ? "Login" : "Register"}
+              </a>
+            </div>
+          </CardContent>
+        </form>
+      </Card>
+    </>
   );
 }
 
