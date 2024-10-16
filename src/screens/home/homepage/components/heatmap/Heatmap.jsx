@@ -9,63 +9,20 @@ import {
 
 import { useState } from "react";
 function Heatmap({ test }) {
-  const getHeatmapColor = (obj) => {
-    console.log(obj);
-    // const range = maxErrors - minErrors;
-    // const lowThreshold = minErrors + range / 3;
-    // const mediumThreshold = minErrors + (2 * range) / 3;
-
-    // if (errors <= lowThreshold) {
-    //   return "#ccffcc"; // Low: Light green
-    // } else if (errors <= mediumThreshold) {
-    //   return "#ffff99"; // Medium: Yellow
-    // } else {
-    //   return "#ff6666"; // High: Red
-    // }
-  };
-
   useEffect(() => {
-    if (test.state == 3) {
-      console.log("test finished");
-
-      const aggregateLetters = (correctLetters, incorrectLetters) => {
-        const counts = {};
-
-        const addCounts = (letterArray, type) => {
-          Object.values(letterArray)
-            .flat()
-            .forEach((letter) => {
-              if (!counts[letter]) {
-                counts[letter] = { correct: 0, incorrect: 0 };
-              }
-              counts[letter][type]++;
-            });
-        };
-
-        addCounts(correctLetters, "correct");
-        addCounts(incorrectLetters, "incorrect");
-
-        return counts;
-      };
-
-      const letterCounts = aggregateLetters(
-        test.words.correctLetters,
-        test.words.incorrectLetters
-      );
-
-      keyboard.rows.forEach((row) => {
-        row.forEach((keyObj) => {
-          const lowerKey = keyObj.key.toLowerCase();
-
-          if (letterCounts[lowerKey]) {
-            keyObj.correct = letterCounts[lowerKey].correct;
-            keyObj.incorrect = letterCounts[lowerKey].incorrect;
-          }
-        });
-      });
-
-      console.log(keyboard);
-    }
+    // if (test.state == 3) {
+    //   console.log("test finished");
+    //   keyboard.rows.forEach((row) => {
+    //     row.forEach((keyObj) => {
+    //       const lowerKey = keyObj.key.toLowerCase();
+    //       if (letterCounts[lowerKey]) {
+    //         keyObj.correct = letterCounts[lowerKey].correct;
+    //         keyObj.incorrect = letterCounts[lowerKey].incorrect;
+    //       }
+    //     });
+    //   });
+    //   console.log(keyboard);
+    // }
   }, [test.state]);
 
   //how?
@@ -73,7 +30,10 @@ function Heatmap({ test }) {
   //take total * 1/3  = low, 2/3 = med, higher = high
 
   const [keyboard, setKeyboard] = useState({
+    finished: false,
     setting: "incorrect",
+    minErrors: 0,
+    maxErrors: 6,
     rows: [
       [
         { key: "Q", incorrect: 0, correct: 0, delay: 0 },
@@ -110,11 +70,85 @@ function Heatmap({ test }) {
     ],
   });
 
-  if (test != undefined) {
-    console.log("not undefined");
+  //   if (test.words.incorrectLetters != undefined) {
+  if (test.state == 3 && keyboard.finished == false) {
+    const aggregateLetters = (correctLetters, incorrectLetters) => {
+      const counts = {};
+
+      const addCounts = (letterArray, type) => {
+        Object.values(letterArray)
+          .flat()
+          .forEach((letter) => {
+            if (!counts[letter]) {
+              counts[letter] = { correct: 0, incorrect: 0 };
+            }
+            counts[letter][type]++;
+          });
+      };
+
+      addCounts(correctLetters, "correct");
+      addCounts(incorrectLetters, "incorrect");
+
+      return counts;
+    };
+
+    const letterCounts = aggregateLetters(
+      test.words.correctLetters,
+      test.words.incorrectLetters
+    );
+    console.log("test finished");
+
+    keyboard.rows.forEach((row) => {
+      row.forEach((keyObj) => {
+        const lowerKey = keyObj.key.toLowerCase();
+
+        if (letterCounts[lowerKey]) {
+          keyObj.correct = letterCounts[lowerKey].correct;
+          keyObj.incorrect = letterCounts[lowerKey].incorrect;
+        }
+      });
+    });
+    console.log(keyboard);
+
+    const calculateErrorRange = (keyboard) => {
+      let minErrors = Infinity;
+      let maxErrors = -Infinity;
+
+      keyboard.rows.forEach((row) => {
+        row.forEach((keyObj) => {
+          if (keyObj.incorrect > 0) {
+            minErrors = Math.min(minErrors, keyObj.incorrect);
+            maxErrors = Math.max(maxErrors, keyObj.incorrect);
+          }
+        });
+      });
+
+      return { minErrors, maxErrors };
+    };
+
+    const { minErrors, maxErrors } = calculateErrorRange(keyboard);
+
+    setKeyboard((prev) => ({
+      ...prev,
+      finished: true,
+      minErrors, // Store the calculated minErrors and maxErrors
+      maxErrors,
+    }));
   }
 
-  //   const heatmapKeyColor = (test, keyErrors) => {};
+  const getHeatmapColor = (obj) => {
+    console.log(obj);
+
+    if (obj.incorrect >= 6) {
+      return "#ff6753f0";
+    } else if (obj.incorrect >= 3) {
+      return "#ff675340";
+    } else if (obj.incorrect > 0) {
+      return "#ff675310";
+    } else {
+      return "#ff675310";
+    }
+  };
 
   return (
     <div className='w-full mx-auto col-span-2 lg:col-span-5 rounded-lg border bg-card p-6 h shadow-sm space-y-4 justify-center flex flex-col'>
@@ -245,7 +279,9 @@ function Heatmap({ test }) {
                   return (
                     <div
                       key={index}
-                      style={{ backgroundColor: getHeatmapColor(obj) }}
+                      style={{
+                        backgroundColor: getHeatmapColor(obj),
+                      }}
                       className='rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
                       {obj.key}
                     </div>
@@ -259,15 +295,15 @@ function Heatmap({ test }) {
         <div className='flex flex-row space-x-8 justify-center mt-2'>
           <div className='flex text-lg text-muted-foreground'>
             <div className='w-4 h-4 border bg-[#ff675310] self-center mr-2'></div>
-            Low &lt; 2
+            Low &lt; {keyboard.minErrors + 1}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div className='w-4 h-4 border bg-[#ff675340] self-center mr-2'></div>
-            Medium 3-5
+            Medium {keyboard.maxErrors - 1 - (keyboard.minErrors + 1)}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div className='w-4 h-4 border bg-[#ff6753f0] self-center mr-2'></div>
-            High &gt; 6
+            High &gt; {keyboard.maxErrors}
           </div>
         </div>
       </div>

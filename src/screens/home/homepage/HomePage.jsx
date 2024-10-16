@@ -30,9 +30,11 @@ import Heatmap from "./components/heatmap/Heatmap";
 // ];
 
 function HomePage({ user, handleUserChange, handleLogout }) {
-  const [charttest, setCharttest] = useState([
+  const [chartData, setChartData] = useState([
     { x: 0, y: 30 },
     { x: 1, y: 42 },
+    { x: 2, y: 42 },
+    { x: 3, y: 42 },
   ]);
   const [test, setTest] = useState({});
 
@@ -50,7 +52,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
             user={user}
             sendData={(test) => {
               setTest(test);
-              setCharttest(test.words.charttest);
+              setChartData(test.words.chartData);
             }}
             AIMode={false}
           />
@@ -77,7 +79,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
               </div>
               <ResponsiveContainer width='100%' height={300}>
                 <AreaChart
-                  test={charttest}
+                  data={chartData}
                   margin={{
                     top: 10,
                     right: 30,
@@ -95,7 +97,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   {/* <YAxis /> */}
                   <YAxis
                     // type='number'
-                    domain={["testMin", "testMax + 25"]}
+                    domain={["dataMin", "dataMax + 25"]}
                     tickLine={false}
                     axisLine={false}
 
@@ -112,7 +114,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   />
                   <Area
                     type='monotone'
-                    testKey='TrueWPM'
+                    dataKey='TrueWPM'
                     stackId='1'
                     stroke='hsl(143, 100%, 51%)'
                     fill='hsl(143, 100%, 51%)'
@@ -120,7 +122,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                   />
                   <Area
                     type='monotone'
-                    testKey='RawWPM'
+                    dataKey='RawWPM'
                     stackId='0'
                     stroke='hsl(20, 100%, 47%)'
                     fill='hsl(34, 100%, 47%)'
