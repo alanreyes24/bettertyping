@@ -9,25 +9,7 @@ import {
 
 import { useState } from "react";
 function Heatmap({ test }) {
-  useEffect(() => {
-    // if (test.state == 3) {
-    //   console.log("test finished");
-    //   keyboard.rows.forEach((row) => {
-    //     row.forEach((keyObj) => {
-    //       const lowerKey = keyObj.key.toLowerCase();
-    //       if (letterCounts[lowerKey]) {
-    //         keyObj.correct = letterCounts[lowerKey].correct;
-    //         keyObj.incorrect = letterCounts[lowerKey].incorrect;
-    //       }
-    //     });
-    //   });
-    //   console.log(keyboard);
-    // }
-  }, [test.state]);
-
-  //how?
-  //first, scale the three colors based on the total, (low med high)
-  //take total * 1/3  = low, 2/3 = med, higher = high
+  useEffect(() => {}, [test.state]);
 
   const [keyboard, setKeyboard] = useState({
     finished: false,
@@ -70,7 +52,6 @@ function Heatmap({ test }) {
     ],
   });
 
-  //   if (test.words.incorrectLetters != undefined) {
   if (test.state == 3 && keyboard.finished == false) {
     const aggregateLetters = (correctLetters, incorrectLetters) => {
       const counts = {};
@@ -131,7 +112,7 @@ function Heatmap({ test }) {
     setKeyboard((prev) => ({
       ...prev,
       finished: true,
-      minErrors, // Store the calculated minErrors and maxErrors
+      minErrors,
       maxErrors,
     }));
   }
@@ -139,15 +120,46 @@ function Heatmap({ test }) {
   const getHeatmapColor = (obj) => {
     console.log(obj);
 
-    if (obj.incorrect >= 6) {
-      return "#ff6753f0";
-    } else if (obj.incorrect >= 3) {
-      return "#ff675340";
+    const range = keyboard.maxErrors - keyboard.minErrors;
+    const lowThreshold = keyboard.minErrors + range / 3;
+    const mediumThreshold = keyboard.minErrors + (2 * range) / 3;
+
+    if (obj.incorrect >= mediumThreshold) {
+      // High error count
+      return "#ff6753f0"; // Dark red
+    } else if (obj.incorrect >= lowThreshold) {
+      // Medium error count
+      return "#ff675340"; // Medium red
     } else if (obj.incorrect > 0) {
-      return "#ff675310";
+      // Low error count
+      return "#ff675310"; // Light red
     } else {
-      return "#ff675310";
+      // No errors
+      return "#191919f0";
     }
+  };
+
+  const getThresholdRanges = (minErrors, maxErrors) => {
+    if (maxErrors === minErrors) {
+      // Special case: all keys have the same error count
+      return {
+        low: `${minErrors}`,
+        medium: `${minErrors}`,
+        high: `${minErrors}`,
+      };
+    }
+
+    const range = maxErrors - minErrors;
+    const lowThreshold = minErrors + range / 3;
+    const mediumThreshold = minErrors + (2 * range) / 3;
+
+    return {
+      low: `1 - ${Math.floor(lowThreshold)}`,
+      medium: `${Math.floor(lowThreshold) + 1} - ${Math.floor(
+        mediumThreshold
+      )}`,
+      high: `${Math.floor(mediumThreshold) + 1} - ${maxErrors}`,
+    };
   };
 
   return (
@@ -282,7 +294,7 @@ function Heatmap({ test }) {
                       style={{
                         backgroundColor: getHeatmapColor(obj),
                       }}
-                      className='rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
+                      className='rounded-md w-12 h-12 flex justify-center items-center hover:scale-105 border'>
                       {obj.key}
                     </div>
                   );
@@ -294,16 +306,20 @@ function Heatmap({ test }) {
         {/* ATLAS / MEANINGS */}
         <div className='flex flex-row space-x-8 justify-center mt-2'>
           <div className='flex text-lg text-muted-foreground'>
+            <div className='w-4 h-4 border bg-[#191919f0] self-center mr-2'></div>
+            {0}
+          </div>
+          <div className='flex text-lg text-muted-foreground'>
             <div className='w-4 h-4 border bg-[#ff675310] self-center mr-2'></div>
-            Low &lt; {keyboard.minErrors + 1}
+            {getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div className='w-4 h-4 border bg-[#ff675340] self-center mr-2'></div>
-            Medium {keyboard.maxErrors - 1 - (keyboard.minErrors + 1)}
+            {getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).medium}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div className='w-4 h-4 border bg-[#ff6753f0] self-center mr-2'></div>
-            High &gt; {keyboard.maxErrors}
+            {getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high}
           </div>
         </div>
       </div>
