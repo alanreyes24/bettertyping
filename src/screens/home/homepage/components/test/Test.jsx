@@ -324,39 +324,6 @@ const Test = ({ user, AIMode, sendData }) => {
 
   // }, [test.eventLog, test.state, test.finished, user.username, AIMode]);
 
-  const calculateWPMs = (type) => {
-    if (test.state === 1) {
-      let totalCorrect = 0;
-      let totalIncorrect = 0;
-
-      for (const value of Object.values(test.words.correctLetters)) {
-        totalCorrect += value.length;
-      }
-
-      for (const value of Object.values(test.words.incorrectLetters)) {
-        totalIncorrect += value.length;
-      }
-
-      const trueWPM =
-        (600 * ((totalCorrect - totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
-      const rawWPM =
-        (600 * ((totalCorrect + totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
-
-      if (type === "trueWPM" && !isNaN(trueWPM)) {
-        return test.settings.type === "time"
-          ? trueWPM.toFixed(2)
-          : (trueWPM * -1).toFixed(2);
-      } else if (type === "rawWPM" && !isNaN(rawWPM)) {
-        return test.settings.type === "time"
-          ? rawWPM.toFixed(2)
-          : (rawWPM * -1).toFixed(2);
-      }
-    }
-    return 0;
-  };
-
   // const wpmData = {
   //   datasets: [
   //     {

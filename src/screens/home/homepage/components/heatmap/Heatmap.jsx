@@ -9,13 +9,16 @@ import {
 
 import { useState } from "react";
 function Heatmap({ test }) {
-  useEffect(() => {}, [test.state]);
+  const [setting, setSetting] = useState("incorrect");
+  const [type, setType] = useState("qwerty");
 
   const [keyboard, setKeyboard] = useState({
     finished: false,
     setting: "incorrect",
     minErrors: 0,
     maxErrors: 6,
+    minCorrect: 0,
+    maxCorrect: 6,
     rows: [
       [
         { key: "Q", incorrect: 0, correct: 0, delay: 0 },
@@ -77,7 +80,6 @@ function Heatmap({ test }) {
       test.words.correctLetters,
       test.words.incorrectLetters
     );
-    console.log("test finished");
 
     keyboard.rows.forEach((row) => {
       row.forEach((keyObj) => {
@@ -89,11 +91,12 @@ function Heatmap({ test }) {
         }
       });
     });
-    console.log(keyboard);
 
     const calculateErrorRange = (keyboard) => {
       let minErrors = Infinity;
+      let minCorrect = Infinity;
       let maxErrors = -Infinity;
+      let maxCorrect = -Infinity;
 
       keyboard.rows.forEach((row) => {
         row.forEach((keyObj) => {
@@ -101,64 +104,82 @@ function Heatmap({ test }) {
             minErrors = Math.min(minErrors, keyObj.incorrect);
             maxErrors = Math.max(maxErrors, keyObj.incorrect);
           }
+          if (keyObj.correct > 0) {
+            minCorrect = Math.min(minCorrect, keyObj.correct);
+            maxCorrect = Math.max(maxCorrect, keyObj.correct);
+          }
         });
       });
 
-      return { minErrors, maxErrors };
+      return { minErrors, maxErrors, minCorrect, maxCorrect };
     };
 
-    const { minErrors, maxErrors } = calculateErrorRange(keyboard);
+    const { minErrors, maxErrors, minCorrect, maxCorrect } =
+      calculateErrorRange(keyboard);
 
     setKeyboard((prev) => ({
       ...prev,
       finished: true,
       minErrors,
+      minCorrect,
       maxErrors,
+      maxCorrect,
     }));
   }
 
   const getHeatmapColor = (obj) => {
-    console.log(obj);
-
-    const range = keyboard.maxErrors - keyboard.minErrors;
-    const lowThreshold = keyboard.minErrors + range / 3;
-    const mediumThreshold = keyboard.minErrors + (2 * range) / 3;
-
-    if (obj.incorrect >= mediumThreshold) {
-      // High error count
-      return "#ff6753f0"; // Dark red
-    } else if (obj.incorrect >= lowThreshold) {
-      // Medium error count
-      return "#ff675340"; // Medium red
-    } else if (obj.incorrect > 0) {
-      // Low error count
-      return "#ff675310"; // Light red
+    if (setting == "incorrect") {
+      const range = keyboard.maxErrors - keyboard.minErrors;
+      const lowThreshold = keyboard.minErrors + range / 3;
+      const mediumThreshold = keyboard.minErrors + (2 * range) / 3;
+      if (obj.incorrect >= mediumThreshold) {
+        // High error count
+        return "#ff6753f0"; // Dark red
+      } else if (obj.incorrect >= lowThreshold) {
+        // Medium error count
+        return "#ff675340"; // Medium red
+      } else if (obj.incorrect > 0) {
+        // Low error count
+        return "#ff675310"; // Light red
+      } else {
+        // No errors
+        return "#191919f0";
+      }
     } else {
-      // No errors
-      return "#191919f0";
+      const range = keyboard.maxCorrect - keyboard.minCorrect;
+      const lowThreshold = keyboard.minCorrect + range / 3;
+      const mediumThreshold = keyboard.minCorrect + (2 * range) / 3;
+      if (obj.correct >= mediumThreshold) {
+        return "#10ff20";
+      } else if (obj.correct >= lowThreshold) {
+        return "#10ff2080";
+      } else if (obj.correct > 0) {
+        return "#10ff2030";
+      } else {
+        return "#191919f0";
+      }
     }
   };
 
-  const getThresholdRanges = (minErrors, maxErrors) => {
-    if (maxErrors === minErrors) {
-      // Special case: all keys have the same error count
+  const getThresholdRanges = (min, max) => {
+    if (min == max) {
       return {
-        low: `${minErrors}`,
-        medium: `${minErrors}`,
-        high: `${minErrors}`,
+        low: `${min}`,
+        medium: `${min}`,
+        high: `${min}`,
       };
     }
 
-    const range = maxErrors - minErrors;
-    const lowThreshold = minErrors + range / 3;
-    const mediumThreshold = minErrors + (2 * range) / 3;
+    const range = max - min;
+    const lowThreshold = min + range / 3;
+    const mediumThreshold = min + (2 * range) / 3;
 
     return {
       low: `1 - ${Math.floor(lowThreshold)}`,
       medium: `${Math.floor(lowThreshold) + 1} - ${Math.floor(
         mediumThreshold
       )}`,
-      high: `${Math.floor(mediumThreshold) + 1} - ${maxErrors}`,
+      high: `${Math.floor(mediumThreshold) + 1} - ${max}`,
     };
   };
 
@@ -176,6 +197,350 @@ function Heatmap({ test }) {
             <Select
               onValueChange={(value) => {
                 console.log(value);
+                setType(value);
+
+                if (value == "dvorak") {
+                  setKeyboard((prev) => ({
+                    ...prev,
+                    rows: [
+                      [
+                        {
+                          key: "P",
+                          incorrect: keyboard.rows[0][9].incorrect,
+                          correct: keyboard.rows[0][9].correct,
+                          delay: keyboard.rows[0][9].delay,
+                        },
+                        {
+                          key: "Y",
+                          incorrect: keyboard.rows[0][5].incorrect,
+                          correct: keyboard.rows[0][5].correct,
+                          delay: keyboard.rows[0][5].delay,
+                        },
+                        {
+                          key: "F",
+                          incorrect: keyboard.rows[1][3].incorrect,
+                          correct: keyboard.rows[1][3].correct,
+                          delay: keyboard.rows[1][3].delay,
+                        },
+                        {
+                          key: "G",
+                          incorrect: keyboard.rows[1][4].incorrect,
+                          correct: keyboard.rows[1][4].correct,
+                          delay: keyboard.rows[1][4].delay,
+                        },
+                        {
+                          key: "C",
+                          incorrect: keyboard.rows[2][2].incorrect,
+                          correct: keyboard.rows[2][2].correct,
+                          delay: keyboard.rows[2][2].delay,
+                        },
+                        {
+                          key: "R",
+                          incorrect: keyboard.rows[0][3].incorrect,
+                          correct: keyboard.rows[0][3].correct,
+                          delay: keyboard.rows[0][3].delay,
+                        },
+                        {
+                          key: "L",
+                          incorrect: keyboard.rows[1][8].incorrect,
+                          correct: keyboard.rows[1][8].correct,
+                          delay: keyboard.rows[1][8].delay,
+                        },
+                      ],
+                      [
+                        {
+                          key: "A",
+                          incorrect: keyboard.rows[1][0].incorrect,
+                          correct: keyboard.rows[1][0].correct,
+                          delay: keyboard.rows[1][0].delay,
+                        },
+                        {
+                          key: "O",
+                          incorrect: keyboard.rows[0][8].incorrect,
+                          correct: keyboard.rows[0][8].correct,
+                          delay: keyboard.rows[0][8].delay,
+                        },
+                        {
+                          key: "E",
+                          incorrect: keyboard.rows[0][2].incorrect,
+                          correct: keyboard.rows[0][2].correct,
+                          delay: keyboard.rows[0][2].delay,
+                        },
+                        {
+                          key: "U",
+                          incorrect: keyboard.rows[0][6].incorrect,
+                          correct: keyboard.rows[0][6].correct,
+                          delay: keyboard.rows[0][6].delay,
+                        },
+
+                        {
+                          key: "I",
+                          incorrect: keyboard.rows[0][7].incorrect,
+                          correct: keyboard.rows[0][7].correct,
+                          delay: keyboard.rows[0][7].delay,
+                        },
+                        {
+                          key: "D",
+                          incorrect: keyboard.rows[1][2].incorrect,
+                          correct: keyboard.rows[1][2].correct,
+                          delay: keyboard.rows[1][2].delay,
+                        },
+                        {
+                          key: "H",
+                          incorrect: keyboard.rows[1][5].incorrect,
+                          correct: keyboard.rows[1][5].correct,
+                          delay: keyboard.rows[1][5].delay,
+                        },
+                        {
+                          key: "T",
+                          incorrect: keyboard.rows[0][4].incorrect,
+                          correct: keyboard.rows[0][4].correct,
+                          delay: keyboard.rows[0][4].delay,
+                        },
+                        {
+                          key: "N",
+                          incorrect: keyboard.rows[2][5].incorrect,
+                          correct: keyboard.rows[2][5].correct,
+                          delay: keyboard.rows[2][5].delay,
+                        },
+                        {
+                          key: "S",
+                          incorrect: keyboard.rows[1][1].incorrect,
+                          correct: keyboard.rows[1][1].correct,
+                          delay: keyboard.rows[1][1].delay,
+                        },
+                      ],
+                      [
+                        {
+                          key: "Q",
+                          incorrect: keyboard.rows[0][0].incorrect,
+                          correct: keyboard.rows[0][0].correct,
+                          delay: keyboard.rows[0][0].delay,
+                        },
+
+                        {
+                          key: "J",
+                          incorrect: keyboard.rows[1][6].incorrect,
+                          correct: keyboard.rows[1][6].correct,
+                          delay: keyboard.rows[1][6].delay,
+                        },
+                        {
+                          key: "K",
+                          incorrect: keyboard.rows[1][7].incorrect,
+                          correct: keyboard.rows[1][7].correct,
+                          delay: keyboard.rows[1][7].delay,
+                        },
+
+                        {
+                          key: "X",
+                          incorrect: keyboard.rows[2][1].incorrect,
+                          correct: keyboard.rows[2][1].correct,
+                          delay: keyboard.rows[2][1].delay,
+                        },
+
+                        {
+                          key: "B",
+                          incorrect: keyboard.rows[2][4].incorrect,
+                          correct: keyboard.rows[2][4].correct,
+                          delay: keyboard.rows[2][4].delay,
+                        },
+
+                        {
+                          key: "M",
+                          incorrect: keyboard.rows[2][6].incorrect,
+                          correct: keyboard.rows[2][6].correct,
+                          delay: keyboard.rows[2][6].delay,
+                        },
+                        {
+                          key: "W",
+                          incorrect: keyboard.rows[0][1].incorrect,
+                          correct: keyboard.rows[0][1].correct,
+                          delay: keyboard.rows[0][1].delay,
+                        },
+                        {
+                          key: "V",
+                          incorrect: keyboard.rows[2][3].incorrect,
+                          correct: keyboard.rows[2][3].correct,
+                          delay: keyboard.rows[2][3].delay,
+                        },
+                        {
+                          key: "Z",
+                          incorrect: keyboard.rows[2][0].incorrect,
+                          correct: keyboard.rows[2][0].correct,
+                          delay: keyboard.rows[2][0].delay,
+                        },
+                      ],
+                    ],
+                  }));
+                } else {
+                  setKeyboard((prev) => ({
+                    ...prev,
+                    rows: [
+                      [
+                        {
+                          key: "Q",
+                          incorrect: keyboard.rows[2][0].incorrect,
+                          correct: keyboard.rows[2][0].correct,
+                          delay: keyboard.rows[2][0].delay,
+                        },
+                        {
+                          key: "W",
+                          incorrect: keyboard.rows[2][6].incorrect,
+                          correct: keyboard.rows[2][6].correct,
+                          delay: keyboard.rows[2][6].delay,
+                        },
+                        {
+                          key: "E",
+                          incorrect: keyboard.rows[1][2].incorrect,
+                          correct: keyboard.rows[1][2].correct,
+                          delay: keyboard.rows[1][2].delay,
+                        },
+                        {
+                          key: "R",
+                          incorrect: keyboard.rows[0][5].incorrect,
+                          correct: keyboard.rows[0][5].correct,
+                          delay: keyboard.rows[0][5].delay,
+                        },
+                        {
+                          key: "T",
+                          incorrect: keyboard.rows[1][7].incorrect,
+                          correct: keyboard.rows[1][7].correct,
+                          delay: keyboard.rows[1][7].delay,
+                        },
+                        {
+                          key: "Y",
+                          incorrect: keyboard.rows[0][1].incorrect,
+                          correct: keyboard.rows[0][1].correct,
+                          delay: keyboard.rows[0][1].delay,
+                        },
+                        {
+                          key: "U",
+                          incorrect: keyboard.rows[1][3].incorrect,
+                          correct: keyboard.rows[1][3].correct,
+                          delay: keyboard.rows[1][3].delay,
+                        },
+                        {
+                          key: "I",
+                          incorrect: keyboard.rows[1][4].incorrect,
+                          correct: keyboard.rows[1][4].correct,
+                          delay: keyboard.rows[1][4].delay,
+                        },
+                        {
+                          key: "O",
+                          incorrect: keyboard.rows[1][1].incorrect,
+                          correct: keyboard.rows[1][1].correct,
+                          delay: keyboard.rows[1][1].delay,
+                        },
+                        {
+                          key: "P",
+                          incorrect: keyboard.rows[0][0].incorrect,
+                          correct: keyboard.rows[0][0].correct,
+                          delay: keyboard.rows[0][0].delay,
+                        },
+                      ],
+                      [
+                        {
+                          key: "A",
+                          incorrect: keyboard.rows[1][0].incorrect,
+                          correct: keyboard.rows[1][0].correct,
+                          delay: keyboard.rows[1][0].delay,
+                        },
+                        {
+                          key: "S",
+                          incorrect: keyboard.rows[1][9].incorrect,
+                          correct: keyboard.rows[1][9].correct,
+                          delay: keyboard.rows[1][9].delay,
+                        },
+                        {
+                          key: "D",
+                          incorrect: keyboard.rows[1][5].incorrect,
+                          correct: keyboard.rows[1][5].correct,
+                          delay: keyboard.rows[1][5].delay,
+                        },
+                        {
+                          key: "F",
+                          incorrect: keyboard.rows[0][2].incorrect,
+                          correct: keyboard.rows[0][2].correct,
+                          delay: keyboard.rows[0][2].delay,
+                        },
+                        {
+                          key: "G",
+                          incorrect: keyboard.rows[0][3].incorrect,
+                          correct: keyboard.rows[0][3].correct,
+                          delay: keyboard.rows[0][3].delay,
+                        },
+                        {
+                          key: "H",
+                          incorrect: keyboard.rows[1][6].incorrect,
+                          correct: keyboard.rows[1][6].correct,
+                          delay: keyboard.rows[1][6].delay,
+                        },
+                        {
+                          key: "J",
+                          incorrect: keyboard.rows[2][1].incorrect,
+                          correct: keyboard.rows[2][1].correct,
+                          delay: keyboard.rows[2][1].delay,
+                        },
+                        {
+                          key: "K",
+                          incorrect: keyboard.rows[2][2].incorrect,
+                          correct: keyboard.rows[2][2].correct,
+                          delay: keyboard.rows[2][2].delay,
+                        },
+                        {
+                          key: "L",
+                          incorrect: keyboard.rows[0][6].incorrect,
+                          correct: keyboard.rows[0][6].correct,
+                          delay: keyboard.rows[0][6].delay,
+                        },
+                      ],
+                      [
+                        {
+                          key: "Z",
+                          incorrect: keyboard.rows[2][8].incorrect,
+                          correct: keyboard.rows[2][8].correct,
+                          delay: keyboard.rows[2][8].delay,
+                        },
+                        {
+                          key: "X",
+                          incorrect: keyboard.rows[2][3].incorrect,
+                          correct: keyboard.rows[2][3].correct,
+                          delay: keyboard.rows[2][3].delay,
+                        },
+                        {
+                          key: "C",
+                          incorrect: keyboard.rows[2][4].incorrect,
+                          correct: keyboard.rows[2][4].correct,
+                          delay: keyboard.rows[2][4].delay,
+                        },
+                        {
+                          key: "V",
+                          incorrect: keyboard.rows[2][7].incorrect,
+                          correct: keyboard.rows[2][7].correct,
+                          delay: keyboard.rows[2][7].delay,
+                        },
+                        {
+                          key: "B",
+                          incorrect: keyboard.rows[2][4].incorrect,
+                          correct: keyboard.rows[2][4].correct,
+                          delay: keyboard.rows[2][4].delay,
+                        },
+                        {
+                          key: "N",
+                          incorrect: keyboard.rows[1][8].incorrect,
+                          correct: keyboard.rows[1][8].correct,
+                          delay: keyboard.rows[1][8].delay,
+                        },
+                        {
+                          key: "M",
+                          incorrect: keyboard.rows[2][5].incorrect,
+                          correct: keyboard.rows[2][5].correct,
+                          delay: keyboard.rows[2][5].delay,
+                        },
+                      ],
+                    ],
+                  }));
+                }
               }}
               defaultValue='qwerty'>
               <SelectTrigger id='status' aria-label='Select Layout'>
@@ -286,7 +651,10 @@ function Heatmap({ test }) {
               <div
                 key={index}
                 className='flex flex-row space-x-4 justify-center'
-                style={{ marginLeft: index == 2 ? "-4rem" : "" }}>
+                style={{
+                  marginLeft: index == 2 && type == "qwerty" ? "-4rem" : "",
+                  marginRight: index == 2 && type == "dvorak" ? "-6rem" : "",
+                }}>
                 {keyboard.rows[index].map((obj, index) => {
                   return (
                     <div
@@ -306,20 +674,50 @@ function Heatmap({ test }) {
         {/* ATLAS / MEANINGS */}
         <div className='flex flex-row space-x-8 justify-center mt-2'>
           <div className='flex text-lg text-muted-foreground'>
-            <div className='w-4 h-4 border bg-[#191919f0] self-center mr-2'></div>
+            <div
+              style={{
+                backgroundColor:
+                  setting == "incorrect" ? "#191919f0" : "#191919f0",
+              }}
+              className='w-4 h-4 border self-center mr-2'></div>
             {0}
           </div>
           <div className='flex text-lg text-muted-foreground'>
-            <div className='w-4 h-4 border bg-[#ff675310] self-center mr-2'></div>
-            {getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low}
+            <div
+              style={{
+                backgroundColor:
+                  setting == "incorrect" ? "#ff675310" : "#10ff2040",
+              }}
+              className='w-4 h-4 border self-center mr-2'></div>
+            {setting == "incorrect"
+              ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low
+              : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
+                  .low}
           </div>
           <div className='flex text-lg text-muted-foreground'>
-            <div className='w-4 h-4 border bg-[#ff675340] self-center mr-2'></div>
-            {getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).medium}
+            <div
+              style={{
+                backgroundColor:
+                  setting == "incorrect" ? "#ff675340" : "#10ff2080",
+              }}
+              className='w-4 h-4 border self-center mr-2'></div>
+            {setting == "incorrect"
+              ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors)
+                  .medium
+              : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
+                  .medium}
           </div>
           <div className='flex text-lg text-muted-foreground'>
-            <div className='w-4 h-4 border bg-[#ff6753f0] self-center mr-2'></div>
-            {getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high}
+            <div
+              style={{
+                backgroundColor:
+                  setting == "incorrect" ? "#ff6753f0" : "#10ff20",
+              }}
+              className='w-4 h-4 border self-center mr-2'></div>
+            {setting == "incorrect"
+              ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high
+              : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
+                  .high}
           </div>
         </div>
       </div>
@@ -327,7 +725,7 @@ function Heatmap({ test }) {
       <div className='w-64 self-center'>
         <Select
           onValueChange={(value) => {
-            console.log(value);
+            setSetting(value);
           }}
           defaultValue='incorrect'>
           <SelectTrigger id='heatmap' aria-label='Select Filter'>
