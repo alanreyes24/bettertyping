@@ -234,7 +234,11 @@ const Test = ({ user, AIMode, sendData }) => {
   useEffect(() => {
     // console.log(test);
 
-    if (test.timer.timeLeft % 10 == 0 && test.state == 1) {
+    if (
+      test.timer.timeLeft % 10 == 0 &&
+      test.state == 1 &&
+      test.settings.type == "timed"
+    ) {
       let totalCorrect = 0;
       let totalIncorrect = 0;
       for (const value of Object.values(test.words.correctLetters)) {
@@ -279,6 +283,12 @@ const Test = ({ user, AIMode, sendData }) => {
           },
         ]);
       }
+    } else if (
+      test.timer.timeLeft % 10 == 0 &&
+      test.state == 1 &&
+      test.settings.type == "words"
+    ) {
+      console.log("should be logging wpm");
     }
   }, [test.timer.timeLeft]);
 

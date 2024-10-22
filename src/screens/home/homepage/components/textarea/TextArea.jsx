@@ -338,7 +338,10 @@ function TextArea({
               onTextStarted();
               setShouldUpdateCursor(true);
               handleUserInput(event);
-            } else if (test.state === 1) {
+            } else if (
+              test.state === 1 &&
+              document.getElementsByClassName("letter").length
+            ) {
               handleUserInput(event);
             }
           }}
