@@ -8,8 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        heading: ["Montserrat"],
-        body: ["Montserrat"],
+        heading: ["Montserrat", "sans-serif"],
+        body: ["Montserrat", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
