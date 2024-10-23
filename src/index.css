@@ -33,7 +33,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground;
   }
 
   h1,
@@ -42,10 +42,10 @@
   h4,
   h5,
   h6 {
-    @apply font-heading;
+    font-family: "Montserrat", sans-serif;
   }
 }
 
 :root {
-  /* font-family: "Montserrat", sans-serif; */
+  font-family: "Montserrat", sans-serif;
 }
