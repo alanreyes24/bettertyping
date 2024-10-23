@@ -31,7 +31,7 @@ function Statistics({ test }) {
               <div className='bg-amber-300 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                 Top 0.1%
               </div>
-              {test.results != undefined ? test.results.TrueWPM : 142.82}
+              {test.results != undefined ? test.results.trueWPM : 142.82}
             </div>
           </div>
           <div className='flex items-center justify-between'>
@@ -46,7 +46,7 @@ function Statistics({ test }) {
                 Above Average
               </div>
               {test.results != undefined
-                ? test.results.Accuracy
+                ? test.results.accuracy
                 : 98.8}
               %
             </div>
@@ -63,7 +63,7 @@ function Statistics({ test }) {
               <div className='bg-red-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
                 Below Average
               </div>
-              {test.results != undefined ? test.results.Mistakes : 11}
+              {test.results != undefined ? test.results.mistakes : 11}
             </div>
           </div>
         </div>

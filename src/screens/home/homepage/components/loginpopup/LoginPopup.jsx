@@ -36,7 +36,7 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
       );
 
       //   let userID = response.data.userID;
-      sendUsernameToHeader(response.data.username);
+      sendUsernameToHeader(response.data);
       // await passLoggedIn(userID, confirmedUsername);
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");
@@ -105,7 +105,7 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
               {/* <a href='#' className='mx-auto inline-block text-sm underline'>
                 Forgot your password?
               </a> */}
-              {error}
+              {error.toString()}
               <Button className='login-button' type='submit'>
                 {showRegister ? "Register" : "Login"}
               </Button>

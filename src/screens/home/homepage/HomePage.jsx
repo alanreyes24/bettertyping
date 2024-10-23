@@ -151,7 +151,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                     <Area
 
                       type='monotone'
-                      dataKey='TrueWPM'
+                      dataKey='trueWPM'
                       stackId='1'
                       stroke='hsl(143, 100%, 51%)'
                       fill='hsl(143, 100%, 51%)'
@@ -159,7 +159,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                     />
                     <Area
                       type='monotone'
-                      dataKey='RawWPM'
+                      dataKey='rawWPM'
                       stackId='0'
                       stroke='hsl(20, 100%, 47%)'
                       fill='hsl(34, 100%, 47%)'

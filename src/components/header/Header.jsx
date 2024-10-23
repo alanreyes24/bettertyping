@@ -16,9 +16,9 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
 
   const [username, setUsername] = useState("");
 
-  const handleUsernameFromLoginPopup = (username) => {
-    setUsername(username);
-
+  const handleUsernameFromLoginPopup = (data) => {
+    setUsername(data.username);
+    passLoggedIn(data.userID, data.username)
     // this function only runs when login was successful so I can set showLogin to false
     setUserLoggedIn(true);
     setShowLogin(false);
@@ -27,7 +27,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   useEffect(() => {
     if (user.username && user.username !== "guest") {
       setUserLoggedIn(true);
-      passLoggedIn(user._id, user.username)
+      setUsername(user.username)
     } else {
       setUserLoggedIn(false);
     }
@@ -69,7 +69,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
       </a>
 
       {username ? (
-        <div className="welcome-message">Welcome, {username + user._id}</div>
+        <div className="welcome-message">Welcome, {username}</div>
       ) : null}
 
       <div className="flex items-center gap-4">

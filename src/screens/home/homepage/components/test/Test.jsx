@@ -46,12 +46,7 @@ gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, AIMode, sendData }) => {
 
-  useEffect(() => {
-    console.log(user)
-  }, [user])
 
-
-  // called if user changes settings during the test
 
   const sendTestToBackend = async () => {
     try {
@@ -78,9 +73,11 @@ const Test = ({ user, AIMode, sendData }) => {
   const handleEndTest = () => {
     // navigate("/test-finished", { state: { AIMode } });
     console.log(test.timestamp)
-    if (user.username !== "guest") {
+
+
+    //weird things happen (its sent twice) while timestamp is 0 (i have no ide awhy)
+    if (user.username !== "guest" && test.timestamp != 0) {
       sendTestToBackend().catch((error) => { console.log(error) }).then(() => {
-        console.log("test made it!")
         setSent(true)
       });
     }
@@ -94,6 +91,7 @@ const Test = ({ user, AIMode, sendData }) => {
     gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
   };
 
+  // called if user changes settings during the test
   const cancelTest = () => {
     setResetWords(true);
     setChartData([]);
@@ -160,6 +158,16 @@ const Test = ({ user, AIMode, sendData }) => {
       }));
     }
   }, [test.state, test.user, user]);
+
+  useEffect(() => {
+
+    setTest((prevTest) => ({
+      ...prevTest,
+      userID: user._id,
+      username: user.username,
+    }));
+
+  }, [user]);
 
   useEffect(() => {
     // HANDLE TIMER
@@ -242,10 +250,10 @@ const Test = ({ user, AIMode, sendData }) => {
         setTest((prevTest) => ({
           ...prevTest,
           results: {
-            TrueWPM: trueWPM.toFixed(2) * 1,
-            RawWPM: rawWPM.toFixed(2) * 1,
-            Accuracy: accuracy.toFixed(2) * 1,
-            Mistakes: totalIncorrect,
+            trueWPM: trueWPM.toFixed(2) * 1,
+            rawWPM: rawWPM.toFixed(2) * 1,
+            accuracy: accuracy.toFixed(2) * 1,
+            mistakes: totalIncorrect,
           },
         }));
       };
@@ -255,8 +263,8 @@ const Test = ({ user, AIMode, sendData }) => {
           ...prevArray,
           {
             second: prevArray.length + 1,
-            TrueWPM: trueWPM.toFixed(2) * 1,
-            RawWPM: rawWPM.toFixed(2) * 1,
+            trueWPM: trueWPM.toFixed(2) * 1,
+            rawWPM: rawWPM.toFixed(2) * 1,
           },
         ]);
       };

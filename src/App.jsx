@@ -58,6 +58,7 @@ function App() {
       _id: passedUserID,
       username: passedUsername,
     }));
+    console.log('set in app')
   };
 
   const handleLogout = () => {
