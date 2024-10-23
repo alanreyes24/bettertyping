@@ -27,6 +27,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   useEffect(() => {
     if (user.username && user.username !== "guest") {
       setUserLoggedIn(true);
+      passLoggedIn(user._id, user.username)
     } else {
       setUserLoggedIn(false);
     }
@@ -68,7 +69,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
       </a>
 
       {username ? (
-        <div className="welcome-message">Welcome, {username}</div>
+        <div className="welcome-message">Welcome, {username + user._id}</div>
       ) : null}
 
       <div className="flex items-center gap-4">

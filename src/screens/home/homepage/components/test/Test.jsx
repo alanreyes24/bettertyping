@@ -45,24 +45,13 @@ ChartJS.register(
 gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, AIMode, sendData }) => {
-  const handleEndTestRedirect = () => {
-    // navigate("/test-finished", { state: { AIMode } });
 
-    sendData(test);
-    gsap.to(".analysis", { display: "block" });
+  useEffect(() => {
+    console.log(user)
+  }, [user])
 
-    gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
-    gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
-  };
 
   // called if user changes settings during the test
-  const cancelTest = () => {
-    setResetWords(true);
-    setChartData([]);
-    gsap.to(".analysis", { opacity: 0, duration: 0.4, delay: 0 });
-    gsap.to(".analysis", { display: "none", duration: 0.4, delay: 0.4 });
-    gsap.to(window, { duration: 0.5, delay: 0, scrollTo: 0 });
-  };
 
   const sendTestToBackend = async () => {
     try {
@@ -85,6 +74,34 @@ const Test = ({ user, AIMode, sendData }) => {
     }
   };
 
+
+  const handleEndTest = () => {
+    // navigate("/test-finished", { state: { AIMode } });
+    console.log(test.timestamp)
+    if (user.username !== "guest") {
+      sendTestToBackend().catch((error) => { console.log(error) }).then(() => {
+        console.log("test made it!")
+        setSent(true)
+      });
+    }
+
+    //send data out to homepage
+    sendData(test);
+
+    //SCROLLING ANIMATION
+    gsap.to(".analysis", { display: "block" });
+    gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
+    gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
+  };
+
+  const cancelTest = () => {
+    setResetWords(true);
+    setChartData([]);
+    gsap.to(".analysis", { opacity: 0, duration: 0.4, delay: 0 });
+    gsap.to(".analysis", { display: "none", duration: 0.4, delay: 0.4 });
+    gsap.to(window, { duration: 0.5, delay: 0, scrollTo: 0 });
+  };
+
   const [test, setTest] = useState({
     userID: "",
     username: "guest",
@@ -97,8 +114,6 @@ const Test = ({ user, AIMode, sendData }) => {
       correctLetters: [],
       incorrectLetters: [],
       chartData: [],
-      // trueWPMArray: [],
-      // rawWPMArray: [],
     },
     settings: {
       type: "words",
@@ -118,13 +133,13 @@ const Test = ({ user, AIMode, sendData }) => {
 
   const [hideSettings, setHideSettings] = useState(false);
   const [resetWords, setResetWords] = useState(false);
-  // const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [chartData, setChartData] = useState([]);
 
   const [settingValue, setSettingValue] = useState(1);
   const [typeValue, setTypeValue] = useState("words");
+  const [sent, setSent] = useState(false)
 
-  //TODO: finish test
+  //TODO: finish test (MIGHT NOT BE NEEDED)
 
   // useEffect(() => {
   //   if (test.state === 3 && !test.finished) {
@@ -135,17 +150,16 @@ const Test = ({ user, AIMode, sendData }) => {
   //   }
   // }, [test]);
 
-  // TODO: DONT KNOW WHAT THIS DOES
 
-  // useEffect(() => {
-  //   if (test.state === 1 && test.userID === "") {
-  //     setTest((prevTest) => ({
-  //       ...prevTest,
-  //       userID: user._id,
-  //       username: user.username,
-  //     }));
-  //   }
-  // }, [test.state, user]);
+  useEffect(() => {
+    if (test.state == 1 && test.userID === "") {
+      setTest((prevTest) => ({
+        ...prevTest,
+        userID: user._id,
+        username: user.username,
+      }));
+    }
+  }, [test.state, test.user, user]);
 
   useEffect(() => {
     // HANDLE TIMER
@@ -165,7 +179,7 @@ const Test = ({ user, AIMode, sendData }) => {
         }
 
         //DECREMENT TIMER
-        console.log("DECREMENT");
+        // console.log("DECREMENT");
 
         if (test.settings.type === "time" && test.timer.timeLeft > 0) {
           setTest((prevTest) => ({
@@ -195,8 +209,8 @@ const Test = ({ user, AIMode, sendData }) => {
       }
     }
 
-    if (test.state == 3) {
-      handleEndTestRedirect();
+    if (test.state == 3 && !sent) {
+      handleEndTest();
     }
   }, [test.state, test.timer]);
 
@@ -265,7 +279,7 @@ const Test = ({ user, AIMode, sendData }) => {
           updateResults(trueWPM, rawWPM, accuracy, totalIncorrect);
           updateChartData(trueWPM, rawWPM);
         }
-        console.log(chartData);
+        // console.log(chartData);
       }
     }
   }, [test.timer.timeLeft]);
@@ -284,6 +298,8 @@ const Test = ({ user, AIMode, sendData }) => {
   ) {
     setTest((prevTest) => ({
       ...prevTest,
+      userID: user._id,
+      username: user.username,
       state: 3,
       finished: true,
       words: {
@@ -329,7 +345,7 @@ const Test = ({ user, AIMode, sendData }) => {
               </>
             )}
           </div>
-
+          {/* SETTINGS */}
           <div className="flex items-center gap-2">
             <Select
               onValueChange={(value) => {
@@ -485,6 +501,8 @@ const Test = ({ user, AIMode, sendData }) => {
             onTextFinished={() => {
               setTest((prevTest) => ({
                 ...prevTest,
+                userID: user._id,
+                username: user.username,
                 state: 3,
                 finished: true,
                 words: {
@@ -492,6 +510,8 @@ const Test = ({ user, AIMode, sendData }) => {
                   chartData: chartData,
                 },
               }));
+
+
             }}
             passEventLog={(e) => {
               setTest((prevTest) => ({
@@ -505,8 +525,8 @@ const Test = ({ user, AIMode, sendData }) => {
             onReset={() => {
               setResetWords(false);
               setTest((prevTest) => ({
-                userID: "",
-                username: "guest",
+                userID: user._id,
+                username: user.username,
                 testID: 0,
                 state: -1,
                 finished: false,
