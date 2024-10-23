@@ -129,7 +129,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
         )}
       </div>
       {showLogin && (
-        <LoginPopup sendUsernameToHeader={handleUsernameFromLoginPopup} />
+        <LoginPopup showHide={() => setShowLogin(!showLogin)} sendUsernameToHeader={handleUsernameFromLoginPopup} />
       )}
     </div>
 

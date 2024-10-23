@@ -15,7 +15,7 @@ import axios from "axios";
 export const description =
   "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.";
 
-export function LoginForm({ sendUsernameToHeader }) {
+export function LoginForm({ sendUsernameToHeader, showHide }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -66,7 +66,7 @@ export function LoginForm({ sendUsernameToHeader }) {
 
   return (
     <>
-      <div className='absolute top-0 left-0 bg-[#19191980] w-full h-[100vh] blur-sm -z-10'></div>
+      <div className='fixed top-0 left-0 bg-[#090909a0] w-[100vw] h-[100vh] -z-10 ' onClick={() => { showHide() }}></div>
       <Card className='mx-auto max-w-sm login-container border rounded-lg blur-none'>
         <CardHeader>
           <CardTitle className='text-2xl'>Sign In</CardTitle>
@@ -77,14 +77,14 @@ export function LoginForm({ sendUsernameToHeader }) {
         <form
           className='login-form'
           onSubmit={showRegister ? handleRegister : handleLogin}>
-          <CardContent>
+          <CardContent className='w-64'>
             <div className='grid gap-4'>
               <div className='grid gap-2'>
-                <Label htmlFor='email'>Email</Label>
+                <Label htmlFor='name'>Username</Label>
                 <Input
-                  id='email'
-                  type='email'
-                  placeholder='yourname@example.com'
+                  className="bg-secondary"
+                  id='name'
+                  type='username'
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
@@ -94,25 +94,29 @@ export function LoginForm({ sendUsernameToHeader }) {
                   <Label htmlFor='password'>Password</Label>
                 </div>
                 <Input
+                  className="bg-secondary"
                   id='password'
+
                   type='password'
                   required
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </div>
-              <a href='#' className='mx-auto inline-block text-sm underline'>
+              {/* <a href='#' className='mx-auto inline-block text-sm underline'>
                 Forgot your password?
-              </a>
+              </a> */}
+              {error}
               <Button className='login-button' type='submit'>
                 {showRegister ? "Register" : "Login"}
               </Button>
             </div>
             <div className='mt-4 text-center text-sm'>
-              Don&apos;t have an account?{" "}
+              {showRegister ? "Already have an account? " : "Don't have an account? "}
+
               <a
-                className='toggle-link'
+                className='toggle-link text-primary-foreground'
                 onClick={() => setShowRegister(!showRegister)}>
-                {showRegister ? "Login" : "Register"}
+                {showRegister ? " Login " : "Register"}
               </a>
             </div>
           </CardContent>
