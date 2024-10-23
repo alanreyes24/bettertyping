@@ -45,3 +45,7 @@
     @apply font-heading;
   }
 }
+
+:root {
+  font-family: "Montserrat", sans-serif;
+}
