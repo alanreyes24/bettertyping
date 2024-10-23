@@ -7,10 +7,10 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Montserrat"', ...fontFamily.sans],
+        sans: ['"Montserrat"'],
 
-        heading: ['"Montserrat"', ...fontFamily.sans],
-        body: ['"Montserrat"', ...fontFamily.sans],
+        heading: ['"Montserrat"'],
+        body: ['"Montserrat"'],
       },
       colors: {
         border: "hsl(var(--border))",
