@@ -44,7 +44,7 @@ function Cursor({ shouldUpdate, currentLetter }) {
     return (
         <div
             id="cursor"
-            className="cursor ml-2 bg-white w-[0.1rem] h-7 transition-all absolute "
+            className="cursor ml-2 bg-primary w-[0.1rem] h-7 transition-all absolute "
         />
     );
 }

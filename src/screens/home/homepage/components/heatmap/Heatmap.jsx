@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/select";
 
 import { useState } from "react";
+
 function Heatmap({ test }) {
   const [setting, setSetting] = useState("incorrect");
   const [type, setType] = useState("qwerty");
@@ -54,6 +55,56 @@ function Heatmap({ test }) {
       ],
     ],
   });
+
+  useEffect(() => {
+    if (keyboard.finished == true && test.state == 0) {
+      console.log('should reset keyboard')
+      setKeyboard((prev) => ({
+        finished: false,
+        setting: "incorrect",
+        minErrors: 0,
+        maxErrors: 6,
+        minCorrect: 0,
+        maxCorrect: 6,
+        rows: [
+          [
+            { key: "Q", incorrect: 0, correct: 0, delay: 0 },
+            { key: "W", incorrect: 0, correct: 0, delay: 0 },
+            { key: "E", incorrect: 0, correct: 0, delay: 0 },
+            { key: "R", incorrect: 0, correct: 0, delay: 0 },
+            { key: "T", incorrect: 0, correct: 0, delay: 0 },
+            { key: "Y", incorrect: 0, correct: 0, delay: 0 },
+            { key: "U", incorrect: 0, correct: 0, delay: 0 },
+            { key: "I", incorrect: 0, correct: 0, delay: 0 },
+            { key: "O", incorrect: 0, correct: 0, delay: 0 },
+            { key: "P", incorrect: 0, correct: 0, delay: 0 },
+          ],
+          [
+            { key: "A", incorrect: 0, correct: 0, delay: 0 },
+            { key: "S", incorrect: 0, correct: 0, delay: 0 },
+            { key: "D", incorrect: 0, correct: 0, delay: 0 },
+            { key: "F", incorrect: 0, correct: 0, delay: 0 },
+            { key: "G", incorrect: 0, correct: 0, delay: 0 },
+            { key: "H", incorrect: 0, correct: 0, delay: 0 },
+            { key: "J", incorrect: 0, correct: 0, delay: 0 },
+            { key: "K", incorrect: 0, correct: 0, delay: 0 },
+            { key: "L", incorrect: 0, correct: 0, delay: 0 },
+          ],
+          [
+            { key: "Z", incorrect: 0, correct: 0, delay: 0 },
+            { key: "X", incorrect: 0, correct: 0, delay: 0 },
+            { key: "C", incorrect: 0, correct: 0, delay: 0 },
+            { key: "V", incorrect: 0, correct: 0, delay: 0 },
+            { key: "B", incorrect: 0, correct: 0, delay: 0 },
+            { key: "N", incorrect: 0, correct: 0, delay: 0 },
+            { key: "M", incorrect: 0, correct: 0, delay: 0 },
+          ],
+        ],
+      }
+      ))
+    }
+  }, [test.state])
+
 
   if (test.state == 3 && keyboard.finished == false) {
     const aggregateLetters = (correctLetters, incorrectLetters) => {
@@ -170,16 +221,31 @@ function Heatmap({ test }) {
       };
     }
 
+    if (min == Infinity || isNaN(max)) {
+      return {
+        low: `0`,
+        medium: `0`,
+        high: `0`,
+      };
+    }
+
     const range = max - min;
     const lowThreshold = min + range / 3;
     const mediumThreshold = min + (2 * range) / 3;
 
+    let lowEnd = Math.floor(lowThreshold);
+    let mediumStart = lowEnd + 1;
+    let mediumEnd = Math.floor(mediumThreshold);
+    let highStart = mediumEnd + 1;
+
+    if (lowEnd < min) lowEnd = min;
+    if (mediumStart > mediumEnd) mediumStart = mediumEnd = lowEnd + 1;
+    if (highStart > max) highStart = max;
+
     return {
-      low: `1 - ${Math.floor(lowThreshold)}`,
-      medium: `${Math.floor(lowThreshold) + 1} - ${Math.floor(
-        mediumThreshold
-      )}`,
-      high: `${Math.floor(mediumThreshold) + 1} - ${max}`,
+      low: `${min} - ${lowEnd}`,
+      medium: `${mediumStart} - ${mediumEnd}`,
+      high: `${highStart} - ${max}`,
     };
   };
 
@@ -692,7 +758,7 @@ function Heatmap({ test }) {
             {setting == "incorrect"
               ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low
               : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                  .low}
+                .low}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div
@@ -703,9 +769,9 @@ function Heatmap({ test }) {
               className='w-4 h-4 border self-center mr-2'></div>
             {setting == "incorrect"
               ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors)
-                  .medium
+                .medium
               : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                  .medium}
+                .medium}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div
@@ -717,7 +783,7 @@ function Heatmap({ test }) {
             {setting == "incorrect"
               ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high
               : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                  .high}
+                .high}
           </div>
         </div>
       </div>

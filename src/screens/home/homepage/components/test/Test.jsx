@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
@@ -26,6 +26,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { gsap } from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(useGSAP);
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -36,17 +42,26 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, AIMode, sendData }) => {
   const handleEndTestRedirect = () => {
     // navigate("/test-finished", { state: { AIMode } });
+
     sendData(test);
+    gsap.to(".analysis", { display: "block" });
+
+    gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
+    gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
   };
 
   // called if user changes settings during the test
   const cancelTest = () => {
     setResetWords(true);
     setChartData([]);
+    gsap.to(".analysis", { opacity: 0, duration: 0.4, delay: 0 });
+    gsap.to(".analysis", { display: "none", duration: 0.4, delay: 0.4 });
+    gsap.to(window, { duration: 0.5, delay: 0, scrollTo: 0 });
   };
 
   const sendTestToBackend = async () => {
@@ -86,13 +101,13 @@ const Test = ({ user, AIMode, sendData }) => {
       // rawWPMArray: [],
     },
     settings: {
-      type: "time",
-      length: 300,
-      count: 0,
+      type: "words",
+      length: 150,
+      count: 25,
       difficulty: "normal",
     },
     timer: {
-      timeLeft: 100,
+      timeLeft: 0,
       isActive: false,
       timerGoesUp: false,
     },
@@ -106,8 +121,8 @@ const Test = ({ user, AIMode, sendData }) => {
   // const [trueWPMArray, setTrueWPMArray] = useState([]);
   const [chartData, setChartData] = useState([]);
 
-  const [settingValue, setSettingValue] = useState(2);
-  const [typeValue, setTypeValue] = useState("time");
+  const [settingValue, setSettingValue] = useState(1);
+  const [typeValue, setTypeValue] = useState("words");
 
   //TODO: finish test
 
@@ -116,51 +131,6 @@ const Test = ({ user, AIMode, sendData }) => {
   //     setTest((prevTest) => ({
   //       ...prevTest,
   //       finished: true,
-  //     }));
-  //   }
-  // }, [test]);
-
-  // TODO: WPM HANDLING
-
-  // useEffect(() => {
-  //   if (test.finished && Object.keys(test.results).length === 0) {
-  //     let totalCorrect = 0;
-  //     let totalIncorrect = 0;
-
-  //     for (const value of Object.values(test.words.correctLetters)) {
-  //       totalCorrect += value.length;
-  //     }
-
-  //     for (const value of Object.values(test.words.incorrectLetters)) {
-  //       totalIncorrect += value.length;
-  //     }
-
-  //     const correctOnlyWPM =
-  //       (600 * (totalCorrect / 5)) /
-  //       (test.settings.length - test.timer.timeLeft);
-  //     const trueWPM =
-  //       (600 * ((totalCorrect - totalIncorrect) / 5)) /
-  //       (test.settings.length - test.timer.timeLeft);
-  //     const rawWPM =
-  //       (600 * ((totalCorrect + totalIncorrect) / 5)) /
-  //       (test.settings.length - test.timer.timeLeft);
-
-  //     const accuracy = (
-  //       (totalCorrect / (totalCorrect + totalIncorrect)) *
-  //       100
-  //     ).toFixed(2);
-
-  //     setTest((prevTest) => ({
-  //       ...prevTest,
-  //       results: {
-  //         trueWPM: test.settings.type === "time" ? trueWPM : trueWPM * -1,
-  //         correctOnlyWPM:
-  //           test.settings.type === "time"
-  //             ? correctOnlyWPM
-  //             : correctOnlyWPM * -1,
-  //         rawWPM: test.settings.type === "time" ? rawWPM : rawWPM * -1,
-  //         accuracy,
-  //       },
   //     }));
   //   }
   // }, [test]);
@@ -244,23 +214,17 @@ const Test = ({ user, AIMode, sendData }) => {
         totalIncorrect += value.length;
       }
 
-      let trueWPM =
-        (600 * ((totalCorrect - totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
+      const calculateWPM = (totalCorrect, totalIncorrect, timeElapsed) => {
+        let trueWPM = (600 * ((totalCorrect - totalIncorrect) / 5)) / timeElapsed;
+        let rawWPM = (600 * ((totalCorrect + totalIncorrect) / 5)) / timeElapsed;
+        return { trueWPM, rawWPM };
+      };
 
-      let rawWPM =
-        (600 * ((totalCorrect + totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
+      const calculateAccuracy = (totalCorrect, totalIncorrect) => {
+        return (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
+      };
 
-      const accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
-
-      if (
-        trueWPM > 0 &&
-        !isNaN(trueWPM) &&
-        rawWPM > 0 &&
-        !isNaN(rawWPM) &&
-        accuracy >= 0
-      ) {
+      const updateResults = (trueWPM, rawWPM, accuracy, totalIncorrect) => {
         setTest((prevTest) => ({
           ...prevTest,
           results: {
@@ -270,6 +234,9 @@ const Test = ({ user, AIMode, sendData }) => {
             Mistakes: totalIncorrect,
           },
         }));
+      };
+
+      const updateChartData = (trueWPM, rawWPM) => {
         setChartData((prevArray) => [
           ...prevArray,
           {
@@ -278,6 +245,27 @@ const Test = ({ user, AIMode, sendData }) => {
             RawWPM: rawWPM.toFixed(2) * 1,
           },
         ]);
+      };
+
+      if (test.settings.type === "time" || test.settings.type !== "time") {
+        const timeElapsed = test.settings.type === "time"
+          ? test.settings.length - test.timer.timeLeft
+          : test.timer.timeLeft;
+
+        const { trueWPM, rawWPM } = calculateWPM(totalCorrect, totalIncorrect, timeElapsed);
+        const accuracy = calculateAccuracy(totalCorrect, totalIncorrect);
+
+        if (
+          trueWPM > 0 &&
+          !isNaN(trueWPM) &&
+          rawWPM > 0 &&
+          !isNaN(rawWPM) &&
+          accuracy >= 0
+        ) {
+          updateResults(trueWPM, rawWPM, accuracy, totalIncorrect);
+          updateChartData(trueWPM, rawWPM);
+        }
+        console.log(chartData);
       }
     }
   }, [test.timer.timeLeft]);
@@ -297,6 +285,7 @@ const Test = ({ user, AIMode, sendData }) => {
     setTest((prevTest) => ({
       ...prevTest,
       state: 3,
+      finished: true,
       words: {
         ...prevTest.words,
         chartData: chartData,
@@ -304,108 +293,29 @@ const Test = ({ user, AIMode, sendData }) => {
     }));
   }
 
-  // TODO: END TEST HANDLING
-
-  // useEffect(() => {
-  //   const handleTestCompletion = async () => {
-  //     if (user.username !== "guest" && !AIMode) {
-  //       await sendTestToBackend();
-  //     } else if (user.username !== "guest" && AIMode) {
-  //       await sendAITestToBackend();
-  //     }
-  //     if (user.username != "guest") {
-  //       handleEndTestRedirect();
-  //     }
-  //   };
-
-  //   if (test.state === 3 && test.finished && test.eventLog.length !== 0) {
-  //     handleTestCompletion();
-  //   }
-
-  // }, [test.eventLog, test.state, test.finished, user.username, AIMode]);
-
-  // const wpmData = {
-  //   datasets: [
-  //     {
-  //       label: "True WPM",
-  //       data: trueWPMArray,
-  //       cubicInterpolationMode: "monotone",
-  //       backgroundColor: "rgba(255, 255, 255, 0.2)",
-  //       showLine: true,
-  //       fill: false,
-  //       borderWidth: 1,
-  //       borderColor: "rgba(255, 255, 255, 1)",
-  //       pointBackgroundColor: "rgba(255, 255, 255, 1)",
-  //       pointBorderColor: "#000",
-  //       pointHoverBackgroundColor: "#000",
-  //       pointHoverBorderColor: "rgba(255, 255, 255, 1)",
-  //     },
-  //     {
-  //       label: "Raw WPM",
-  //       data: rawWPMArray,
-  //       cubicInterpolationMode: "monotone",
-  //       showLine: true,
-  //       fill: true,
-  //       borderWidth: 1,
-  //       backgroundColor: "rgba(0, 0, 0, 0.2)",
-  //       borderColor: "rgba(0, 0, 0, 1)",
-  //       pointBackgroundColor: "rgba(0, 0, 0, 1)",
-  //       pointBorderColor: "#fff",
-  //       pointHoverBackgroundColor: "#fff",
-  //       pointHoverBorderColor: "rgba(0, 0, 0, 1)",
-  //     },
-  //   ],
-  // };
-
-  const options = {
-    animation: false,
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
-      },
-      title: {
-        display: true,
-        text: "",
-      },
-    },
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        type: "linear",
-        ticks: {
-          stepSize: 1,
-        },
-      },
-      y: {
-        type: "linear",
-      },
-    },
-  };
-
   return (
     <>
       {/* INTRO */}
-      <div className='space-y-4 justify-center text-center self-center mt-16'>
-        <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
+      <div className="intro pt-32 opacity-0 space-y-4 justify-center text-center self-center mt-16">
+        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
           Test Your Typing Speed
         </h1>
-        <p className='max-w-2xl self-center text-muted-foreground md:text-xl/relaxed'>
+        <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
           Take a short typing test and we will match you with an individualized
           AI program to improve your skils!
         </p>
       </div>
 
       {/* TEST */}
-      <div className='w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border'>
+      <div className="test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
         {/* SETTINGS AND TIMER*/}
-        <div className='flex items-center justify-between'>
-          <div className='space-y-1'>
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
             {test.state === 1 ? (
               <Timer test={test} />
             ) : (
               <>
-                <h2 className='text-2xl font-bold'>
+                <h2 className="text-4xl font-bold">
                   {test.settings.type == "time"
                     ? "Timed, "
                     : "Count, " + test.settings.count}
@@ -413,14 +323,14 @@ const Test = ({ user, AIMode, sendData }) => {
                     ? test.settings.length / 10 + " Seconds"
                     : " Words"}
                 </h2>
-                <p className='text-muted-foreground'>
+                <p className="text-muted-foreground">
                   Type as many words as you can in 30 seconds.
                 </p>
               </>
             )}
           </div>
 
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <Select
               onValueChange={(value) => {
                 cancelTest();
@@ -436,8 +346,8 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     count:
                       settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
@@ -449,25 +359,27 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: value == "time" ? false : true,
                   },
                 }));
               }}
-              defaultValue='time'>
+              defaultValue="words"
+            >
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id='type'
-                aria-label='Select Type'>
-                <SelectValue placeholder='Select Test' />
+                id="type"
+                aria-label="Select Type"
+              >
+                <SelectValue placeholder="Select Test" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='time'>Timed</SelectItem>
-                <SelectItem value='words'>Words</SelectItem>
+                <SelectItem value="time">Timed</SelectItem>
+                <SelectItem value="words">Count</SelectItem>
               </SelectContent>
             </Select>
 
@@ -489,21 +401,23 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? v == 1
                           ? 150
                           : v == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: typeValue == "time" ? false : true,
                   },
                 }));
               }}
-              defaultValue={2}>
+              defaultValue={1}
+            >
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id='length'
-                aria-label='Select Length'>
-                <SelectValue placeholder='Select Length' />
+                id="length"
+                aria-label="Select Length"
+              >
+                <SelectValue placeholder="Select Length" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={1}>
@@ -521,7 +435,7 @@ const Test = ({ user, AIMode, sendData }) => {
         </div>
 
         {/* TEXT AREA */}
-        <div className='flex justify-center m-4 '>
+        <div className="flex justify-center m-4 ">
           <TextArea
             user={user}
             aiMode={AIMode}
@@ -572,6 +486,11 @@ const Test = ({ user, AIMode, sendData }) => {
               setTest((prevTest) => ({
                 ...prevTest,
                 state: 3,
+                finished: true,
+                words: {
+                  ...prevTest.words,
+                  chartData: chartData,
+                },
               }));
             }}
             passEventLog={(e) => {
@@ -581,11 +500,10 @@ const Test = ({ user, AIMode, sendData }) => {
                 eventLog: e,
               }));
             }}
-            onFocus={() => {}}
+            onFocus={() => { }}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
-              //reset test
               setTest((prevTest) => ({
                 userID: "",
                 username: "guest",
@@ -613,8 +531,8 @@ const Test = ({ user, AIMode, sendData }) => {
                       ? settingValue == 1
                         ? 150
                         : settingValue == 2
-                        ? 300
-                        : 600
+                          ? 300
+                          : 600
                       : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,

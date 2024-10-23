@@ -122,39 +122,16 @@ function TextArea({
 
   // track letters for errors by second
   useEffect(() => {
-    if (test.state === 1) {
-      setCurrentIncorrectLetterArray([]);
-      setCurrentCorrectLetterArray([]);
-    }
-
-    if (test.state === 1) {
-      setTimeout(() => {
-        setCurrentLetterArrayIndexValue((prev) => prev + 1);
-      }, 1000);
-      setIncorrectLetters((prev) => ({
-        ...prev,
-        [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
-      }));
-      setCorrectLetters((prev) => ({
-        ...prev,
-        [currentLetterArrayIndexValue]: currentCorrectLetterArray,
-      }));
-    }
-
     if (
-      test.state === 1 &&
       JSON.stringify(test.words.incorrectLetters) !==
-        JSON.stringify(incorrectLetters)
+      JSON.stringify(incorrectLetters)
     ) {
-      // console.log(incorrectLetters);
-
       passIncorrectLetters(incorrectLetters);
     }
 
     if (
-      test.state === 1 &&
       JSON.stringify(test.words.correctLetters) !==
-        JSON.stringify(correctLetters)
+      JSON.stringify(correctLetters)
     ) {
       passCorrectLetters(correctLetters);
     }
@@ -175,7 +152,26 @@ function TextArea({
         passWords(arr);
       }, 0);
     }
-  }, [currentLetterArrayIndexValue, test.state]);
+  }, [currentLetterArrayIndexValue, test.state, test.timer.timeLeft]);
+
+  useEffect(() => {
+    setIncorrectLetters((prev) => ({
+      ...prev,
+      [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
+    }));
+    setCorrectLetters((prev) => ({
+      ...prev,
+      [currentLetterArrayIndexValue]: currentCorrectLetterArray,
+    }));
+
+    if (test.timer.timeLeft % 10 == 0 && test.state == 1 && !test.finished) {
+      setCurrentLetterArrayIndexValue((prev) => prev + 1);
+    }
+    if (test.state == 1 && test.timer.timeLeft % 10 == 0) {
+      setCurrentIncorrectLetterArray([]);
+      setCurrentCorrectLetterArray([]);
+    }
+  }, [test.state, test.timer.timeLeft, test.finished]);
 
   // cursor blinking
   const cursor = document.getElementById("cursor");
@@ -210,7 +206,7 @@ function TextArea({
       return Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className='word'>
+          <div key={i} className="word">
             <Word word={AIWordList[i % AIWordList.length]} />
           </div>
         ));
@@ -218,7 +214,7 @@ function TextArea({
       let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className='word'>
+          <div key={i} className="word">
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
@@ -238,7 +234,7 @@ function TextArea({
     let wordArr = Array(amount)
       .fill(false)
       .map((_, i) => (
-        <div key={i + wordList.length} className='word'>
+        <div key={i + wordList.length} className="word">
           <Word selectedDifficulty={selectedDifficulty} />
         </div>
       ));
@@ -321,15 +317,15 @@ function TextArea({
           onBlur={() => {
             setShouldUpdateCursor(false);
           }}
-          id='input'
-          autoComplete='off'
-          autoCapitalize='off'
-          autoCorrect='off'
-          type='text'
-          data-gramm='false'
-          data-gramm_editor='false'
-          data-enable-grammarly='false'
-          list='autocompleteOff'
+          id="input"
+          autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          type="text"
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
+          list="autocompleteOff"
           onKeyDown={(event) => {
             if (
               test.state === 0 &&
@@ -344,14 +340,15 @@ function TextArea({
           }}
           style={{ opacity: 0, height: 0, width: 0 }}
         />
-        <div className='rounded-lg w-full h-44 overflow-hidden '>
+        <div className="rounded-lg w-full h-44 overflow-hidden ">
           <div
             onClick={focusInput}
-            className=''
+            className=""
             style={{
               marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
-            }}>
-            {wordsLoaded ? wordList : <>hi</>}
+            }}
+          >
+            {wordsLoaded ? wordList : <></>}
           </div>
         </div>
       </div>

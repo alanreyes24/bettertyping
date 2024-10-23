@@ -46,7 +46,7 @@ function Statistics({ test }) {
                 Above Average
               </div>
               {test.results != undefined
-                ? test.results.Accuracy.toFixed(1)
+                ? test.results.Accuracy
                 : 98.8}
               %
             </div>
