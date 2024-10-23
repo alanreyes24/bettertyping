@@ -1,15 +1,14 @@
 /** @type {import('tailwindcss').Config} */
 
 import { fontFamily } from "tailwindcss/defaultTheme";
-
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       fontFamily: {
-        heading: ["Montserrat", "sans-serif"],
-        body: ["Montserrat", "sans-serif"],
+        heading: ["var(--font-heading)", "Montserrat"],
+        body: ["var(--font-body)", "Montserrat"],
       },
       colors: {
         border: "hsl(var(--border))",
