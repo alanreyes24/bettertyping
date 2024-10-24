@@ -1,6 +1,73 @@
 import React from "react";
 
 function Statistics({ test }) {
+
+
+  const getPerformanceBadge = (category, value, percentile) => {
+    let badgeText = "";
+    let badgeStyle = "";
+
+    // Check for Top 1% or Top 0.1%
+    // if (percentile <= 1) {
+    //   badgeText = `Top ${percentile}%`;
+    //   badgeStyle = "bg-amber-300"; // Badge style for Top 1%
+    // } else {
+    // Badge assignment based on category and value
+    if (category === "WPM") {
+      if (value >= 80) {
+        badgeText = "Excellent";
+        badgeStyle = "bg-amber-300";
+      } else if (value >= 50) {
+        badgeText = "Above Average";
+        badgeStyle = "bg-green-400";
+      } else if (value >= 30) {
+        badgeText = "Average";
+        badgeStyle = "bg-yellow-400";
+      } else {
+        badgeText = "Below Average";
+        badgeStyle = "bg-red-400";
+      }
+    } else if (category === "Accuracy") {
+      if (value >= 100) {
+        badgeText = "Perfect";
+        badgeStyle = "bg-amber-300";
+      } else if (value >= 95) {
+        badgeText = "Above Average";
+        badgeStyle = "bg-green-400";
+      } else if (value >= 70) {
+        badgeText = "Average";
+        badgeStyle = "bg-green-600";
+      } else {
+        badgeText = "Below Average";
+        badgeStyle = "bg-red-400";
+      }
+    } else if (category === "Mistakes") {
+      if (value <= 0) {
+        badgeText = "Perfect";
+        badgeStyle = "bg-amber-300";
+      } else if (value <= 5) {
+        badgeText = "Above Average";
+        badgeStyle = "bg-green-400";
+      } else if (value <= 10) {
+        badgeText = "Average";
+        badgeStyle = "bg-green-600";
+      } else {
+        badgeText = "Below Average";
+        badgeStyle = "bg-red-400";
+      }
+    }
+
+
+    return (
+      <div
+        className={`${badgeStyle} h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2`}
+      >
+        {badgeText}
+      </div>
+    );
+  };
+
+
   return (
     <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
       <div className='flex items-center justify-between'>
@@ -28,9 +95,7 @@ function Statistics({ test }) {
             </div>
 
             <div className='text-3xl font-bold flex flex-col-reverse text-center justify-end'>
-              <div className='bg-amber-300 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
-                Top 0.1%
-              </div>
+              {test.results != undefined ? getPerformanceBadge("WPM", test.results.trueWPM, 1) : <></>}
               {test.results != undefined ? test.results.trueWPM : 142.82}
             </div>
           </div>
@@ -42,9 +107,7 @@ function Statistics({ test }) {
               </p>
             </div>
             <div className='text-4xl font-bold flex-col-reverse text-center flex justify-center'>
-              <div className='bg-green-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
-                Above Average
-              </div>
+              {test.results != undefined ? getPerformanceBadge("Accuracy", test.results.accuracy, 1) : <></>}
               {test.results != undefined
                 ? test.results.accuracy
                 : 98.8}
@@ -60,9 +123,7 @@ function Statistics({ test }) {
               </p>
             </div>
             <div className='text-4xl font-bold flex flex-col-reverse text-center justify-center'>
-              <div className='bg-red-400 h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2'>
-                Below Average
-              </div>
+              {test.results != undefined ? getPerformanceBadge("Mistakes", test.results.mistakes, 1) : <></>}
               {test.results != undefined ? test.results.mistakes : 11}
             </div>
           </div>

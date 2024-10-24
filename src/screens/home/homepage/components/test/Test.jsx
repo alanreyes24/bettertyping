@@ -159,7 +159,6 @@ const Test = ({ user, AIMode, sendData }) => {
 
   // HANDLE WEIRD USER ISNT SIGNED IN BUT WANTS TO SAVE SO SIGNS IN AND THEN DOESNT SEND TEST
   useEffect(() => {
-    console.log("user changed")
     setTest((prevTest) => ({
       ...prevTest,
       userID: user._id,
@@ -170,14 +169,10 @@ const Test = ({ user, AIMode, sendData }) => {
 
 
   useEffect(() => {
-    console.log("user id change")
-    // console.log(test.userID)
-    // console.log(test.username)
-    // console.log(sent)
+
 
     if (test.username != undefined && test.userID != undefined) {
       if (test.username != "guest" && test.userID != "" && test.timestamp !== 0 && !sent) {
-        console.log('sending from user edit')
         sendTestToBackend().catch((error) => {
           console.log(error)
           if (error) {
@@ -191,8 +186,6 @@ const Test = ({ user, AIMode, sendData }) => {
 
 
   useEffect(() => {
-    console.log("sent")
-    console.log(sent)
     setTest((prevTest) => ({
       ...prevTest,
       sent: sent

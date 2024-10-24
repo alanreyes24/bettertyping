@@ -28,12 +28,14 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   const [pulledTests60AllTime, setPulledTests60AllTime] = useState([]);
 
   const [pulledWordsTests25Daily, setPulledWordsTests25Daily] = useState([]);
+  const [pulledWordsTests25All, setPulledWordsTests25All] = useState([]);
 
   useEffect(() => {
     retrieveTimeTestRankings(15);
     retrieveTimeTestRankings(30);
     retrieveTimeTestRankings(60);
-    retreiveWordTestRankings(25)
+    retreiveWordTestRankings(25, "all-time")
+    retreiveWordTestRankings(25, "daily")
   }, []);
 
   async function retrieveTimeTestRankings(duration) {
@@ -60,9 +62,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL
-        }/test/wordRankings?count=${count}&timeFrame=all-time`
+        }/test/wordRankings?count=${count}&timeFrame=${time}`
       );
       if (count === 25) {
+        setPulledWordsTests25All(response.data);
+      }
+      if (count == 25 && time == "daily") {
         setPulledWordsTests25Daily(response.data);
       }
       // if (count === 50) {
@@ -88,9 +93,26 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     ? pulledTests60AllTime.slice(0, 20)
     : [];
 
-  const currentTestsWords25 = Array.isArray(pulledWordsTests25Daily)
+  const currentTestsWords25All = Array.isArray(pulledWordsTests25All)
+    ? pulledWordsTests25All.slice(0, 20)
+    : [];
+
+  const currentTestsWords25Daily = Array.isArray(pulledWordsTests25Daily)
     ? pulledWordsTests25Daily.slice(0, 20)
     : [];
+
+  // console.log("Top 3")
+
+  // console.log(getTopThreeUsers(currentTestsWords25Daily))
+  // console.log("all daily tests")
+  // console.log(currentTestsWords25Daily)
+
+  function getTopThreeUsers(users) {
+    let sortedUsers = users.sort((a, b) => b.results.trueWPM - a.results.trueWPM);
+    return sortedUsers.slice(0, 3);
+  }
+
+  const topUsers = currentTestsWords25Daily ? getTopThreeUsers(currentTestsWords25Daily) : [];
 
   return (
     <div className="">
@@ -116,7 +138,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
 
       {/* PODIUM */}
 
-      <div className='max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-1 mt-6 mx-auto slide-in-left' >
+      <div className='max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-1 mt-6 mx-auto slide-in-left ' >
         <div className='w-full col-span-1 lg:col-span-1 mx-auto rounded-lg shadow-sm'>
           <div className='space-y-1'>
             <h2 className='text-4xl font-bold'>Daily Podium</h2>
@@ -125,42 +147,66 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
             </p>
           </div>
 
-          <div className='grid grid-cols-3'>
+          <div className='grid grid-cols-3 lg:px-44'>
 
-            <div className='flex flex-col items-center justify-end slide-in-left'>
-              <h3 className='text-lg font-medium text-center'>alan</h3>
+            <div className='flex flex-col items-center justify-end'>
+              <h3 className='text-lg font-medium text-center'>{
+                topUsers.length > 1
+                  ? topUsers[1].username
+                  : <></>
+              }</h3>
               <div className='text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center'>
                 <div className='bg-gray-400 shadow-md h-12 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl  font-semibold transition-colors '>
                   2nd
                 </div>
-                95 WPM
+                {
+                  topUsers.length > 1
+                    ? topUsers[1].results.trueWPM
+                    : <></>
+                }
               </div>
             </div>
 
-            <div className='flex flex-col items-center  justify-end slide-in-left'>
-              <h3 className='text-lg font-medium text-center'>miles</h3>
+            <div className='flex flex-col items-center  justify-end '>
+              <h3 className='text-lg font-medium text-center'>{
+                topUsers.length > 1
+                  ? topUsers[0].username
+                  : <></>
+              }</h3>
               <div className='text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center'>
                 <div className='bg-amber-300 shadow-md h-14 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl  font-semibold transition-colors '>
                   1st
                 </div>
-                100 WPM
+                {
+                  topUsers.length > 1
+                    ? topUsers[0].results.trueWPM
+                    : <></>
+                }
               </div>
             </div>
 
-            <div className='flex flex-col items-center justify-end slide-in-left'>
-              <h3 className='text-lg font-medium text-center'>jessie</h3>
+            <div className='flex flex-col items-center justify-end '>
+              <h3 className='text-lg font-medium text-center'>{
+                topUsers.length > 1
+                  ? topUsers[2].username
+                  : <></>
+              }</h3>
               <div className='text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center'>
                 <div className='bg-[#CC7748] shadow-md h-10 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl  font-semibold transition-colors '>
                   3rd
                 </div>
-                75 WPM
+                {
+                  topUsers.length > 1
+                    ? topUsers[2].results.trueWPM
+                    : <></>
+                }
               </div>
             </div>
           </div>
         </div>
       </div>
 
-
+      {/* TABLE */}
       <div className="max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-1 mt-16 gap-6 mx-auto mb-64 slide-in-bottom-delay">
 
         <div className='space-y-1 flex justify-between'>
@@ -249,7 +295,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
         </div>
 
         <Table className="text-lg">
-          <TableCaption>If you`&apos;`re on here, good job!</TableCaption>
+          <TableCaption>If you&apos;re on here, good job!</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="text-left font-bold text-xl">Place</TableHead>
@@ -261,7 +307,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentTestsWords25.map((test, index) => (
+            {currentTestsWords25All.map((test, index) => (
               <TableRow className key={index}>
                 <TableCell className="font-thin text-left pl-6">{index + 1}</TableCell>
                 <TableCell className=" text-left">{test.username}</TableCell>
@@ -275,6 +321,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
       </div>
 
       <div className="leaderboard">
+        OLD LEADERBOARD (legacy users)
         <div className="leaderboard-container">
           <div className="leaderboard-section">
             <div className="section-title">15 Second Tests</div>
