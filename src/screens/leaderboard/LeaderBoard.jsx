@@ -25,14 +25,22 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   // State variables for selections
   const [timeFrame, setTimeFrame] = useState("daily");
   const [testType, setTestType] = useState("Words");
-  const [testLength, setTestLength] = useState(25); // Changed to number
+  const [testLength, setTestLength] = useState(25);
   const [testData, setTestData] = useState([]);
 
-  const wordCounts = [25, 50, 100]; // Changed to numbers
+  const wordCounts = [25, 50, 100];
   const durations = [15, 30, 60];
 
   // Fetch data when selections change
   useEffect(() => {
+    console.log(
+      "useEffect triggered with testType:",
+      testType,
+      "testLength:",
+      testLength,
+      "timeFrame:",
+      timeFrame
+    );
     if (testType === "Words") {
       retrieveWordTestRankings(testLength, timeFrame);
     } else {
@@ -43,7 +51,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   // Reset test length when test type changes
   useEffect(() => {
     if (testType === "Words") {
-      setTestLength(25); // Changed to number
+      setTestLength(25);
     } else {
       setTestLength(15);
     }
@@ -216,7 +224,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
             </Select>
             <Select
               onValueChange={(v) => setTestLength(Number(v))}
-              value={testLength}
+              value={testLength.toString()}
             >
               <SelectTrigger id="length" aria-label="Select Length">
                 <SelectValue placeholder="Select Length" />
@@ -224,12 +232,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
               <SelectContent>
                 {testType === "Words"
                   ? wordCounts.map((count) => (
-                      <SelectItem key={count} value={count}>
+                      <SelectItem key={count} value={count.toString()}>
                         {count} Words
                       </SelectItem>
                     ))
                   : durations.map((duration) => (
-                      <SelectItem key={duration} value={duration}>
+                      <SelectItem key={duration} value={duration.toString()}>
                         {duration} Seconds
                       </SelectItem>
                     ))}
