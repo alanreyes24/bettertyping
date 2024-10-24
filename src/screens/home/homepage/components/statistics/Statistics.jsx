@@ -1,8 +1,6 @@
 import React from "react";
 
 function Statistics({ test }) {
-
-
   const getPerformanceBadge = (category, value, percentile) => {
     let badgeText = "";
     let badgeStyle = "";
@@ -22,7 +20,7 @@ function Statistics({ test }) {
         badgeStyle = "bg-green-400";
       } else if (value >= 30) {
         badgeText = "Average";
-        badgeStyle = "bg-yellow-400";
+        badgeStyle = "bg-green-600";
       } else {
         badgeText = "Below Average";
         badgeStyle = "bg-red-400";
@@ -57,16 +55,13 @@ function Statistics({ test }) {
       }
     }
 
-
     return (
       <div
-        className={`${badgeStyle} h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2`}
-      >
+        className={`${badgeStyle} h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2`}>
         {badgeText}
       </div>
     );
   };
-
 
   return (
     <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
@@ -95,7 +90,11 @@ function Statistics({ test }) {
             </div>
 
             <div className='text-3xl font-bold flex flex-col-reverse text-center justify-end'>
-              {test.results != undefined ? getPerformanceBadge("WPM", test.results.trueWPM, 1) : <></>}
+              {test.results != undefined ? (
+                getPerformanceBadge("WPM", test.results.trueWPM, 1)
+              ) : (
+                <></>
+              )}
               {test.results != undefined ? test.results.trueWPM : 142.82}
             </div>
           </div>
@@ -107,11 +106,12 @@ function Statistics({ test }) {
               </p>
             </div>
             <div className='text-4xl font-bold flex-col-reverse text-center flex justify-center'>
-              {test.results != undefined ? getPerformanceBadge("Accuracy", test.results.accuracy, 1) : <></>}
-              {test.results != undefined
-                ? test.results.accuracy
-                : 98.8}
-              %
+              {test.results != undefined ? (
+                getPerformanceBadge("Accuracy", test.results.accuracy, 1)
+              ) : (
+                <></>
+              )}
+              {test.results != undefined ? test.results.accuracy : 98.8}%
             </div>
           </div>
 
@@ -123,7 +123,11 @@ function Statistics({ test }) {
               </p>
             </div>
             <div className='text-4xl font-bold flex flex-col-reverse text-center justify-center'>
-              {test.results != undefined ? getPerformanceBadge("Mistakes", test.results.mistakes, 1) : <></>}
+              {test.results != undefined ? (
+                getPerformanceBadge("Mistakes", test.results.mistakes, 1)
+              ) : (
+                <></>
+              )}
               {test.results != undefined ? test.results.mistakes : 11}
             </div>
           </div>
