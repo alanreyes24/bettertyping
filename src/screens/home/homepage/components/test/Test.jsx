@@ -45,9 +45,6 @@ ChartJS.register(
 gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, AIMode, sendData }) => {
-
-
-
   const sendTestToBackend = async () => {
     try {
       console.log("SENDING!");
@@ -69,22 +66,22 @@ const Test = ({ user, AIMode, sendData }) => {
     }
   };
 
-
   const handleEndTest = () => {
     // navigate("/test-finished", { state: { AIMode } });
-    console.log(test.timestamp)
-
+    console.log(test.timestamp);
 
     //weird things happen (its sent twice) while timestamp is 0 (i have no ide awhy)
 
-
-
     if (user.username !== "guest" && test.timestamp != 0) {
-      console.log('sending from end test')
+      console.log("sending from end test");
 
-      sendTestToBackend().catch((error) => { console.log(error) }).then(() => {
-        setSent(true)
-      });
+      sendTestToBackend()
+        .catch((error) => {
+          console.log(error);
+        })
+        .then(() => {
+          setSent(true);
+        });
     }
 
     //send data out to homepage
@@ -96,8 +93,6 @@ const Test = ({ user, AIMode, sendData }) => {
     gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
     gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
   };
-
-
 
   // called if user changes settings during the test
   const cancelTest = () => {
@@ -143,7 +138,7 @@ const Test = ({ user, AIMode, sendData }) => {
 
   const [settingValue, setSettingValue] = useState(1);
   const [typeValue, setTypeValue] = useState("words");
-  const [sent, setSent] = useState(false)
+  const [sent, setSent] = useState(false);
 
   //TODO: finish test (MIGHT NOT BE NEEDED)
 
@@ -156,7 +151,6 @@ const Test = ({ user, AIMode, sendData }) => {
   //   }
   // }, [test]);
 
-
   // HANDLE WEIRD USER ISNT SIGNED IN BUT WANTS TO SAVE SO SIGNS IN AND THEN DOESNT SEND TEST
   useEffect(() => {
     setTest((prevTest) => ({
@@ -164,38 +158,35 @@ const Test = ({ user, AIMode, sendData }) => {
       userID: user._id,
       username: user.username,
     }));
-
-  }, [user])
-
+  }, [user]);
 
   useEffect(() => {
-
-
     if (test.username != undefined && test.userID != undefined) {
-      if (test.username != "guest" && test.userID != "" && test.timestamp !== 0 && !sent) {
-        sendTestToBackend().catch((error) => {
-          console.log(error)
-          if (error) {
-            setSent(false)
-          }
-        }).then(setSent(true))
+      if (
+        test.username != "guest" &&
+        test.userID != "" &&
+        test.timestamp !== 0 &&
+        !sent
+      ) {
+        sendTestToBackend()
+          .catch((error) => {
+            console.log(error);
+            setResetWords(true);
+            setSent(false);
+          })
+          .then(setSent(true));
       }
     }
-
-  }, [test.userID])
-
+  }, [test.userID]);
 
   useEffect(() => {
     setTest((prevTest) => ({
       ...prevTest,
-      sent: sent
+      sent: sent,
     }));
 
-    sendData(test)
-  }, [sent])
-
-
-
+    sendData(test);
+  }, [sent]);
 
   useEffect(() => {
     if (test.state == 1 && test.userID === "") {
@@ -208,13 +199,11 @@ const Test = ({ user, AIMode, sendData }) => {
   }, [test.state, test.user, user]);
 
   useEffect(() => {
-
     setTest((prevTest) => ({
       ...prevTest,
       userID: user._id,
       username: user.username,
     }));
-
   }, [user]);
 
   useEffect(() => {
@@ -285,8 +274,10 @@ const Test = ({ user, AIMode, sendData }) => {
       }
 
       const calculateWPM = (totalCorrect, totalIncorrect, timeElapsed) => {
-        let trueWPM = (600 * ((totalCorrect - totalIncorrect) / 5)) / timeElapsed;
-        let rawWPM = (600 * ((totalCorrect + totalIncorrect) / 5)) / timeElapsed;
+        let trueWPM =
+          (600 * ((totalCorrect - totalIncorrect) / 5)) / timeElapsed;
+        let rawWPM =
+          (600 * ((totalCorrect + totalIncorrect) / 5)) / timeElapsed;
         return { trueWPM, rawWPM };
       };
 
@@ -318,11 +309,16 @@ const Test = ({ user, AIMode, sendData }) => {
       };
 
       if (test.settings.type === "time" || test.settings.type !== "time") {
-        const timeElapsed = test.settings.type === "time"
-          ? test.settings.length - test.timer.timeLeft
-          : test.timer.timeLeft;
+        const timeElapsed =
+          test.settings.type === "time"
+            ? test.settings.length - test.timer.timeLeft
+            : test.timer.timeLeft;
 
-        const { trueWPM, rawWPM } = calculateWPM(totalCorrect, totalIncorrect, timeElapsed);
+        const { trueWPM, rawWPM } = calculateWPM(
+          totalCorrect,
+          totalIncorrect,
+          timeElapsed
+        );
         const accuracy = calculateAccuracy(totalCorrect, totalIncorrect);
 
         if (
@@ -368,27 +364,28 @@ const Test = ({ user, AIMode, sendData }) => {
   return (
     <>
       {/* INTRO */}
-      <div className="intro pt-32 opacity-0 space-y-4 justify-center text-center self-center mt-16">
-        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+      <div className='intro pt-32 opacity-0 space-y-4 justify-center text-center self-center mt-16'>
+        <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
           Test Your Typing Speed
         </h1>
-        <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
-          Take a short typing test to analyze your typing speed, accuracy, and keystrokes.
+        <p className='max-w-2xl self-center text-muted-foreground md:text-xl/relaxed'>
+          Take a short typing test to analyze your typing speed, accuracy, and
+          keystrokes.
           {/* and we will match you with an individualized
           AI program to improve your skils! */}
         </p>
       </div>
 
       {/* TEST */}
-      <div className="test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
+      <div className='test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border'>
         {/* SETTINGS AND TIMER*/}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
+        <div className='flex items-center justify-between'>
+          <div className='space-y-1'>
             {test.state === 1 ? (
               <Timer test={test} />
             ) : (
               <>
-                <h2 className="text-4xl font-bold">
+                <h2 className='text-4xl font-bold'>
                   {test.settings.type == "time"
                     ? "Timed, "
                     : "Count, " + test.settings.count}
@@ -396,20 +393,19 @@ const Test = ({ user, AIMode, sendData }) => {
                     ? test.settings.length / 10 + " Seconds"
                     : " Words"}
                 </h2>
-                <p className="text-muted-foreground ml-1">
+                <p className='text-muted-foreground ml-1'>
                   {test.settings.type == "time"
                     ? "Type as many words as you can in "
                     : "Type these " + test.settings.count}
                   {test.settings.type == "time"
                     ? test.settings.length / 10 + " Seconds"
                     : " Words as fast as you can!"}
-
                 </p>
               </>
             )}
           </div>
           {/* SETTINGS */}
-          <div className="flex items-center gap-2">
+          <div className='flex items-center gap-2'>
             <Select
               onValueChange={(value) => {
                 cancelTest();
@@ -425,8 +421,8 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                            ? 300
-                            : 600
+                          ? 300
+                          : 600
                         : 0,
                     count:
                       settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
@@ -438,27 +434,25 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                            ? 300
-                            : 600
+                          ? 300
+                          : 600
                         : 0,
                     timerGoesUp: value == "time" ? false : true,
                   },
                 }));
               }}
-              defaultValue="words"
-            >
+              defaultValue='words'>
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="type"
-                aria-label="Select Type"
-              >
-                <SelectValue placeholder="Select Test" />
+                id='type'
+                aria-label='Select Type'>
+                <SelectValue placeholder='Select Test' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="time">Timed</SelectItem>
-                <SelectItem value="words">Count</SelectItem>
+                <SelectItem value='time'>Timed</SelectItem>
+                <SelectItem value='words'>Count</SelectItem>
               </SelectContent>
             </Select>
 
@@ -480,23 +474,21 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? v == 1
                           ? 150
                           : v == 2
-                            ? 300
-                            : 600
+                          ? 300
+                          : 600
                         : 0,
                     timerGoesUp: typeValue == "time" ? false : true,
                   },
                 }));
               }}
-              defaultValue={1}
-            >
+              defaultValue={1}>
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="length"
-                aria-label="Select Length"
-              >
-                <SelectValue placeholder="Select Length" />
+                id='length'
+                aria-label='Select Length'>
+                <SelectValue placeholder='Select Length' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={1}>
@@ -514,7 +506,7 @@ const Test = ({ user, AIMode, sendData }) => {
         </div>
 
         {/* TEXT AREA */}
-        <div className="flex justify-center m-4 ">
+        <div className='flex justify-center m-4 '>
           <TextArea
             user={user}
             aiMode={AIMode}
@@ -573,8 +565,6 @@ const Test = ({ user, AIMode, sendData }) => {
                   chartData: chartData,
                 },
               }));
-
-
             }}
             passEventLog={(e) => {
               setTest((prevTest) => ({
@@ -583,7 +573,7 @@ const Test = ({ user, AIMode, sendData }) => {
                 eventLog: e,
               }));
             }}
-            onFocus={() => { }}
+            onFocus={() => {}}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
@@ -614,8 +604,8 @@ const Test = ({ user, AIMode, sendData }) => {
                       ? settingValue == 1
                         ? 150
                         : settingValue == 2
-                          ? 300
-                          : 600
+                        ? 300
+                        : 600
                       : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,
@@ -627,14 +617,19 @@ const Test = ({ user, AIMode, sendData }) => {
             }}
           />
         </div>
-
       </div>
-      {(user.username == "guest" && !test.sent) ? <><p className='intro opacity-0 max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
-        UNSAVED
-      </p>
-        <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
-          Sign in to save your test
-        </p></> : <></>}
+      {user.username == "guest" && !test.sent ? (
+        <>
+          <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
+            UNSAVED
+          </p>
+          <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
+            Sign in to save your test
+          </p>
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 };

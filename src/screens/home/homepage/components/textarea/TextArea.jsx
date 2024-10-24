@@ -144,15 +144,15 @@ function TextArea({
       passEventLog(eventLog);
     }
 
-    if (test.state === 3 && test.words.attemptedWords === 0) {
-      const arr = Array.from(
-        { length: totalCorrectWords },
-        (_, i) => document.getElementsByClassName("word")[i].textContent
-      );
-      setTimeout(() => {
-        passWords(arr);
-      }, 0);
-    }
+    // if (test.state === 3 && test.words.attemptedWords === 0) {
+    //   const arr = Array.from(
+    //     { length: totalCorrectWords },
+    //     (_, i) => document.getElementsByClassName("word")[i].textContent
+    //   );
+    //   setTimeout(() => {
+    //     passWords(arr);
+    //   }, 0);
+    // }
   }, [currentLetterArrayIndexValue, test.state, test.timer.timeLeft]);
 
   useEffect(() => {
@@ -207,7 +207,7 @@ function TextArea({
       return Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word word={AIWordList[i % AIWordList.length]} />
           </div>
         ));
@@ -215,7 +215,7 @@ function TextArea({
       let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
@@ -235,7 +235,7 @@ function TextArea({
     let wordArr = Array(amount)
       .fill(false)
       .map((_, i) => (
-        <div key={i + wordList.length} className="word">
+        <div key={i + wordList.length} className='word'>
           <Word selectedDifficulty={selectedDifficulty} />
         </div>
       ));
@@ -257,53 +257,55 @@ function TextArea({
       setStartTime(Date.now());
     }
 
-    setEventLog((prevLog) => [
-      ...prevLog,
-      {
-        timestamp,
-        intended: currentLetter.textContent,
-        typed: input,
-      },
-    ]);
+    if (currentLetter.textContent != undefined) {
+      setEventLog((prevLog) => [
+        ...prevLog,
+        {
+          timestamp,
+          intended: currentLetter.textContent,
+          typed: input,
+        },
+      ]);
 
-    if (input !== "Backspace") {
-      setTextTyped((prev) => prev + input);
+      if (input !== "Backspace") {
+        setTextTyped((prev) => prev + input);
 
-      if (input === currentLetter.textContent) {
-        if (currentLetter.textContent !== " ") {
-          setCurrentCorrectLetterArray((prev) => [...prev, input]);
-          setTotalCorrectLetters((prev) => prev + 1);
+        if (input === currentLetter.textContent) {
+          if (currentLetter.textContent !== " ") {
+            setCurrentCorrectLetterArray((prev) => [...prev, input]);
+            setTotalCorrectLetters((prev) => prev + 1);
+          } else {
+            setTotalCorrectWords((prev) => prev + 1);
+            setCurrentCorrectLetterArray((prev) => [...prev, input]);
+            setTextTyped("");
+          }
+          currentLetter.classList.remove("incorrect");
+          currentLetter.classList.add("correct");
+          if (nextLetter) nextLetter.classList.add("next");
+          setCurrentLetterIndex((prev) => prev + 1);
         } else {
-          setTotalCorrectWords((prev) => prev + 1);
-          setCurrentCorrectLetterArray((prev) => [...prev, input]);
-          setTextTyped("");
+          currentLetter.classList.add("incorrect");
+          setCurrentIncorrectLetterArray((prev) => [...prev, input]);
+          if (nextLetter) nextLetter.classList.add("next");
+          setCurrentLetterIndex((prev) => prev + 1);
         }
-        currentLetter.classList.remove("incorrect");
-        currentLetter.classList.add("correct");
-        if (nextLetter) nextLetter.classList.add("next");
-        setCurrentLetterIndex((prev) => prev + 1);
-      } else {
-        currentLetter.classList.add("incorrect");
-        setCurrentIncorrectLetterArray((prev) => [...prev, input]);
-        if (nextLetter) nextLetter.classList.add("next");
-        setCurrentLetterIndex((prev) => prev + 1);
-      }
 
-      if (
-        document.getElementsByClassName("letter").length ===
-        currentLetterIndex + 2
-      ) {
-        onTextFinished();
+        if (
+          document.getElementsByClassName("letter").length ===
+          currentLetterIndex + 2
+        ) {
+          onTextFinished();
+        }
+      } else if (input === "Backspace" && currentLetterIndex > 0) {
+        const lastLetter =
+          document.getElementsByClassName("letter")[currentLetterIndex - 1];
+        if (lastLetter) {
+          lastLetter.classList.remove("correct");
+          lastLetter.classList.remove("incorrect");
+        }
+        setCurrentLetterIndex((prev) => prev - 1);
+        setTextTyped((prev) => prev.slice(0, -1));
       }
-    } else if (input === "Backspace" && currentLetterIndex > 0) {
-      const lastLetter =
-        document.getElementsByClassName("letter")[currentLetterIndex - 1];
-      if (lastLetter) {
-        lastLetter.classList.remove("correct");
-        lastLetter.classList.remove("incorrect");
-      }
-      setCurrentLetterIndex((prev) => prev - 1);
-      setTextTyped((prev) => prev.slice(0, -1));
     }
   };
 
@@ -318,15 +320,15 @@ function TextArea({
           onBlur={() => {
             setShouldUpdateCursor(false);
           }}
-          id="input"
-          autoComplete="off"
-          autoCapitalize="off"
-          autoCorrect="off"
-          type="text"
-          data-gramm="false"
-          data-gramm_editor="false"
-          data-enable-grammarly="false"
-          list="autocompleteOff"
+          id='input'
+          autoComplete='off'
+          autoCapitalize='off'
+          autoCorrect='off'
+          type='text'
+          data-gramm='false'
+          data-gramm_editor='false'
+          data-enable-grammarly='false'
+          list='autocompleteOff'
           onKeyDown={(event) => {
             if (
               test.state === 0 &&
@@ -342,20 +344,16 @@ function TextArea({
           style={{ opacity: 0, height: 0, width: 0 }}
         />
 
-        <div className="rounded-lg w-full h-44 overflow-hidden ">
+        <div className='rounded-lg w-full h-44 overflow-hidden '>
           <div
             onClick={focusInput}
-            className=""
+            className=''
             style={{
               marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
-            }}
-          >
-
+            }}>
             {wordsLoaded ? wordList : <></>}
-
           </div>
         </div>
-
       </div>
     </>
   );

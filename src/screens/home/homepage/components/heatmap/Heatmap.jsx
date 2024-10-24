@@ -58,7 +58,7 @@ function Heatmap({ test }) {
 
   useEffect(() => {
     if (keyboard.finished == true && test.state == 0) {
-      console.log('should reset keyboard')
+      console.log("should reset keyboard");
       setKeyboard((prev) => ({
         finished: false,
         setting: "incorrect",
@@ -100,83 +100,83 @@ function Heatmap({ test }) {
             { key: "M", incorrect: 0, correct: 0, delay: 0 },
           ],
         ],
-      }
-      ))
+      }));
     }
-  }, [test.state])
+  }, [test.state]);
 
+  useEffect(() => {
+    if (test.state == 3 && keyboard.finished == false) {
+      const aggregateLetters = (correctLetters, incorrectLetters) => {
+        const counts = {};
 
-  if (test.state == 3 && keyboard.finished == false) {
-    const aggregateLetters = (correctLetters, incorrectLetters) => {
-      const counts = {};
+        const addCounts = (letterArray, type) => {
+          Object.values(letterArray)
+            .flat()
+            .forEach((letter) => {
+              if (!counts[letter]) {
+                counts[letter] = { correct: 0, incorrect: 0 };
+              }
+              counts[letter][type]++;
+            });
+        };
 
-      const addCounts = (letterArray, type) => {
-        Object.values(letterArray)
-          .flat()
-          .forEach((letter) => {
-            if (!counts[letter]) {
-              counts[letter] = { correct: 0, incorrect: 0 };
-            }
-            counts[letter][type]++;
-          });
+        addCounts(correctLetters, "correct");
+        addCounts(incorrectLetters, "incorrect");
+
+        return counts;
       };
 
-      addCounts(correctLetters, "correct");
-      addCounts(incorrectLetters, "incorrect");
-
-      return counts;
-    };
-
-    const letterCounts = aggregateLetters(
-      test.words.correctLetters,
-      test.words.incorrectLetters
-    );
-
-    keyboard.rows.forEach((row) => {
-      row.forEach((keyObj) => {
-        const lowerKey = keyObj.key.toLowerCase();
-
-        if (letterCounts[lowerKey]) {
-          keyObj.correct = letterCounts[lowerKey].correct;
-          keyObj.incorrect = letterCounts[lowerKey].incorrect;
-        }
-      });
-    });
-
-    const calculateErrorRange = (keyboard) => {
-      let minErrors = Infinity;
-      let minCorrect = Infinity;
-      let maxErrors = -Infinity;
-      let maxCorrect = -Infinity;
+      const letterCounts = aggregateLetters(
+        test.words.correctLetters,
+        test.words.incorrectLetters
+      );
 
       keyboard.rows.forEach((row) => {
         row.forEach((keyObj) => {
-          if (keyObj.incorrect > 0) {
-            minErrors = Math.min(minErrors, keyObj.incorrect);
-            maxErrors = Math.max(maxErrors, keyObj.incorrect);
-          }
-          if (keyObj.correct > 0) {
-            minCorrect = Math.min(minCorrect, keyObj.correct);
-            maxCorrect = Math.max(maxCorrect, keyObj.correct);
+          const lowerKey = keyObj.key.toLowerCase();
+
+          if (letterCounts[lowerKey]) {
+            keyObj.correct = letterCounts[lowerKey].correct;
+            keyObj.incorrect = letterCounts[lowerKey].incorrect;
           }
         });
       });
 
-      return { minErrors, maxErrors, minCorrect, maxCorrect };
-    };
+      const calculateErrorRange = (keyboard) => {
+        let minErrors = Infinity;
+        let minCorrect = Infinity;
+        let maxErrors = -Infinity;
+        let maxCorrect = -Infinity;
 
-    const { minErrors, maxErrors, minCorrect, maxCorrect } =
-      calculateErrorRange(keyboard);
+        keyboard.rows.forEach((row) => {
+          row.forEach((keyObj) => {
+            if (keyObj.incorrect > 0) {
+              minErrors = Math.min(minErrors, keyObj.incorrect);
+              maxErrors = Math.max(maxErrors, keyObj.incorrect);
+            }
+            if (keyObj.correct > 0) {
+              minCorrect = Math.min(minCorrect, keyObj.correct);
+              maxCorrect = Math.max(maxCorrect, keyObj.correct);
+            }
+          });
+        });
 
-    setKeyboard((prev) => ({
-      ...prev,
-      finished: true,
-      minErrors,
-      minCorrect,
-      maxErrors,
-      maxCorrect,
-    }));
-  }
+        return { minErrors, maxErrors, minCorrect, maxCorrect };
+      };
+
+      const { minErrors, maxErrors, minCorrect, maxCorrect } =
+        calculateErrorRange(keyboard);
+
+      setKeyboard((prev) => ({
+        ...prev,
+        finished: true,
+        minErrors,
+        minCorrect,
+        maxErrors,
+        maxCorrect,
+      }));
+    }
+  }, [test]);
 
   const getHeatmapColor = (obj) => {
     if (setting == "incorrect") {
@@ -758,7 +758,7 @@ function Heatmap({ test }) {
             {setting == "incorrect"
               ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low
               : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                .low}
+                  .low}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div
@@ -769,9 +769,9 @@ function Heatmap({ test }) {
               className='w-4 h-4 border self-center mr-2'></div>
             {setting == "incorrect"
               ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors)
-                .medium
+                  .medium
               : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                .medium}
+                  .medium}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div
@@ -783,7 +783,7 @@ function Heatmap({ test }) {
             {setting == "incorrect"
               ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high
               : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                .high}
+                  .high}
           </div>
         </div>
       </div>
