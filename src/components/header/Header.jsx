@@ -55,8 +55,8 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   // Handle home button click
   function handleHomeClick(e) {
     if (location.pathname === "/") {
-      e.preventDefault();
-      window.location.reload();
+      // e.preventDefault();
+      // window.location.reload();
     } else {
       navigate("/");
     }
@@ -64,7 +64,9 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
 
   return (
     <div className="z-50 sticky top-0 bg-background container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-      <a className="text-xl font-bold text-foreground" href="#">
+      <a className="text-xl font-bold text-foreground cursor-pointer" onClick={() => {
+        navigate("/")
+      }} >
         bettertyping
       </a>
 

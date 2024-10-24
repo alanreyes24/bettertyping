@@ -8,10 +8,10 @@ import Analysis from "./screens/analysis/Analysis";
 import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
 import AITest from "./screens/aitest/AITest";
-// Removed unused import HeaderWrapper
 import Information from "./screens/information/Information";
 
 function App() {
+
   const [user, setUser] = useState({
     _id: "",
     username: "guest",
@@ -58,13 +58,11 @@ function App() {
       _id: passedUserID,
       username: passedUsername,
     }));
-    console.log('set in app')
   };
 
   const handleLogout = () => {
-    console.log("this is running");
+    console.log("Logging Out");
     setUser((prevUser) => ({
-      ...prevUser,
       _id: "",
       username: "guest",
     }));
@@ -92,6 +90,7 @@ function App() {
                 handleUserChange={handleUserChange}
                 handleLogout={handleLogout}
               />
+
             }
           />
           <Route

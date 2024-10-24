@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useReducer } from "react";
+
 import Word from "../word/Word";
 import axios from "axios";
 import Cursor from "../cursor/Cursor";
@@ -340,6 +341,7 @@ function TextArea({
           }}
           style={{ opacity: 0, height: 0, width: 0 }}
         />
+
         <div className="rounded-lg w-full h-44 overflow-hidden ">
           <div
             onClick={focusInput}
@@ -348,9 +350,12 @@ function TextArea({
               marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
             }}
           >
+
             {wordsLoaded ? wordList : <></>}
+
           </div>
         </div>
+
       </div>
     </>
   );

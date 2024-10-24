@@ -13,7 +13,7 @@ import "./LoginPopup.css";
 import axios from "axios";
 
 export const description =
-  "A login form with email and password. There's an option to login with Google and a link to sign up if you don't have an account.";
+  "A login form with username and password. With a link to sign up if you don't have an account.";
 
 export function LoginForm({ sendUsernameToHeader, showHide }) {
   const [username, setUsername] = useState("");
@@ -69,9 +69,9 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
       <div className='fixed top-0 left-0 bg-[#090909a0] w-[100vw] h-[100vh] -z-10 ' onClick={() => { showHide() }}></div>
       <Card className='mx-auto max-w-sm login-container border rounded-lg blur-none'>
         <CardHeader>
-          <CardTitle className='text-2xl'>Sign In</CardTitle>
+          <CardTitle className='text-2xl'>{showRegister ? "Register" : "Sign In"}</CardTitle>
           <CardDescription>
-            Enter your email below to login to your account
+            Enter your username below to {showRegister ? "register for an account" : "sign in to your account"}
           </CardDescription>
         </CardHeader>
         <form
@@ -107,7 +107,7 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
               </a> */}
               {error.toString()}
               <Button className='login-button' type='submit'>
-                {showRegister ? "Register" : "Login"}
+                {showRegister ? "Register" : "Sign In"}
               </Button>
             </div>
             <div className='mt-4 text-center text-sm'>
@@ -116,7 +116,7 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
               <a
                 className='toggle-link text-primary-foreground'
                 onClick={() => setShowRegister(!showRegister)}>
-                {showRegister ? " Login " : "Register"}
+                {showRegister ? " Sign In " : "Register"}
               </a>
             </div>
           </CardContent>

@@ -1,3 +1,4 @@
+
 // src/components/homepage/HomePage.jsx
 import React from "react"; // Removed unused imports
 import HeaderWrapper from "../../../components/header/HeaderWrapper";
@@ -24,47 +25,19 @@ import Statistics from "./components/statistics/Statistics";
 
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
+import OnboardingModal from "../../../components/onboarding/onboardingModal";
 
 
-// let charttest = [
-//   { second: "1", RawWPM: 186, TrueWPM: 80 },
-//   { second: "2", RawWPM: 305, TrueWPM: 200 },
-//   { second: "3", RawWPM: 237, TrueWPM: 120 },
-//   { second: "4", RawWPM: 73, TrueWPM: 190 },
-//   { second: "5", RawWPM: 209, TrueWPM: 130 },
-//   { second: "6", RawWPM: 214, TrueWPM: 140 },
-// ];
-
-
-function HomePage({ user, handleUserChange, handleLogout }) {
+function HomePage({ user, handleUserChange, handleLogout, visited }) {
   const [chartData, setChartData] = useState([]);
   const [test, setTest] = useState({});
+  const [onboardingType, setOnboardingType] = useState("intro")
 
   const container = useRef();
 
-  // useEffect(() => {
-  //   gsap.to(".loader", { yPercent: -100, duration: .75, ease: "power4.out" })
-  // })
-
   useGSAP(
     () => {
-      // gsap code here...
-
       const tl = gsap.timeline();
-
-      tl
-        .to(".intro", {
-          opacity: 1,
-          delay: 0.25,
-          paddingTop: 0,
-          duration: 0.5
-        })
-      gsap.to(".test", {
-        opacity: 1,
-        duration: 0.25,
-        delay: .25,
-      })
-
     },
     // { scope: container }
   );
@@ -76,7 +49,26 @@ function HomePage({ user, handleUserChange, handleLogout }) {
         passLogout={handleLogout}
         user={user}
       />
+
+
+
+
       <div ref={container} className='bg-background w-full h-full'>
+        <OnboardingModal user={user} type={onboardingType} onHide={() => {
+          gsap
+            .to(".intro", {
+              opacity: 1,
+              delay: 0.25,
+              paddingTop: 0,
+              duration: 0.5
+            })
+          gsap.to(".test", {
+            opacity: 1,
+            duration: 0.25,
+            delay: .25,
+          })
+        }}
+        />
         <div className='flex flex-1 flex-col'>
           {/* TEST */}
           <Test
@@ -85,13 +77,23 @@ function HomePage({ user, handleUserChange, handleLogout }) {
             sendData={(test) => {
               setTest(test);
               setChartData(test.words.chartData);
+              setOnboardingType("analysis")
 
             }}
             AIMode={false}
           />
 
-          <div className="analysis hidden opacity-0">
-            <div className='space-y-4 justify-center text-center self-center mt-32 mx-auto max-w-3xl lg:max-w-6xl'>
+          {(user.username == "guest" && !test.sent) ? <><p className='max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
+            UNSAVED
+          </p>
+            <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
+              Sign in to save your test
+            </p></> : <></>}
+
+          {/* ANALYSIS */}
+          <div className="analysis hidden opacity-0 mb-24">
+            <div className='space-y-4 justify-center text-center self-center mt-24 mx-auto max-w-3xl lg:max-w-6xl'>
+
               <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
                 Analysis
               </h1>
@@ -99,7 +101,11 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                 An in depth look at your typing test. For a more detailed report,
                 use our AI tool!
               </p>
+
+
+
             </div>
+
 
 
             {/* REPORT */}
@@ -177,7 +183,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
               <Heatmap test={test} />
 
               {/* MISTAKES */}
-              <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
+              {/* <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
                 <div className='flex items-center justify-between'>
                   <div className='space-y-1'>
                     <h2 className='text-2xl font-bold'>Mistakes</h2>
@@ -185,17 +191,17 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                       List of all word errors
                     </p>
                   </div>
-                </div>
+                </div> */}
 
-                {/* header */}
-                <div className='grid grid-cols-3 gap-4 border-b mt-4 text-center'>
+              {/* header */}
+              {/* <div className='grid grid-cols-3 gap-4 border-b mt-4 text-center'>
                   <div className='text-lg font-medium'>Word</div>
                   <div className='text-lg font-medium'>Typed</div>
                   <div className='text-lg font-medium'>Count</div>
-                </div>
+                </div> */}
 
-                {/* list */}
-                <ScrollArea className='h-64'>
+              {/* list */}
+              {/* <ScrollArea className='h-64'>
                   <div className='grid grid-cols-3 gap-2 text-center'>
                     <div>our</div>
                     <div>uor</div>
@@ -206,9 +212,12 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                     <div>204ms</div>
                   </div>
                 </ScrollArea>
-              </div>
+              </div> */}
             </div>
           </div>
+
+
+
         </div>
       </div>
     </>

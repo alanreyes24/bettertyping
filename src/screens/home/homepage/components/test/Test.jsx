@@ -76,7 +76,12 @@ const Test = ({ user, AIMode, sendData }) => {
 
 
     //weird things happen (its sent twice) while timestamp is 0 (i have no ide awhy)
+
+
+
     if (user.username !== "guest" && test.timestamp != 0) {
+      console.log('sending from end test')
+
       sendTestToBackend().catch((error) => { console.log(error) }).then(() => {
         setSent(true)
       });
@@ -86,10 +91,13 @@ const Test = ({ user, AIMode, sendData }) => {
     sendData(test);
 
     //SCROLLING ANIMATION
+
     gsap.to(".analysis", { display: "block" });
     gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
     gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
   };
+
+
 
   // called if user changes settings during the test
   const cancelTest = () => {
@@ -147,6 +155,53 @@ const Test = ({ user, AIMode, sendData }) => {
   //     }));
   //   }
   // }, [test]);
+
+
+  // HANDLE WEIRD USER ISNT SIGNED IN BUT WANTS TO SAVE SO SIGNS IN AND THEN DOESNT SEND TEST
+  useEffect(() => {
+    console.log("user changed")
+    setTest((prevTest) => ({
+      ...prevTest,
+      userID: user._id,
+      username: user.username,
+    }));
+
+  }, [user])
+
+
+  useEffect(() => {
+    console.log("user id change")
+    // console.log(test.userID)
+    // console.log(test.username)
+    // console.log(sent)
+
+    if (test.username != undefined && test.userID != undefined) {
+      if (test.username != "guest" && test.userID != "" && test.timestamp !== 0 && !sent) {
+        console.log('sending from user edit')
+        sendTestToBackend().catch((error) => {
+          console.log(error)
+          if (error) {
+            setSent(false)
+          }
+        }).then(setSent(true))
+      }
+    }
+
+  }, [test.userID])
+
+
+  useEffect(() => {
+    console.log("sent")
+    console.log(sent)
+    setTest((prevTest) => ({
+      ...prevTest,
+      sent: sent
+    }));
+
+    sendData(test)
+  }, [sent])
+
+
 
 
   useEffect(() => {
@@ -252,7 +307,7 @@ const Test = ({ user, AIMode, sendData }) => {
           results: {
             trueWPM: trueWPM.toFixed(2) * 1,
             rawWPM: rawWPM.toFixed(2) * 1,
-            accuracy: accuracy.toFixed(2) * 1,
+            accuracy: accuracy.toFixed(1) * 1,
             mistakes: totalIncorrect,
           },
         }));
@@ -325,8 +380,9 @@ const Test = ({ user, AIMode, sendData }) => {
           Test Your Typing Speed
         </h1>
         <p className="max-w-2xl self-center text-muted-foreground md:text-xl/relaxed">
-          Take a short typing test and we will match you with an individualized
-          AI program to improve your skils!
+          Take a short typing test to analyze your typing speed, accuracy, and keystrokes.
+          {/* and we will match you with an individualized
+          AI program to improve your skils! */}
         </p>
       </div>
 
@@ -347,8 +403,14 @@ const Test = ({ user, AIMode, sendData }) => {
                     ? test.settings.length / 10 + " Seconds"
                     : " Words"}
                 </h2>
-                <p className="text-muted-foreground">
-                  Type as many words as you can in 30 seconds.
+                <p className="text-muted-foreground ml-1">
+                  {test.settings.type == "time"
+                    ? "Type as many words as you can in "
+                    : "Type these " + test.settings.count}
+                  {test.settings.type == "time"
+                    ? test.settings.length / 10 + " Seconds"
+                    : " Words as fast as you can!"}
+
                 </p>
               </>
             )}
