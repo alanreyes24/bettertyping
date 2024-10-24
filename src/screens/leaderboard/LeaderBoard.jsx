@@ -8,11 +8,10 @@ import {
   TableBody,
   TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
+} from "@/components/ui/table";
 
 import {
   Select,
@@ -23,96 +22,89 @@ import {
 } from "@/components/ui/select";
 
 function LeaderBoard({ user, handleUserChange, handleLogout }) {
-  const [pulledTests15AllTime, setPulledTests15AllTime] = useState([]);
-  const [pulledTests30AllTime, setPulledTests30AllTime] = useState([]);
-  const [pulledTests60AllTime, setPulledTests60AllTime] = useState([]);
+  // State variables for selections
+  const [timeFrame, setTimeFrame] = useState("daily");
+  const [testType, setTestType] = useState("Words");
+  const [testLength, setTestLength] = useState(25); // Changed to number
+  const [testData, setTestData] = useState([]);
 
-  const [pulledWordsTests25Daily, setPulledWordsTests25Daily] = useState([]);
-  const [pulledWordsTests25All, setPulledWordsTests25All] = useState([]);
+  const wordCounts = [25, 50, 100]; // Changed to numbers
+  const durations = [15, 30, 60];
 
+  // Fetch data when selections change
   useEffect(() => {
-    retrieveTimeTestRankings(15);
-    retrieveTimeTestRankings(30);
-    retrieveTimeTestRankings(60);
-    retreiveWordTestRankings(25, "all-time")
-    retreiveWordTestRankings(25, "daily")
-  }, []);
-
-  async function retrieveTimeTestRankings(duration) {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL
-        }/test/timeRankings?duration=${duration}&timeFrame=all-time`
-      );
-      if (duration === 15) {
-        setPulledTests15AllTime(response.data);
-      }
-      if (duration === 30) {
-        setPulledTests30AllTime(response.data);
-      }
-      if (duration === 60) {
-        setPulledTests60AllTime(response.data);
-      }
-    } catch (error) {
-      console.error("Error fetching rankings:", error.response);
+    if (testType === "Words") {
+      retrieveWordTestRankings(testLength, timeFrame);
+    } else {
+      retrieveTimeTestRankings(testLength, timeFrame);
     }
-  }
+  }, [testType, testLength, timeFrame]);
 
-  async function retreiveWordTestRankings(count, time) {
+  // Reset test length when test type changes
+  useEffect(() => {
+    if (testType === "Words") {
+      setTestLength(25); // Changed to number
+    } else {
+      setTestLength(15);
+    }
+  }, [testType]);
+
+  // Log testData updates
+  useEffect(() => {
+    console.log("Updated testData:", testData);
+  }, [testData]);
+
+  // Fetch word test rankings
+  async function retrieveWordTestRankings(count, time) {
+    console.log(
+      "Fetching word rankings with count:",
+      count,
+      "and timeFrame:",
+      time
+    );
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL
+        `${
+          import.meta.env.VITE_API_URL
         }/test/wordRankings?count=${count}&timeFrame=${time}`
       );
-      if (count === 25) {
-        setPulledWordsTests25All(response.data);
-      }
-      if (count == 25 && time == "daily") {
-        setPulledWordsTests25Daily(response.data);
-      }
-      // if (count === 50) {
-      //   setPulledTests30AllTime(response.data);
-      // }
-      // if (count === 100) {
-      //   setPulledTests60AllTime(response.data);
-      // }
+      console.log("API response data:", response.data);
+      setTestData(response.data.slice(0, 20)); // Limit to top 20
     } catch (error) {
       console.error("Error fetching rankings:", error.response);
     }
   }
 
-  const currentTests15 = Array.isArray(pulledTests15AllTime)
-    ? pulledTests15AllTime.slice(0, 20)
-    : [];
-
-  const currentTests30 = Array.isArray(pulledTests30AllTime)
-    ? pulledTests30AllTime.slice(0, 20)
-    : [];
-
-  const currentTests60 = Array.isArray(pulledTests60AllTime)
-    ? pulledTests60AllTime.slice(0, 20)
-    : [];
-
-  const currentTestsWords25All = Array.isArray(pulledWordsTests25All)
-    ? pulledWordsTests25All.slice(0, 20)
-    : [];
-
-  const currentTestsWords25Daily = Array.isArray(pulledWordsTests25Daily)
-    ? pulledWordsTests25Daily.slice(0, 20)
-    : [];
-
-  // console.log("Top 3")
-
-  // console.log(getTopThreeUsers(currentTestsWords25Daily))
-  // console.log("all daily tests")
-  // console.log(currentTestsWords25Daily)
+  // Fetch time test rankings
+  async function retrieveTimeTestRankings(duration, timeFrame) {
+    console.log(
+      "Fetching time rankings with duration:",
+      duration,
+      "and timeFrame:",
+      timeFrame
+    );
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_API_URL
+        }/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`
+      );
+      console.log("API response data:", response.data);
+      setTestData(response.data.slice(0, 20)); // Limit to top 20
+    } catch (error) {
+      console.error("Error fetching rankings:", error.response);
+    }
+  }
 
   function getTopThreeUsers(users) {
-    let sortedUsers = users.sort((a, b) => b.results.trueWPM - a.results.trueWPM);
+    if (!Array.isArray(users)) return [];
+    let sortedUsers = [...users].sort(
+      (a, b) => b.results.trueWPM - a.results.trueWPM
+    );
     return sortedUsers.slice(0, 3);
   }
 
-  const topUsers = currentTestsWords25Daily ? getTopThreeUsers(currentTestsWords25Daily) : [];
+  const topUsers = getTopThreeUsers(testData);
 
   return (
     <div className="">
@@ -122,114 +114,89 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
         user={user}
       />
 
-
       {/* Leaderboard */}
 
-      <div className='mt-16 space-y-4 justify-center text-center self-center mx-auto max-w-3xl lg:max-w-6xl'>
-        <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
+      <div className="mt-16 space-y-4 justify-center text-center self-center mx-auto max-w-3xl lg:max-w-6xl">
+        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
           Leaderboard
         </h1>
-        <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed'>
+        <p className="max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed">
           Track your progress versus others!
         </p>
       </div>
 
-
-
       {/* PODIUM */}
 
-      <div className='max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-1 mt-6 mx-auto slide-in-left ' >
-        <div className='w-full col-span-1 lg:col-span-1 mx-auto rounded-lg shadow-sm'>
-          <div className='space-y-1'>
-            <h2 className='text-4xl font-bold'>Daily Podium</h2>
-            <p className='text-muted-foreground'>
-              25 Words
-            </p>
-          </div>
-
-          <div className='grid grid-cols-3 lg:px-44'>
-
-            <div className='flex flex-col items-center justify-end'>
-              <h3 className='text-lg font-medium text-center'>{
-                topUsers.length > 1
-                  ? topUsers[1].username
-                  : <></>
-              }</h3>
-              <div className='text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center'>
-                <div className='bg-gray-400 shadow-md h-12 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl  font-semibold transition-colors '>
-                  2nd
-                </div>
-                {
-                  topUsers.length > 1
-                    ? topUsers[1].results.trueWPM
-                    : <></>
-                }
+      <div className="max-w-3xl lg:max-w-6xl grid grid-cols-3 lg:px-44 mt-6 mx-auto slide-in-left ">
+        {/* Silver - Second place on the left */}
+        {topUsers[1] ? (
+          <div className="flex flex-col items-center justify-end">
+            <h3 className="text-lg font-medium text-center">
+              {topUsers[1].username}
+            </h3>
+            <div className="text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center">
+              <div className="bg-gray-400 shadow-md h-12 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl font-semibold transition-colors">
+                2nd
               </div>
-            </div>
-
-            <div className='flex flex-col items-center  justify-end '>
-              <h3 className='text-lg font-medium text-center'>{
-                topUsers.length > 1
-                  ? topUsers[0].username
-                  : <></>
-              }</h3>
-              <div className='text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center'>
-                <div className='bg-amber-300 shadow-md h-14 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl  font-semibold transition-colors '>
-                  1st
-                </div>
-                {
-                  topUsers.length > 1
-                    ? topUsers[0].results.trueWPM
-                    : <></>
-                }
-              </div>
-            </div>
-
-            <div className='flex flex-col items-center justify-end '>
-              <h3 className='text-lg font-medium text-center'>{
-                topUsers.length > 1
-                  ? topUsers[2].username
-                  : <></>
-              }</h3>
-              <div className='text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center'>
-                <div className='bg-[#CC7748] shadow-md h-10 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl  font-semibold transition-colors '>
-                  3rd
-                </div>
-                {
-                  topUsers.length > 1
-                    ? topUsers[2].results.trueWPM
-                    : <></>
-                }
-              </div>
+              {topUsers[1].results.trueWPM.toFixed(2)}
             </div>
           </div>
-        </div>
+        ) : (
+          <div></div>
+        )}
+
+        {/* Gold - First place in the middle */}
+        {topUsers[0] && (
+          <div className="flex flex-col items-center justify-end">
+            <h3 className="text-lg font-medium text-center">
+              {topUsers[0].username}
+            </h3>
+            <div className="text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center">
+              <div className="bg-amber-300 shadow-md h-14 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl font-semibold transition-colors">
+                1st
+              </div>
+              {topUsers[0].results.trueWPM.toFixed(2)}
+            </div>
+          </div>
+        )}
+
+        {/* Bronze - Third place on the right */}
+        {topUsers[2] ? (
+          <div className="flex flex-col items-center justify-end">
+            <h3 className="text-lg font-medium text-center">
+              {topUsers[2].username}
+            </h3>
+            <div className="text-3xl font-bold flex flex-col-reverse text-center self-center justify-center items-center">
+              <div className="bg-[#CC7748] shadow-md h-10 w-64 justify-center text-white inline-flex items-center rounded-t-2xl border text-xl font-semibold transition-colors">
+                3rd
+              </div>
+              {topUsers[2].results.trueWPM.toFixed(2)}
+            </div>
+          </div>
+        ) : (
+          <div></div>
+        )}
       </div>
 
       {/* TABLE */}
       <div className="max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-1 mt-16 gap-6 mx-auto mb-64 slide-in-bottom-delay">
-
-        <div className='space-y-1 flex justify-between'>
+        <div className="space-y-1 flex justify-between">
           <div>
-            <h2 className='text-4xl font-bold'>All Time</h2>
-            <p className='text-muted-foreground'>
-              25 Words
+            <h2 className="text-4xl font-bold">
+              {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)}
+            </h2>
+            <p className="text-muted-foreground">
+              {testType === "Words"
+                ? `${testLength} Words`
+                : `${testLength} Seconds`}
             </p>
           </div>
           <div className="flex items-center gap-2">
             <Select
-              disabled={true}
-              onValueChange={(value) => {
-
-              }}
-              defaultValue="all-time"
+              onValueChange={(value) => setTimeFrame(value)}
+              value={timeFrame}
             >
-              <SelectTrigger
-                onFocus={(e) => {
-                }}
-                id="type"
-                aria-label="Select Time"
-              >
+              <SelectTrigger id="time" aria-label="Select Time">
                 <SelectValue placeholder="Select Time" />
               </SelectTrigger>
               <SelectContent>
@@ -238,57 +205,34 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                 <SelectItem value="all-time">All Time</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              disabled={true}
-              onValueChange={(v) => {
-
-              }}
-              defaultValue={2}
-            >
-              <SelectTrigger
-                onFocus={(e) => {
-
-                }}
-                id="length"
-                aria-label="Select Type"
-              >
+            <Select onValueChange={(v) => setTestType(v)} value={testType}>
+              <SelectTrigger id="type" aria-label="Select Type">
                 <SelectValue placeholder="Select Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={1}>
-                  Timed
-                </SelectItem>
-                <SelectItem value={2}>
-                  Words
-                </SelectItem>
+                <SelectItem value="Timed">Timed</SelectItem>
+                <SelectItem value="Words">Words</SelectItem>
               </SelectContent>
             </Select>
             <Select
-              disabled={true}
-              onValueChange={(v) => {
-
-              }}
-              defaultValue={1}
+              onValueChange={(v) => setTestLength(Number(v))}
+              value={testLength}
             >
-              <SelectTrigger
-                onFocus={(e) => {
-
-                }}
-                id="length"
-                aria-label="Select Length"
-              >
+              <SelectTrigger id="length" aria-label="Select Length">
                 <SelectValue placeholder="Select Length" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={1}>
-                  25 Words
-                </SelectItem>
-                <SelectItem value={2}>
-                  50 Words
-                </SelectItem>
-                <SelectItem value={3}>
-                  100 Words
-                </SelectItem>
+                {testType === "Words"
+                  ? wordCounts.map((count) => (
+                      <SelectItem key={count} value={count}>
+                        {count} Words
+                      </SelectItem>
+                    ))
+                  : durations.map((duration) => (
+                      <SelectItem key={duration} value={duration}>
+                        {duration} Seconds
+                      </SelectItem>
+                    ))}
               </SelectContent>
             </Select>
           </div>
@@ -298,94 +242,48 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
           <TableCaption>If you&apos;re on here, good job!</TableCaption>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-left font-bold text-xl">Place</TableHead>
-              <TableHead className="text-left font-bold text-xl">Name</TableHead>
-              <TableHead className="text-center font-bold text-xl">WPM</TableHead>
-              <TableHead className="text-center font-bold text-xl">Accuracy</TableHead>
-              {/* <TableHead className="text-center font-bold text-xl">Type</TableHead> */}
-              <TableHead className="text-center font-bold text-xl">Date</TableHead>
+              <TableHead className="text-left font-bold text-xl">
+                Place
+              </TableHead>
+              <TableHead className="text-left font-bold text-xl">
+                Name
+              </TableHead>
+              <TableHead className="text-center font-bold text-xl">
+                WPM
+              </TableHead>
+              <TableHead className="text-center font-bold text-xl">
+                Accuracy
+              </TableHead>
+              <TableHead className="text-center font-bold text-xl">
+                Date
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {currentTestsWords25All.map((test, index) => (
-              <TableRow className key={index}>
-                <TableCell className="font-thin text-left pl-6">{index + 1}</TableCell>
-                <TableCell className=" text-left">{test.username}</TableCell>
-                <TableCell className="font-bold text-center">{test.results.trueWPM.toFixed(2)}</TableCell>
-                <TableCell className="text-center">{test.results.accuracy.toFixed(2)}</TableCell>
-                <TableCell className="font-thin text-center">{new Date(test.timestamp).toLocaleDateString("en-US").toString()}</TableCell>
+            {testData.map((test, index) => (
+              <TableRow key={index}>
+                <TableCell className="font-thin text-left pl-6">
+                  {index + 1}
+                </TableCell>
+                <TableCell className="text-left">{test.username}</TableCell>
+                <TableCell className="font-bold text-center">
+                  {test.results.trueWPM.toFixed(2)}
+                </TableCell>
+                <TableCell className="text-center">
+                  {test.results.accuracy.toFixed(2)}%
+                </TableCell>
+                <TableCell className="font-thin text-center">
+                  {new Date(test.timestamp)
+                    .toLocaleDateString("en-US")
+                    .toString()}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
-
-      <div className="leaderboard">
-        OLD LEADERBOARD (legacy users)
-        <div className="leaderboard-container">
-          <div className="leaderboard-section">
-            <div className="section-title">15 Second Tests</div>
-            <div className="leaderboard-list">
-              {currentTests15.map((test, index) => (
-                <div key={index} className="leaderboard-item">
-                  <div className="leaderboard-rank">
-                    {index + 1}:
-                    <span className="leaderboard-username">
-                      {test.username}
-                    </span>
-                  </div>
-                  <div className="leaderboard-wpm">
-                    true WPM: {test.results.trueWPM}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="leaderboard-section">
-            <div className="section-title">30 Second Tests</div>
-            <div className="leaderboard-list">
-              {currentTests30.map((test, index) => (
-                <div key={index} className="leaderboard-item">
-                  <div className="leaderboard-rank">
-                    {index + 1}:
-                    <span className="leaderboard-username">
-                      {test.username}
-                    </span>
-                  </div>
-                  <div className="leaderboard-wpm">
-                    true WPM: {test.results.trueWPM}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="leaderboard-section">
-            <div className="section-title">60 Second Tests</div>
-            <div className="leaderboard-list">
-              {currentTests60.map((test, index) => (
-                <div key={index} className="leaderboard-item">
-                  <div className="leaderboard-rank">
-                    {index + 1}:
-                    <span className="leaderboard-username">
-                      {test.username}
-                    </span>
-                  </div>
-                  <div className="leaderboard-wpm">
-                    true WPM: {test.results.trueWPM}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-
     </div>
   );
 }
 
 export default LeaderBoard;
-
