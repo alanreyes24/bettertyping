@@ -69,121 +69,122 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
           })
         }}
         />
-        <div className='flex flex-1 flex-col'> */}
-        {/* TEST */}
-        <Test
+        */}
+        <div className='flex flex-1 flex-col'>
+          {/* TEST */}
+          <Test
 
-          user={user}
-          sendData={(test) => {
-            setTest(test);
-            setChartData(test.words.chartData);
-            setOnboardingType("analysis")
+            user={user}
+            sendData={(test) => {
+              setTest(test);
+              setChartData(test.words.chartData);
+              setOnboardingType("analysis")
 
-          }}
-          AIMode={false}
-        />
+            }}
+            AIMode={false}
+          />
 
-        {(user.username == "guest" && !test.sent) ? <><p className='max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
-          UNSAVED
-        </p>
-          <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
-            Sign in to save your test
-          </p></> : <></>}
+          {(user.username == "guest" && !test.sent) ? <><p className='max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
+            UNSAVED
+          </p>
+            <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
+              Sign in to save your test
+            </p></> : <></>}
 
-        {/* ANALYSIS */}
-        <div className="analysis hidden opacity-0 mb-24">
-          <div className='space-y-4 justify-center text-center self-center mt-24 mx-auto max-w-3xl lg:max-w-6xl'>
+          {/* ANALYSIS */}
+          <div className="analysis hidden opacity-0 mb-24">
+            <div className='space-y-4 justify-center text-center self-center mt-24 mx-auto max-w-3xl lg:max-w-6xl'>
 
-            <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
-              Analysis
-            </h1>
-            <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed'>
-              An in depth look at your typing test. For a more detailed report,
-              use our AI tool!
-            </p>
-
-
-
-          </div>
+              <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
+                Analysis
+              </h1>
+              <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed'>
+                An in depth look at your typing test. For a more detailed report,
+                use our AI tool!
+              </p>
 
 
-
-          {/* REPORT */}
-          <div className='max-w-3xl lg:max-w-6xl grid grid-cols-2 lg:grid-cols-5 mt-6 gap-6 mx-auto'>
-            {/* GRAPH */}
-            <div className='w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm'>
-              <div className='space-y-1'>
-                <h2 className='text-2xl font-bold'>Words Per Minute</h2>
-                <p className='text-muted-foreground'>
-                  Track your WPM over the length of the test.
-                </p>
-              </div>
-              <ResponsiveContainer width='100%' height={300}>
-                <AreaChart
-                  data={chartData}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}>
-                  <CartesianGrid strokeDasharray='3 3' vertical={false} />
-                  <XAxis
-
-                    testKey='second'
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={2}
-                    tickFormatter={(value) => value + 1}
-                  />
-                  {/* <YAxis /> */}
-                  <YAxis
-                    // type='number'
-                    domain={["dataMin", "dataMax + 25"]}
-                    tickLine={false}
-                    axisLine={false}
-
-                  // tickMargin={8}
-                  // tickCount={8}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--secondary))",
-                      border: 0,
-                      borderRadius: "0.5rem",
-                    }}
-                    wrapperStyle={{ color: "white", borderRadius: "2rem" }}
-                  />
-                  <Area
-
-                    type='monotone'
-                    dataKey='trueWPM'
-                    stackId='1'
-                    stroke='hsl(143, 100%, 51%)'
-                    fill='hsl(143, 100%, 51%)'
-                    fillOpacity={0.15}
-                  />
-                  <Area
-                    type='monotone'
-                    dataKey='rawWPM'
-                    stackId='0'
-                    stroke='hsl(20, 100%, 47%)'
-                    fill='hsl(34, 100%, 47%)'
-                    fillOpacity={0.1}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
 
             </div>
 
-            {/* STATISTICS */}
 
-            <Statistics test={test} />
-            {/* HEATMAP */}
-            <Heatmap test={test} />
 
-            {/* MISTAKES */}
-            {/* <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
+            {/* REPORT */}
+            <div className='max-w-3xl lg:max-w-6xl grid grid-cols-2 lg:grid-cols-5 mt-6 gap-6 mx-auto'>
+              {/* GRAPH */}
+              <div className='w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm'>
+                <div className='space-y-1'>
+                  <h2 className='text-2xl font-bold'>Words Per Minute</h2>
+                  <p className='text-muted-foreground'>
+                    Track your WPM over the length of the test.
+                  </p>
+                </div>
+                <ResponsiveContainer width='100%' height={300}>
+                  <AreaChart
+                    data={chartData}
+                    margin={{
+                      top: 10,
+                      right: 30,
+                      left: 0,
+                      bottom: 0,
+                    }}>
+                    <CartesianGrid strokeDasharray='3 3' vertical={false} />
+                    <XAxis
+
+                      testKey='second'
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={2}
+                      tickFormatter={(value) => value + 1}
+                    />
+                    {/* <YAxis /> */}
+                    <YAxis
+                      // type='number'
+                      domain={["dataMin", "dataMax + 25"]}
+                      tickLine={false}
+                      axisLine={false}
+
+                    // tickMargin={8}
+                    // tickCount={8}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--secondary))",
+                        border: 0,
+                        borderRadius: "0.5rem",
+                      }}
+                      wrapperStyle={{ color: "white", borderRadius: "2rem" }}
+                    />
+                    <Area
+
+                      type='monotone'
+                      dataKey='trueWPM'
+                      stackId='1'
+                      stroke='hsl(143, 100%, 51%)'
+                      fill='hsl(143, 100%, 51%)'
+                      fillOpacity={0.15}
+                    />
+                    <Area
+                      type='monotone'
+                      dataKey='rawWPM'
+                      stackId='0'
+                      stroke='hsl(20, 100%, 47%)'
+                      fill='hsl(34, 100%, 47%)'
+                      fillOpacity={0.1}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+
+              </div>
+
+              {/* STATISTICS */}
+
+              <Statistics test={test} />
+              {/* HEATMAP */}
+              <Heatmap test={test} />
+
+              {/* MISTAKES */}
+              {/* <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
                 <div className='flex items-center justify-between'>
                   <div className='space-y-1'>
                     <h2 className='text-2xl font-bold'>Mistakes</h2>
@@ -193,15 +194,15 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
                   </div>
                 </div> */}
 
-            {/* header */}
-            {/* <div className='grid grid-cols-3 gap-4 border-b mt-4 text-center'>
+              {/* header */}
+              {/* <div className='grid grid-cols-3 gap-4 border-b mt-4 text-center'>
                   <div className='text-lg font-medium'>Word</div>
                   <div className='text-lg font-medium'>Typed</div>
                   <div className='text-lg font-medium'>Count</div>
                 </div> */}
 
-            {/* list */}
-            {/* <ScrollArea className='h-64'>
+              {/* list */}
+              {/* <ScrollArea className='h-64'>
                   <div className='grid grid-cols-3 gap-2 text-center'>
                     <div>our</div>
                     <div>uor</div>
@@ -213,13 +214,13 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
                   </div>
                 </ScrollArea>
               </div> */}
+            </div>
           </div>
+
+
+
         </div>
-
-
-
-      </div>
-    </div >
+      </div >
     </>
   );
 }
