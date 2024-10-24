@@ -90,20 +90,20 @@ export default function OnboardingModal({ type, onHide, user, }) {
     const [visited, setVisited] = useState()
 
     // FIRST TIME COOKIE SAVING
-    useEffect(() => {
+    // useEffect(() => {
 
-        if (decodeURIComponent(document.cookie).includes("visit")) {
-            setVisited(true)
-            onHide()
+    //     if (decodeURIComponent(document.cookie).includes("visit")) {
+    //         setVisited(true)
+    //         onHide()
 
-        } else {
-            document.cookie = "visit";
-            console.log("Welcome to bettertyping!")
-            setOpen(true)
-        }
+    //     } else {
+    //         // document.cookie = "visit";
+    //         console.log("Welcome to bettertyping!")
+    //         setOpen(true)
+    //     }
 
 
-    }, [])
+    // }, [])
 
 
 

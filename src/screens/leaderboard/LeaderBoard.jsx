@@ -249,7 +249,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
         </div>
 
         <Table className="text-lg">
-          <TableCaption>If you're on here, good job!</TableCaption>
+          <TableCaption>If you`&apos;`re on here, good job!</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="text-left font-bold text-xl">Place</TableHead>
