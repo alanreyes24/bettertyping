@@ -85,26 +85,35 @@ function OnboardingModal({ type, onHide, user, }) {
     const [open, setOpen] = useState(false)
     const [currentStep, setCurrentStep] = useState(0)
     const [visited, setVisited] = useState()
+    const [firstTime, setFirstTime] = useState()
 
     // FIRST TIME COOKIE SAVING
     useEffect(() => {
 
         if (decodeURIComponent(document.cookie).includes("visit")) {
             setVisited(true)
+            setFirstTime(false)
             onHide()
 
         } else {
             document.cookie = "visit";
             console.log("Welcome to bettertyping!")
             setOpen(true)
+            setFirstTime(true)
+
         }
 
 
     }, [])
 
 
+
+
     useEffect(() => {
-        // setOpen(true)
+        if (type == "analysis" && firstTime) {
+            setFirstTime(false)
+            setOpen(true)
+        }
         setCurrentStep(0)
 
     }, [type])
@@ -123,6 +132,10 @@ function OnboardingModal({ type, onHide, user, }) {
         <Dialog open={open} onOpenChange={(e) => {
             setOpen(e)
             onHide()
+
+            if (type == "analysis") {
+                setFirstTime(false)
+            }
         }}>
             <DialogContent className="sm:max-w-[525px] p-8">
                 <DialogHeader>

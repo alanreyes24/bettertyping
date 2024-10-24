@@ -634,7 +634,14 @@ const Test = ({ user, AIMode, sendData }) => {
             }}
           />
         </div>
+
       </div>
+      {(user.username == "guest" && !test.sent) ? <><p className='intro opacity-0 max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
+        UNSAVED
+      </p>
+        <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
+          Sign in to save your test
+        </p></> : <></>}
     </>
   );
 };

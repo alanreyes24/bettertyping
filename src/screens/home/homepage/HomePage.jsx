@@ -36,6 +36,13 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
 
   const container = useRef();
 
+  useEffect(() => {
+    if (test.state == 3) {
+      console.log("3")
+      setOnboardingType("analysis")
+    }
+  }, [test])
+
   useGSAP(
     () => {
       const tl = gsap.timeline();
@@ -79,18 +86,13 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
             sendData={(test) => {
               setTest(test);
               setChartData(test.words.chartData);
-              setOnboardingType("analysis")
+
 
             }}
             AIMode={false}
           />
 
-          {(user.username == "guest" && !test.sent) ? <><p className='max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
-            UNSAVED
-          </p>
-            <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
-              Sign in to save your test
-            </p></> : <></>}
+
 
           {/* ANALYSIS */}
           <div className="analysis hidden opacity-0 mb-24">
