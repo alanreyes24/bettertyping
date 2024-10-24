@@ -25,7 +25,8 @@ import Statistics from "./components/statistics/Statistics";
 
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-// import OnboardingModal from "../../../components/onboarding/onboardingModal";
+
+import OnboardingModal from "../homepage/components/onboarding/OnboardingModal";
 
 
 function HomePage({ user, handleUserChange, handleLogout, visited }) {
@@ -54,7 +55,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
 
 
       <div ref={container} className='bg-background w-full h-full'>
-        {/* <OnboardingModal user={user} type={onboardingType} onHide={() => {
+        <OnboardingModal user={user} type={onboardingType} onHide={() => {
           gsap
             .to(".intro", {
               opacity: 1,
@@ -69,7 +70,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
           })
         }}
         />
-        */}
+
         <div className='flex flex-1 flex-col'>
           {/* TEST */}
           <Test
