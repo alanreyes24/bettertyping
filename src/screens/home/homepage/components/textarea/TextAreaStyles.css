@@ -7,13 +7,6 @@
   /* background-color: #40404050; */
 }
 
-.type__container {
-  overflow: hidden;
-  min-width: 50vw;
-  max-width: 80vw;
-  height: 7.5rem;
-}
-
 .type__box {
   /* box-shadow: 0px -5px 20px -50px rgba(0, 0, 0, 0.15); */
   box-sizing: border-box;

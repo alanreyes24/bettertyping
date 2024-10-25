@@ -1,23 +1,51 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 5% 6%;
+    --foreground: 60 5% 90%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 240 4% 15%;
+    --secondary-foreground: 60 5% 85%;
+    --accent: 240 0% 13%;
+    --accent-foreground: 60 0% 100%;
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 98%;
+    --muted: 240 5% 25%;
+    --muted-foreground: 60 5% 85%;
+    --card: 240 4% 10%;
+    --card-foreground: 60 5% 90%;
+    --popover: 240 5% 15%;
+    --popover-foreground: 60 5% 85%;
+    --border: 240 6% 20%;
+    --input: 240 6% 20%;
+    --ring: 240 5% 90%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: "Montserrat", sans-serif;
+  }
+}
+
 :root {
-  color: rgba(255, 255, 255, 0.87);
-  /* background: linear-gradient(#25335e, #344984); */
-  background: #273564;
-  margin: 0;
-  display: flex;
-  max-width: 100vw;
-  min-width: 100vw;
-  box-sizing: border-box;
-  font-display: block;
-}
-
-body {
-  margin: 0;
-  overflow: hidden;
-}
-
-a:hover {
-  cursor: pointer;
-  display: inline-block;
-  transform: scale(1.05);
-  transition: all 0.15s ease;
+  font-family: "Montserrat", sans-serif;
 }

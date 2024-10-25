@@ -24,10 +24,6 @@
   padding-left: 1.7rem;
 }
 
-.next {
-  /* background-color: #90909020; */
-}
-
 .cursorBlink {
   animation: cursorBlink 1s infinite;
 }

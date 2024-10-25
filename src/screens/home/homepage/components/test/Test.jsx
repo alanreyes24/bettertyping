@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
 import { Scatter } from "react-chartjs-2";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { LoginForm } from "../loginpopup/LoginPopup";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,6 +18,20 @@ import {
   Legend,
 } from "chart.js";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import { gsap } from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+import { useGSAP } from "@gsap/react";
+
+gsap.registerPlugin(useGSAP);
+
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -27,14 +42,9 @@ ChartJS.register(
   Tooltip,
   Legend
 );
+gsap.registerPlugin(ScrollToPlugin);
 
-const Test = ({ user, AIMode }) => {
-  const navigate = useNavigate();
-
-  const handleEndTestRedirect = () => {
-    navigate("/test-finished", { state: { AIMode } });
-  };
-
+const Test = ({ user, AIMode, sendData }) => {
   const sendTestToBackend = async () => {
     try {
       console.log("SENDING!");
@@ -56,11 +66,46 @@ const Test = ({ user, AIMode }) => {
     }
   };
 
-  const [hideSettings, setHideSettings] = useState(false);
+  const handleEndTest = () => {
+    // navigate("/test-finished", { state: { AIMode } });
+    console.log(test.timestamp);
+
+    //weird things happen (its sent twice) while timestamp is 0 (i have no ide awhy)
+
+    if (user.username !== "guest" && test.timestamp != 0) {
+      console.log("sending from end test");
+
+      sendTestToBackend()
+        .catch((error) => {
+          console.log(error);
+        })
+        .then(() => {
+          setSent(true);
+        });
+    }
+
+    //send data out to homepage
+    sendData(test);
+
+    //SCROLLING ANIMATION
+
+    gsap.to(".analysis", { display: "block" });
+    gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
+    gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });
+  };
+
+  // called if user changes settings during the test
+  const cancelTest = () => {
+    setResetWords(true);
+    setChartData([]);
+    gsap.to(".analysis", { opacity: 0, duration: 0.4, delay: 0 });
+    gsap.to(".analysis", { display: "none", duration: 0.4, delay: 0.4 });
+    gsap.to(window, { duration: 0.5, delay: 0, scrollTo: 0 });
+  };
 
   const [test, setTest] = useState({
     userID: "",
-    username: "aaaa",
+    username: "guest",
     testID: 0,
     state: -1,
     finished: false,
@@ -69,17 +114,16 @@ const Test = ({ user, AIMode }) => {
       attemptedWords: 0,
       correctLetters: [],
       incorrectLetters: [],
-      trueWPMArray: [],
-      rawWPMArray: [],
+      chartData: [],
     },
     settings: {
-      type: "time",
-      length: 300,
-      count: 50,
+      type: "words",
+      length: 150,
+      count: 25,
       difficulty: "normal",
     },
     timer: {
-      timeLeft: 300,
+      timeLeft: 0,
       isActive: false,
       timerGoesUp: false,
     },
@@ -88,90 +132,101 @@ const Test = ({ user, AIMode }) => {
     timestamp: 0,
   });
 
-  const [trueWPMArray, setTrueWPMArray] = useState([]);
-  const [rawWPMArray, setRawWPMArray] = useState([]);
+  const [hideSettings, setHideSettings] = useState(false);
+  const [resetWords, setResetWords] = useState(false);
+  const [chartData, setChartData] = useState([]);
+
+  const [settingValue, setSettingValue] = useState(1);
+  const [typeValue, setTypeValue] = useState("words");
+  const [sent, setSent] = useState(false);
+
+  //TODO: finish test (MIGHT NOT BE NEEDED)
+
+  // useEffect(() => {
+  //   if (test.state === 3 && !test.finished) {
+  //     setTest((prevTest) => ({
+  //       ...prevTest,
+  //       finished: true,
+  //     }));
+  //   }
+  // }, [test]);
+
+  // HANDLE WEIRD USER ISNT SIGNED IN BUT WANTS TO SAVE SO SIGNS IN AND THEN DOESNT SEND TEST
+  useEffect(() => {
+    setTest((prevTest) => ({
+      ...prevTest,
+      userID: user._id,
+      username: user.username,
+    }));
+  }, [user]);
 
   useEffect(() => {
-    if (
-      test.state <= 1 &&
-      test.timer.timeLeft === 0 &&
-      test.settings.type === "time"
-    ) {
-      setTest((prevTest) => ({
-        ...prevTest,
-        state: 3,
-      }));
-    }
-  }, [test]);
-
-  useEffect(() => {
-    if (test.state === 3 && !test.finished) {
-      setTest((prevTest) => ({
-        ...prevTest,
-        finished: true,
-      }));
-    }
-  }, [test]);
-
-  useEffect(() => {
-    if (test.finished && Object.keys(test.results).length === 0) {
-      let totalCorrect = 0;
-      let totalIncorrect = 0;
-
-      for (const value of Object.values(test.words.correctLetters)) {
-        totalCorrect += value.length;
+    if (test.username != undefined && test.userID != undefined) {
+      if (
+        test.username != "guest" &&
+        test.userID != "" &&
+        test.timestamp !== 0 &&
+        !sent
+      ) {
+        sendTestToBackend()
+          .catch((error) => {
+            console.log(error);
+            setResetWords(true);
+            setSent(false);
+          })
+          .then(setSent(true));
       }
-
-      for (const value of Object.values(test.words.incorrectLetters)) {
-        totalIncorrect += value.length;
-      }
-
-      const correctOnlyWPM =
-        (600 * (totalCorrect / 5)) /
-        (test.settings.length - test.timer.timeLeft);
-      const trueWPM =
-        (600 * ((totalCorrect - totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
-      const rawWPM =
-        (600 * ((totalCorrect + totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
-
-      const accuracy = (
-        (totalCorrect / (totalCorrect + totalIncorrect)) *
-        100
-      ).toFixed(2);
-
-      setTest((prevTest) => ({
-        ...prevTest,
-        results: {
-          trueWPM: test.settings.type === "time" ? trueWPM : trueWPM * -1,
-          correctOnlyWPM:
-            test.settings.type === "time"
-              ? correctOnlyWPM
-              : correctOnlyWPM * -1,
-          rawWPM: test.settings.type === "time" ? rawWPM : rawWPM * -1,
-          accuracy,
-        },
-      }));
     }
-  }, [test]);
+  }, [test.userID]);
 
   useEffect(() => {
-    if (test.state === 1 && test.userID === "") {
+    setTest((prevTest) => ({
+      ...prevTest,
+      sent: sent,
+    }));
+
+    sendData(test);
+  }, [sent]);
+
+  useEffect(() => {
+    if (test.state == 1 && test.userID === "") {
       setTest((prevTest) => ({
         ...prevTest,
         userID: user._id,
         username: user.username,
       }));
     }
-  }, [test.state, user]);
+  }, [test.state, test.user, user]);
 
   useEffect(() => {
-    if (test.state === 1) {
-      setHideSettings(true);
+    setTest((prevTest) => ({
+      ...prevTest,
+      userID: user._id,
+      username: user.username,
+    }));
+  }, [user]);
 
-      if (test.settings.type === "time" && test.timer.timeLeft > 0) {
-        setTimeout(() => {
+  useEffect(() => {
+    // HANDLE TIMER
+
+    if (test.state === 1) {
+      //TIMER CODE
+      var interval = 100; // ms
+      var expected = Date.now() + interval;
+      let timeout = setTimeout(step, interval);
+
+      // eslint-disable-next-line no-inner-declarations
+      function step() {
+        var dt = Date.now() - expected;
+        if (dt > interval) {
+          // THIS IS BAD
+          console.log("something strange happened, timer not working");
+        }
+
+        //DECREMENT TIMER
+        // console.log("DECREMENT");
+
+        if (test.settings.type === "time" && test.timer.timeLeft > 0) {
           setTest((prevTest) => ({
             ...prevTest,
             timer: {
@@ -179,244 +234,296 @@ const Test = ({ user, AIMode }) => {
               timeLeft: prevTest.timer.timeLeft - 1,
             },
           }));
-        }, 100);
-      } else if (test.settings.type === "words") {
-        setTimeout(() => {
+        }
+
+        if (test.settings.type === "words") {
           setTest((prevTest) => ({
             ...prevTest,
             timer: {
               ...prevTest.timer,
               timeLeft: prevTest.timer.timeLeft + 1,
-              timerGoesUp: true,
             },
           }));
-        }, 100);
+        }
+
+        expected += interval;
+        let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
+
+        clearTimeout(timeout);
+        clearTimeout(other);
       }
     }
-  }, [test.settings.type, test.timer.timeLeft, test.state]);
 
-  useEffect(() => {
-    if (test.state === 1 && !test.finished) {
-      setTimeout(() => {
-        setTrueWPMArray((prevArray) => [
-          ...prevArray,
-          calculateWPMs("trueWPM"),
-        ]);
-        setRawWPMArray((prevArray) => [...prevArray, calculateWPMs("rawWPM")]);
-      }, 1000);
+    if (test.state == 3 && !sent) {
+      handleEndTest();
     }
-  }, [test.state, trueWPMArray]);
+  }, [test.state, test.timer]);
 
+  //WPM LOGGING
   useEffect(() => {
-    if (test.finished) {
-      const convertedTrueWPMArray = trueWPMArray.map((item, index) => ({
-        x: index,
-        y: parseFloat(item),
-      }));
-      const convertedRawWPMArray = rawWPMArray.map((item, index) => ({
-        x: index,
-        y: parseFloat(item),
-      }));
+    // console.log(test);
 
-      setTrueWPMArray(convertedTrueWPMArray);
-      setRawWPMArray(convertedRawWPMArray);
-
-      setTest((prevTest) => ({
-        ...prevTest,
-        words: {
-          ...prevTest.words,
-          trueWPMArray: convertedTrueWPMArray,
-          rawWPMArray: convertedRawWPMArray,
-        },
-      }));
-    }
-  }, [test.finished]);
-
-  useEffect(() => {
-    const handleTestCompletion = async () => {
-      if (user.username !== "guest" && !AIMode) {
-        await sendTestToBackend();
-      } else if (user.username !== "guest" && AIMode) {
-        await sendAITestToBackend();
-      }
-      if (user.username != "guest") {
-        handleEndTestRedirect();
-      }
-    };
-
-    if (test.state === 3 && test.finished && test.eventLog.length !== 0) {
-      handleTestCompletion();
-    }
-  }, [test.eventLog, test.state, test.finished, user.username, AIMode]);
-
-  const calculateWPMs = (type) => {
-    if (test.state === 1) {
+    if (test.timer.timeLeft % 10 == 0 && test.state == 1) {
       let totalCorrect = 0;
       let totalIncorrect = 0;
-
       for (const value of Object.values(test.words.correctLetters)) {
         totalCorrect += value.length;
       }
-
       for (const value of Object.values(test.words.incorrectLetters)) {
         totalIncorrect += value.length;
       }
 
-      const trueWPM =
-        (600 * ((totalCorrect - totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
-      const rawWPM =
-        (600 * ((totalCorrect + totalIncorrect) / 5)) /
-        (test.settings.length - test.timer.timeLeft);
+      const calculateWPM = (totalCorrect, totalIncorrect, timeElapsed) => {
+        let trueWPM =
+          (600 * ((totalCorrect - totalIncorrect) / 5)) / timeElapsed;
+        let rawWPM =
+          (600 * ((totalCorrect + totalIncorrect) / 5)) / timeElapsed;
+        return { trueWPM, rawWPM };
+      };
 
-      if (type === "trueWPM" && !isNaN(trueWPM)) {
-        return test.settings.type === "time"
-          ? trueWPM.toFixed(2)
-          : (trueWPM * -1).toFixed(2);
-      } else if (type === "rawWPM" && !isNaN(rawWPM)) {
-        return test.settings.type === "time"
-          ? rawWPM.toFixed(2)
-          : (rawWPM * -1).toFixed(2);
+      const calculateAccuracy = (totalCorrect, totalIncorrect) => {
+        return (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
+      };
+
+      const updateResults = (trueWPM, rawWPM, accuracy, totalIncorrect) => {
+        setTest((prevTest) => ({
+          ...prevTest,
+          results: {
+            trueWPM: trueWPM.toFixed(2) * 1,
+            rawWPM: rawWPM.toFixed(2) * 1,
+            accuracy: accuracy.toFixed(1) * 1,
+            mistakes: totalIncorrect,
+          },
+        }));
+      };
+
+      const updateChartData = (trueWPM, rawWPM) => {
+        setChartData((prevArray) => [
+          ...prevArray,
+          {
+            second: prevArray.length + 1,
+            trueWPM: trueWPM.toFixed(2) * 1,
+            rawWPM: rawWPM.toFixed(2) * 1,
+          },
+        ]);
+      };
+
+      if (test.settings.type === "time" || test.settings.type !== "time") {
+        const timeElapsed =
+          test.settings.type === "time"
+            ? test.settings.length - test.timer.timeLeft
+            : test.timer.timeLeft;
+
+        const { trueWPM, rawWPM } = calculateWPM(
+          totalCorrect,
+          totalIncorrect,
+          timeElapsed
+        );
+        const accuracy = calculateAccuracy(totalCorrect, totalIncorrect);
+
+        if (
+          trueWPM > 0 &&
+          !isNaN(trueWPM) &&
+          rawWPM > 0 &&
+          !isNaN(rawWPM) &&
+          accuracy >= 0
+        ) {
+          updateResults(trueWPM, rawWPM, accuracy, totalIncorrect);
+          updateChartData(trueWPM, rawWPM);
+        }
+        // console.log(chartData);
       }
     }
-    return 0;
-  };
+  }, [test.timer.timeLeft]);
 
-  const wpmData = {
-    datasets: [
-      {
-        label: "True WPM",
-        data: trueWPMArray,
-        cubicInterpolationMode: "monotone",
-        backgroundColor: "rgba(255, 255, 255, 0.2)",
-        showLine: true,
-        fill: false,
-        borderWidth: 1,
-        borderColor: "rgba(255, 255, 255, 1)",
-        pointBackgroundColor: "rgba(255, 255, 255, 1)",
-        pointBorderColor: "#000",
-        pointHoverBackgroundColor: "#000",
-        pointHoverBorderColor: "rgba(255, 255, 255, 1)",
-      },
-      {
-        label: "Raw WPM",
-        data: rawWPMArray,
-        cubicInterpolationMode: "monotone",
-        showLine: true,
-        fill: true,
-        borderWidth: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.2)",
-        borderColor: "rgba(0, 0, 0, 1)",
-        pointBackgroundColor: "rgba(0, 0, 0, 1)",
-        pointBorderColor: "#fff",
-        pointHoverBackgroundColor: "#fff",
-        pointHoverBorderColor: "rgba(0, 0, 0, 1)",
-      },
-    ],
-  };
+  // ON TEST LOAD (state -1)
+  //TODO: FEST USER?
+  if (test.state === -1) {
+    //test
+  }
 
-  const options = {
-    animation: false,
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "top",
+  // CHECK FOR TIMER 0
+  if (
+    test.state <= 1 &&
+    test.timer.timeLeft <= 0 &&
+    test.settings.type === "time"
+  ) {
+    setTest((prevTest) => ({
+      ...prevTest,
+      userID: user._id,
+      username: user.username,
+      state: 3,
+      finished: true,
+      words: {
+        ...prevTest.words,
+        chartData: chartData,
       },
-      title: {
-        display: true,
-        text: "",
-      },
-    },
-    maintainAspectRatio: false,
-    scales: {
-      x: {
-        type: "linear",
-        ticks: {
-          stepSize: 1,
-        },
-      },
-      y: {
-        type: "linear",
-      },
-    },
-  };
+    }));
+  }
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: "3rem",
-        }}
-      >
-        {hideSettings || AIMode ? (
-          <div
-            style={{
-              display: "flex",
-              alignSelf: "center",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "15px",
-              padding: "1rem",
-              width: "20rem",
-              minHeight: "1rem",
-              maxHeight: "1rem",
-            }}
-          />
-        ) : (
-          <Settings
-            hideModal={hideSettings}
+    <>
+      {/* INTRO */}
+      <div className='intro pt-32 opacity-0 space-y-4 justify-center text-center self-center mt-16'>
+        <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
+          Test Your Typing Speed
+        </h1>
+        <p className='max-w-2xl self-center text-muted-foreground md:text-xl/relaxed'>
+          Take a short typing test to analyze your typing speed, accuracy, and
+          keystrokes.
+          {/* and we will match you with an individualized
+          AI program to improve your skils! */}
+        </p>
+      </div>
+
+      {/* TEST */}
+      <div className='test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border'>
+        {/* SETTINGS AND TIMER*/}
+        <div className='flex items-center justify-between'>
+          <div className='space-y-1'>
+            {test.state === 1 ? (
+              <Timer test={test} />
+            ) : (
+              <>
+                <h2 className='text-4xl font-bold'>
+                  {test.settings.type == "time"
+                    ? "Timed, "
+                    : "Count, " + test.settings.count}
+                  {test.settings.type == "time"
+                    ? test.settings.length / 10 + " Seconds"
+                    : " Words"}
+                </h2>
+                <p className='text-muted-foreground ml-1'>
+                  {test.settings.type == "time"
+                    ? "Type as many words as you can in "
+                    : "Type these " + test.settings.count}
+                  {test.settings.type == "time"
+                    ? test.settings.length / 10 + " Seconds"
+                    : " Words as fast as you can!"}
+                </p>
+              </>
+            )}
+          </div>
+          {/* SETTINGS */}
+          <div className='flex items-center gap-2'>
+            <Select
+              onValueChange={(value) => {
+                cancelTest();
+                console.log(value);
+                setTypeValue(value);
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  settings: {
+                    ...prevTest.settings,
+                    type: value,
+                    length:
+                      value == "time"
+                        ? settingValue == 1
+                          ? 150
+                          : settingValue == 2
+                          ? 300
+                          : 600
+                        : 0,
+                    count:
+                      settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
+                  },
+                  timer: {
+                    ...prevTest.timer,
+                    timeLeft:
+                      value == "time"
+                        ? settingValue == 1
+                          ? 150
+                          : settingValue == 2
+                          ? 300
+                          : 600
+                        : 0,
+                    timerGoesUp: value == "time" ? false : true,
+                  },
+                }));
+              }}
+              defaultValue='words'>
+              <SelectTrigger
+                onFocus={(e) => {
+                  cancelTest();
+                }}
+                id='type'
+                aria-label='Select Type'>
+                <SelectValue placeholder='Select Test' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='time'>Timed</SelectItem>
+                <SelectItem value='words'>Count</SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              onValueChange={(v) => {
+                setSettingValue(v);
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  settings: {
+                    ...prevTest.settings,
+                    type: typeValue,
+                    length: v == 1 ? 150 : v == 2 ? 300 : 600,
+                    count: v == 1 ? 25 : v == 2 ? 50 : 100,
+                  },
+                  timer: {
+                    ...prevTest.timer,
+                    timeLeft:
+                      typeValue == "time"
+                        ? v == 1
+                          ? 150
+                          : v == 2
+                          ? 300
+                          : 600
+                        : 0,
+                    timerGoesUp: typeValue == "time" ? false : true,
+                  },
+                }));
+              }}
+              defaultValue={1}>
+              <SelectTrigger
+                onFocus={(e) => {
+                  cancelTest();
+                }}
+                id='length'
+                aria-label='Select Length'>
+                <SelectValue placeholder='Select Length' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={1}>
+                  {test.settings.type == "time" ? "15 Seconds" : "25 Words"}
+                </SelectItem>
+                <SelectItem value={2}>
+                  {test.settings.type == "time" ? "30 Seconds" : "50 Words"}
+                </SelectItem>
+                <SelectItem value={3}>
+                  {test.settings.type == "time" ? "60 Seconds" : "100 Words"}
+                </SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* TEXT AREA */}
+        <div className='flex justify-center m-4 '>
+          <TextArea
+            user={user}
+            aiMode={AIMode}
             test={test}
-            passSettings={(newSettings) => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                timer: {
-                  ...prevTest.timer,
-                  timeLeft: newSettings.length,
-                },
-                settings: newSettings,
-              }));
+            selectedDifficulty={test.settings.difficulty}
+            passWords={(w) => {
+              setTimeout(() => {
+                setTest((prevTest) => ({
+                  ...prevTest,
+                  words: {
+                    ...prevTest.words,
+                    wordList: w,
+                  },
+                }));
+              }, 0);
             }}
-          />
-        )}
-      </div>
-      <div
-        style={{
-          justifyContent: "center",
-          alignSelf: "center",
-          marginBottom: "2rem",
-        }}
-      >
-        <Timer test={test} />
-      </div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          transition: "all .15s ease-out",
-          marginBottom: "2rem",
-        }}
-      >
-        <TextArea
-          user={user}
-          aiMode={AIMode}
-          test={test}
-          selectedDifficulty={test.settings.difficulty}
-          passWords={(w) => {
-            setTimeout(() => {
-              setTest((prevTest) => ({
-                ...prevTest,
-                words: {
-                  ...prevTest.words,
-                  wordList: w,
-                },
-              }));
-            }, 0);
-          }}
-          passCorrectLetters={(l) => {
-            setTimeout(() => {
+            passCorrectLetters={(l) => {
               setTest((prevTest) => ({
                 ...prevTest,
                 words: {
@@ -424,10 +531,8 @@ const Test = ({ user, AIMode }) => {
                   correctLetters: l,
                 },
               }));
-            }, 0);
-          }}
-          passIncorrectLetters={(l) => {
-            setTimeout(() => {
+            }}
+            passIncorrectLetters={(l) => {
               setTest((prevTest) => ({
                 ...prevTest,
                 words: {
@@ -435,102 +540,97 @@ const Test = ({ user, AIMode }) => {
                   incorrectLetters: l,
                 },
               }));
-            }, 0);
-          }}
-          onTextLoaded={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 0,
-            }));
-          }}
-          onTextStarted={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 1,
-            }));
-          }}
-          onTextFinished={() => {
-            setTest((prevTest) => ({
-              ...prevTest,
-              state: 3,
-            }));
-          }}
-          passEventLog={(e) => {
-            setTimeout(() => {
+            }}
+            onTextLoaded={() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                state: 0,
+              }));
+            }}
+            onTextStarted={() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                state: 1,
+              }));
+            }}
+            onTextFinished={() => {
+              setTest((prevTest) => ({
+                ...prevTest,
+                userID: user._id,
+                username: user.username,
+                state: 3,
+                finished: true,
+                words: {
+                  ...prevTest.words,
+                  chartData: chartData,
+                },
+              }));
+            }}
+            passEventLog={(e) => {
               setTest((prevTest) => ({
                 ...prevTest,
                 timestamp: e[0]?.timestamp || Date.now(),
                 eventLog: e,
               }));
-            }, 0);
-          }}
-          onFocus={() => {}}
-          onFocusLost={() => {}}
-        />
-      </div>
-      {user.username === "guest" && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            height: "50vh",
-            margin: "0 auto",
-          }}
-        >
-          {test.finished && wpmData && options && (
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  fontWeight: "bold",
-                  marginTop: "2rem",
-                }}
-              >
-                make an account to save your tests!
-              </div>
-              <div
-                style={{
-                  width: "80rem",
-                  height: "20rem",
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Scatter data={wpmData} options={options} />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  gap: "2rem",
-                  marginTop: "1rem",
-                  marginBottom: "3rem",
-                }}
-              >
-                <div>
-                  <span>raw WPM:</span> <b>{test?.results.rawWPM}</b>
-                </div>
-                <div>
-                  <span>true WPM:</span> <b>{test?.results.trueWPM}</b>
-                </div>
-                <div>
-                  <span>correct only WPM:</span>{" "}
-                  <b>{test?.results.correctOnlyWPM}</b>
-                </div>
-                <div>
-                  <span>accuracy:</span> <b>{test?.results.accuracy}%</b>
-                </div>
-              </div>
-            </div>
-          )}
+            }}
+            onFocus={() => {}}
+            reset={resetWords}
+            onReset={() => {
+              setResetWords(false);
+              setTest((prevTest) => ({
+                userID: user._id,
+                username: user.username,
+                testID: 0,
+                state: -1,
+                finished: false,
+                words: {
+                  wordList: [],
+                  attemptedWords: 0,
+                  correctLetters: [],
+                  incorrectLetters: [],
+                  chartData: [],
+                  // trueWPMArray: [],
+                  // rawWPMArray: [],
+                },
+                settings: {
+                  type: test.settings.type,
+                  length: test.settings.length,
+                  count: test.settings.count,
+                  difficulty: "normal",
+                },
+                timer: {
+                  timeLeft:
+                    typeValue == "time"
+                      ? settingValue == 1
+                        ? 150
+                        : settingValue == 2
+                        ? 300
+                        : 600
+                      : 0,
+                  isActive: false,
+                  timerGoesUp: test.timer.timerGoesUp,
+                },
+                results: {},
+                eventLog: [],
+                timestamp: 0,
+              }));
+            }}
+          />
         </div>
+      </div>
+      {user.username == "guest" && !test.sent ? (
+        <>
+          <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
+            UNSAVED
+          </p>
+          <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
+            Sign in to save your test
+          </p>
+        </>
+      ) : (
+        <></>
       )}
-    </div>
+    </>
   );
 };
 

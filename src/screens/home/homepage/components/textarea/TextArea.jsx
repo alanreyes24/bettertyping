@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
+
 import Word from "../word/Word";
 import axios from "axios";
 import Cursor from "../cursor/Cursor";
@@ -16,11 +17,13 @@ function TextArea({
   onTextLoaded,
   onTextStarted,
   onFocus,
-  onFocusLost,
   test,
+  reset,
+  onReset,
 }) {
   const [wordList, setWordList] = useState([]);
   const [wordsLoaded, setWordsLoaded] = useState(false);
+  let correctLettersArray = [];
 
   const [correctLetters, setCorrectLetters] = useState({});
   const [incorrectLetters, setIncorrectLetters] = useState({});
@@ -64,74 +67,122 @@ function TextArea({
   }
 
   useEffect(() => {
-    const cursor = document.getElementById("cursor");
-    if (cursor) {
-      if (shouldUpdateCursor && test.state === 0) {
-        cursor.classList.add("cursorBlink");
-      } else {
-        cursor.classList.remove("cursorBlink");
+    // handle line shifting
+    if (test.state === 1) {
+      const currentLetter =
+        document.getElementsByClassName("letter")[currentLetterIndex - 1];
+      const nextLetter =
+        document.getElementsByClassName("letter")[currentLetterIndex];
+
+      if (currentLetter && nextLetter) {
+        if (getOffset(nextLetter).top > getOffset(currentLetter).top) {
+          setDeleteLines((prev) => prev + 1);
+        } else if (getOffset(nextLetter).top < getOffset(currentLetter).top) {
+          setDeleteLines((prev) => prev - 1);
+        }
       }
     }
-  }, [shouldUpdateCursor, test.state]);
+  }, [currentLetterIndex, test.state]);
 
   useEffect(() => {
-    if (test.state === 1) {
-      setTimeout(() => {
-        setCurrentLetterArrayIndexValue((prev) => prev + 1);
-      }, 1000);
-      setIncorrectLetters((prev) => ({
-        ...prev,
-        [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
-      }));
-      setCorrectLetters((prev) => ({
-        ...prev,
-        [currentLetterArrayIndexValue]: currentCorrectLetterArray,
-      }));
+    // make words show up
+    if (test.state == -1) {
+      if (test.settings.type === "words") {
+        populateWordList(test.settings.count);
+      } else {
+        populateWordList(50);
+      }
     }
-  }, [test.state, currentCorrectLetterArray, currentIncorrectLetterArray]);
+
+    // extend word list
+    if (test.state === 1 && test.settings.type !== "words") {
+      if (currentLetterIndex / 5 >= wordList.length - 30 && !reset) {
+        // console.log("extending")
+        // console.log(wordList.length)
+        extendWordList(30);
+      }
+    }
+
+    if (reset) {
+      setWordList([]);
+      setCorrectLetters([]);
+      setCurrentLetterArrayIndexValue(0);
+      setCurrentLetterIndex(0);
+      setDeleteLines(0);
+      onReset();
+    }
+  }, [
+    test.settings.type,
+    test.settings.count,
+    test.state,
+    currentLetterIndex,
+    currentLetterArrayIndexValue,
+    wordList,
+    reset,
+  ]);
+
+  // track letters for errors by second
+  useEffect(() => {
+    if (
+      JSON.stringify(test.words.incorrectLetters) !==
+      JSON.stringify(incorrectLetters)
+    ) {
+      passIncorrectLetters(incorrectLetters);
+    }
+
+    if (
+      JSON.stringify(test.words.correctLetters) !==
+      JSON.stringify(correctLetters)
+    ) {
+      passCorrectLetters(correctLetters);
+    }
+
+    if (
+      test.state === 3 &&
+      JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
+    ) {
+      passEventLog(eventLog);
+    }
+
+    // if (test.state === 3 && test.words.attemptedWords === 0) {
+    //   const arr = Array.from(
+    //     { length: totalCorrectWords },
+    //     (_, i) => document.getElementsByClassName("word")[i].textContent
+    //   );
+    //   setTimeout(() => {
+    //     passWords(arr);
+    //   }, 0);
+    // }
+  }, [currentLetterArrayIndexValue, test.state, test.timer.timeLeft]);
 
   useEffect(() => {
-    if (test.state === 1) {
+    setIncorrectLetters((prev) => ({
+      ...prev,
+      [currentLetterArrayIndexValue]: currentIncorrectLetterArray,
+    }));
+    setCorrectLetters((prev) => ({
+      ...prev,
+      [currentLetterArrayIndexValue]: currentCorrectLetterArray,
+    }));
+
+    if (test.timer.timeLeft % 10 == 0 && test.state == 1 && !test.finished) {
+      setCurrentLetterArrayIndexValue((prev) => prev + 1);
+    }
+    if (test.state == 1 && test.timer.timeLeft % 10 == 0) {
       setCurrentIncorrectLetterArray([]);
       setCurrentCorrectLetterArray([]);
     }
-  }, [currentLetterArrayIndexValue]);
+  }, [test.state, test.timer.timeLeft, test.finished]);
 
-  useEffect(() => {
-    if (
-      test.state === 1 &&
-      JSON.stringify(test.words.correctLetters) !==
-        JSON.stringify(correctLetters)
-    ) {
-      setTimeout(() => {
-        passCorrectLetters(correctLetters);
-      }, 0);
+  // cursor blinking
+  const cursor = document.getElementById("cursor");
+  if (cursor) {
+    if (shouldUpdateCursor && test.state === 0) {
+      cursor.classList.add("cursorBlink");
+    } else {
+      cursor.classList.remove("cursorBlink");
     }
-  }, [correctLetters, passCorrectLetters, test.state]);
-
-  useEffect(() => {
-    if (
-      test.state === 1 &&
-      JSON.stringify(test.words.incorrectLetters) !==
-        JSON.stringify(incorrectLetters)
-    ) {
-      setTimeout(() => {
-        passIncorrectLetters(incorrectLetters);
-      }, 0);
-    }
-  }, [incorrectLetters, passIncorrectLetters, test.state]);
-
-  useEffect(() => {
-    if (
-      test.state === 3 &&
-      test.finished &&
-      JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
-    ) {
-      setTimeout(() => {
-        passEventLog(eventLog);
-      }, 0);
-    }
-  }, [eventLog, passEventLog, test.state, test.finished]);
+  }
 
   const focusInput = () => {
     const input = document.getElementById("input");
@@ -156,18 +207,20 @@ function TextArea({
       return Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word word={AIWordList[i % AIWordList.length]} />
           </div>
         ));
     } else {
-      return Array(amount)
+      let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
+
+      return arr;
     }
   };
 
@@ -178,8 +231,22 @@ function TextArea({
     onTextLoaded();
   }
 
+  function extendWordList(amount) {
+    let wordArr = Array(amount)
+      .fill(false)
+      .map((_, i) => (
+        <div key={i + wordList.length} className='word'>
+          <Word selectedDifficulty={selectedDifficulty} />
+        </div>
+      ));
+    setWordList((prev) => [...prev, ...wordArr]);
+  }
+
   const handleUserInput = (event) => {
     const input = event.key;
+
+    if (input == "Shift") return;
+
     const currentLetter =
       document.getElementsByClassName("letter")[currentLetterIndex];
     const nextLetter =
@@ -190,153 +257,102 @@ function TextArea({
       setStartTime(Date.now());
     }
 
-    setEventLog((prevLog) => [
-      ...prevLog,
-      {
-        timestamp,
-        intended: currentLetter.textContent,
-        typed: input,
-      },
-    ]);
+    if (currentLetter.textContent != undefined) {
+      setEventLog((prevLog) => [
+        ...prevLog,
+        {
+          timestamp,
+          intended: currentLetter.textContent,
+          typed: input,
+        },
+      ]);
 
-    if (input !== "Backspace") {
-      setTextTyped((prev) => prev + input);
+      if (input !== "Backspace") {
+        setTextTyped((prev) => prev + input);
 
-      if (input === currentLetter.textContent) {
-        if (currentLetter.textContent !== " ") {
-          setCurrentCorrectLetterArray((prev) => [...prev, input]);
-          setTotalCorrectLetters((prev) => prev + 1);
+        if (input === currentLetter.textContent) {
+          if (currentLetter.textContent !== " ") {
+            setCurrentCorrectLetterArray((prev) => [...prev, input]);
+            setTotalCorrectLetters((prev) => prev + 1);
+          } else {
+            setTotalCorrectWords((prev) => prev + 1);
+            setCurrentCorrectLetterArray((prev) => [...prev, input]);
+            setTextTyped("");
+          }
+          currentLetter.classList.remove("incorrect");
+          currentLetter.classList.add("correct");
+          if (nextLetter) nextLetter.classList.add("next");
+          setCurrentLetterIndex((prev) => prev + 1);
         } else {
-          setTotalCorrectWords((prev) => prev + 1);
-          setCurrentCorrectLetterArray((prev) => [...prev, input]);
-          setTextTyped("");
+          currentLetter.classList.add("incorrect");
+          setCurrentIncorrectLetterArray((prev) => [...prev, input]);
+          if (nextLetter) nextLetter.classList.add("next");
+          setCurrentLetterIndex((prev) => prev + 1);
         }
-        currentLetter.classList.remove("incorrect");
-        currentLetter.classList.add("correct");
-        if (nextLetter) nextLetter.classList.add("next");
-        setCurrentLetterIndex((prev) => prev + 1);
-      } else {
-        currentLetter.classList.add("incorrect");
-        setCurrentIncorrectLetterArray((prev) => [...prev, input]);
-        if (nextLetter) nextLetter.classList.add("next");
-        setCurrentLetterIndex((prev) => prev + 1);
-      }
 
-      if (
-        document.getElementsByClassName("letter").length ===
-        currentLetterIndex + 2
-      ) {
-        onTextFinished();
+        if (
+          document.getElementsByClassName("letter").length ===
+          currentLetterIndex + 2
+        ) {
+          onTextFinished();
+        }
+      } else if (input === "Backspace" && currentLetterIndex > 0) {
+        const lastLetter =
+          document.getElementsByClassName("letter")[currentLetterIndex - 1];
+        if (lastLetter) {
+          lastLetter.classList.remove("correct");
+          lastLetter.classList.remove("incorrect");
+        }
+        setCurrentLetterIndex((prev) => prev - 1);
+        setTextTyped((prev) => prev.slice(0, -1));
       }
-    } else if (input === "Backspace") {
-      const lastLetter =
-        document.getElementsByClassName("letter")[currentLetterIndex - 1];
-      if (lastLetter) {
-        lastLetter.classList.remove("correct");
-        lastLetter.classList.remove("incorrect");
-      }
-      setCurrentLetterIndex((prev) => prev - 1);
-      setTextTyped((prev) => prev.slice(0, -1));
     }
   };
 
-  useEffect(() => {
-    if (test.state <= 0) {
-      if (test.settings.type === "words") {
-        populateWordList(test.settings.count);
-      } else {
-        populateWordList(50);
-      }
-    }
-  }, [test.settings.type, test.settings.count, test.state]);
-
-  useEffect(() => {
-    if (test.state === 1) {
-      const currentLetter =
-        document.getElementsByClassName("letter")[currentLetterIndex - 1];
-      const nextLetter =
-        document.getElementsByClassName("letter")[currentLetterIndex];
-
-      if (currentLetter && nextLetter) {
-        if (getOffset(nextLetter).top > getOffset(currentLetter).top) {
-          setDeleteLines((prev) => prev + 1);
-        } else if (getOffset(nextLetter).top < getOffset(currentLetter).top) {
-          setDeleteLines((prev) => prev - 1);
-        }
-      }
-    }
-  }, [currentLetterIndex, test.state]);
-
-  function extendWordList(amount) {
-    let wordArr = Array(amount)
-      .fill(false)
-      .map((_, i) => (
-        <div key={i + wordList.length} className="word">
-          <Word selectedDifficulty={selectedDifficulty} />
-        </div>
-      ));
-    setWordList((prev) => [...prev, ...wordArr]);
-  }
-
-  if (test.state === 1 && test.settings.type !== "words") {
-    if (totalCorrectWords >= wordList.length - 30) {
-      extendWordList(50);
-    }
-  }
-
-  if (test.state === 3 && test.words.attemptedWords === 0) {
-    const arr = Array.from(
-      { length: totalCorrectWords },
-      (_, i) => document.getElementsByClassName("word")[i].textContent
-    );
-    setTimeout(() => {
-      passWords(arr);
-    }, 0);
-  }
-
   return (
     <>
-      <Cursor
-        shouldUpdate={shouldUpdateCursor}
-        currentLetter={currentLetterIndex}
-      />
-      <input
-        onBlur={() => {
-          setShouldUpdateCursor(false);
-          onFocusLost();
-        }}
-        id="input"
-        autoComplete="off"
-        autoCapitalize="off"
-        autoCorrect="off"
-        type="text"
-        data-gramm="false"
-        data-gramm_editor="false"
-        data-enable-grammarly="false"
-        list="autocompleteOff"
-        onKeyDown={(event) => {
-          if (
-            test.state === 0 &&
-            document.getElementsByClassName("letter").length
-          ) {
-            onTextStarted();
-            setShouldUpdateCursor(true);
-            handleUserInput(event);
-          } else if (test.state === 1) {
-            handleUserInput(event);
-          }
-        }}
-        style={{ opacity: 0, height: 0, width: 0 }}
-      />
-      <div className="type__container">
-        <div
-          onClick={focusInput}
-          className="type__box"
-          style={{
-            marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
+      <div>
+        <Cursor
+          shouldUpdate={shouldUpdateCursor}
+          currentLetter={currentLetterIndex}
+        />
+        <input
+          onBlur={() => {
+            setShouldUpdateCursor(false);
           }}
-        >
-          {wordsLoaded ? wordList : null}
+          id='input'
+          autoComplete='off'
+          autoCapitalize='off'
+          autoCorrect='off'
+          type='text'
+          data-gramm='false'
+          data-gramm_editor='false'
+          data-enable-grammarly='false'
+          list='autocompleteOff'
+          onKeyDown={(event) => {
+            if (
+              test.state === 0 &&
+              document.getElementsByClassName("letter").length
+            ) {
+              onTextStarted();
+              setShouldUpdateCursor(true);
+              handleUserInput(event);
+            } else if (test.state === 1) {
+              handleUserInput(event);
+            }
+          }}
+          style={{ opacity: 0, height: 0, width: 0 }}
+        />
+
+        <div className='rounded-lg w-full h-44 overflow-hidden '>
+          <div
+            onClick={focusInput}
+            className=''
+            style={{
+              marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
+            }}>
+            {wordsLoaded ? wordList : <></>}
+          </div>
         </div>
       </div>
     </>
