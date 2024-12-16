@@ -47,6 +47,7 @@ function TextArea({
 
   const [eventLog, setEventLog] = useState([]);
   const [startTime, setStartTime] = useState(0);
+  const [lastTimestamp, setLastTimestamp] = useState(0);
 
   const [AIWordList, setAIWordList] = useState([" "]);
 
@@ -264,8 +265,10 @@ function TextArea({
           timestamp,
           intended: currentLetter.textContent,
           typed: input,
+          delay: timestamp - lastTimestamp,
         },
       ]);
+      setLastTimestamp(timestamp);
 
       if (input !== "Backspace") {
         setTextTyped((prev) => prev + input);

@@ -20,6 +20,8 @@ function Heatmap({ test }) {
     maxErrors: 6,
     minCorrect: 0,
     maxCorrect: 6,
+    minDelay: 0,
+    maxDelay: 1500,
     rows: [
       [
         { key: "Q", incorrect: 0, correct: 0, delay: 0 },
@@ -58,7 +60,6 @@ function Heatmap({ test }) {
 
   useEffect(() => {
     if (keyboard.finished == true && test.state == 0) {
-      console.log("should reset keyboard");
       setKeyboard((prev) => ({
         finished: false,
         setting: "incorrect",
@@ -66,6 +67,8 @@ function Heatmap({ test }) {
         maxErrors: 6,
         minCorrect: 0,
         maxCorrect: 6,
+        minDelay: 0,
+        maxDelay: 1500,
         rows: [
           [
             { key: "Q", incorrect: 0, correct: 0, delay: 0 },
@@ -105,7 +108,7 @@ function Heatmap({ test }) {
   }, [test.state]);
 
   useEffect(() => {
-    if (test.state == 3 && keyboard.finished == false) {
+    if (test.state == 4 && keyboard.finished == false) {
       const aggregateLetters = (correctLetters, incorrectLetters) => {
         const counts = {};
 
@@ -135,6 +138,15 @@ function Heatmap({ test }) {
         row.forEach((keyObj) => {
           const lowerKey = keyObj.key.toLowerCase();
 
+          test.eventLog?.forEach((event) => {
+            if (event?.typed !== undefined) {
+              if (event.typed == lowerKey && keyObj.delay <= event.delay) {
+                keyObj.delay = event.delay;
+                // keyObj.delay = event.delay;
+              }
+            }
+          });
+
           if (letterCounts[lowerKey]) {
             keyObj.correct = letterCounts[lowerKey].correct;
             keyObj.incorrect = letterCounts[lowerKey].incorrect;
@@ -145,8 +157,10 @@ function Heatmap({ test }) {
       const calculateErrorRange = (keyboard) => {
         let minErrors = Infinity;
         let minCorrect = Infinity;
+        let minDelay = Infinity;
         let maxErrors = -Infinity;
         let maxCorrect = -Infinity;
+        let maxDelay = -Infinity;
 
         keyboard.rows.forEach((row) => {
           row.forEach((keyObj) => {
@@ -161,11 +175,37 @@ function Heatmap({ test }) {
           });
         });
 
-        return { minErrors, maxErrors, minCorrect, maxCorrect };
+        //THIS IS THE MOST INNEFFICIENT THING I HAVE EVER DONE, FOR EVERY SINGLE LETTER IT LOOPS THE ENTIRE EVENT LOG ITS SO BAD
+        //BUT IT WORKS AND I WANT THINGS THAT WORK MORE THAN NOTHING
+        //TODO: RE WRITE THIS IS TERRIBLE
+
+        test.eventLog?.forEach((event) => {
+          if (event?.typed !== undefined && event?.typed != " ") {
+            if (event.delay > 0 && event.delay < 10000) {
+              minDelay = Math.min(minDelay, event.delay);
+              maxDelay = Math.max(maxDelay, event.delay);
+            }
+          }
+        });
+
+        return {
+          minErrors,
+          maxErrors,
+          minCorrect,
+          maxCorrect,
+          minDelay,
+          maxDelay,
+        };
       };
 
-      const { minErrors, maxErrors, minCorrect, maxCorrect } =
-        calculateErrorRange(keyboard);
+      const {
+        minErrors,
+        maxErrors,
+        minCorrect,
+        maxCorrect,
+        minDelay,
+        maxDelay,
+      } = calculateErrorRange(keyboard);
 
       setKeyboard((prev) => ({
         ...prev,
@@ -174,6 +214,8 @@ function Heatmap({ test }) {
         minCorrect,
         maxErrors,
         maxCorrect,
+        minDelay,
+        maxDelay,
       }));
     }
   }, [test]);
@@ -196,7 +238,7 @@ function Heatmap({ test }) {
         // No errors
         return "#191919f0";
       }
-    } else {
+    } else if (setting == "correct") {
       const range = keyboard.maxCorrect - keyboard.minCorrect;
       const lowThreshold = keyboard.minCorrect + range / 3;
       const mediumThreshold = keyboard.minCorrect + (2 * range) / 3;
@@ -206,6 +248,20 @@ function Heatmap({ test }) {
         return "#10ff2080";
       } else if (obj.correct > 0) {
         return "#10ff2030";
+      } else {
+        return "#191919f0";
+      }
+    } else {
+      const range = keyboard.maxDelay - keyboard.minDelay;
+      const lowThreshold = keyboard.minDelay + range / 3;
+      const mediumThreshold = keyboard.minDelay + (2 * range) / 3;
+
+      if (obj.delay >= mediumThreshold) {
+        return "#ff6753f0";
+      } else if (obj.delay >= lowThreshold) {
+        return "#ff675340";
+      } else if (obj.delay > 0) {
+        return "#ff675310";
       } else {
         return "#191919f0";
       }
@@ -247,6 +303,65 @@ function Heatmap({ test }) {
       medium: `${mediumStart} - ${mediumEnd}`,
       high: `${highStart} - ${max}`,
     };
+  };
+
+  const rangeFinder = (type) => {
+    if (setting == "incorrect") {
+      if (type == "low") {
+        return getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low;
+      } else if (type == "medium") {
+        return getThresholdRanges(keyboard.minErrors, keyboard.maxErrors)
+          .medium;
+      } else {
+        return getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high;
+      }
+    } else if (setting == "correct") {
+      if (type == "low") {
+        return getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect).low;
+      } else if (type == "medium") {
+        return getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
+          .medium;
+      } else {
+        return getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
+          .high;
+      }
+    } else {
+      if (type == "low") {
+        return getThresholdRanges(keyboard.minDelay, keyboard.maxDelay).low;
+      } else if (type == "medium") {
+        return getThresholdRanges(keyboard.minDelay, keyboard.maxDelay).medium;
+      } else {
+        return getThresholdRanges(keyboard.minDelay, keyboard.maxDelay).high;
+      }
+    }
+  };
+
+  const settingColor = (type) => {
+    if (setting == "incorrect") {
+      if (type == "low") {
+        return "#ff675310";
+      } else if (type == "medium") {
+        return "#ff675340";
+      } else {
+        return "#ff6753f0";
+      }
+    } else if (setting == "correct") {
+      if (type == "low") {
+        return "#10ff2040";
+      } else if (type == "medium") {
+        return "#10ff2080";
+      } else {
+        return "#10ff20";
+      }
+    } else {
+      if (type == "low") {
+        return "#ff675310";
+      } else if (type == "medium") {
+        return "#ff675340";
+      } else {
+        return "#ff6753f0";
+      }
+    }
   };
 
   return (
@@ -623,94 +738,6 @@ function Heatmap({ test }) {
 
       {/* KEYBOARD */}
       <div>
-        {/* <div className='grid text-white gap-3 font-bold grid-rows-3 mt-2'>
-          <div className='flex flex-row space-x-4 justify-center'>
-            <div
-              style={{ backgroundColor: heatmapKeyColor(data) }}
-              className='rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              Q
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              W
-            </div>
-            <div className='bg-[#ff6753f0] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              E
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              R
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              T
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              Y
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              U
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              I
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              O
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              P
-            </div>
-          </div>
-          <div className='flex flex-row space-x-4 justify-center'>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              A
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              S
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              D
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              F
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              G
-            </div>
-            <div className='bg-[#ff6753f0] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              H
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              J
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              K
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              L
-            </div>
-          </div>
-          <div className='flex flex-row -ml-16 space-x-4 justify-center'>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              Z
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              X
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              C
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              V
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              B
-            </div>
-            <div className='bg-[#ff675340] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              N
-            </div>
-            <div className='bg-[#ff675310] rounded-md w-12 h-12 flex justify-center items-center hover:scale-105'>
-              M
-            </div>
-          </div>
-        </div> */}
         <div className='grid text-white gap-3 font-bold grid-rows-3 mt-2'>
           {keyboard.rows.map((row, index) => {
             return (
@@ -751,39 +778,26 @@ function Heatmap({ test }) {
           <div className='flex text-lg text-muted-foreground'>
             <div
               style={{
-                backgroundColor:
-                  setting == "incorrect" ? "#ff675310" : "#10ff2040",
+                backgroundColor: settingColor("low"),
               }}
               className='w-4 h-4 border self-center mr-2'></div>
-            {setting == "incorrect"
-              ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low
-              : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                  .low}
+            {rangeFinder("low")}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div
               style={{
-                backgroundColor:
-                  setting == "incorrect" ? "#ff675340" : "#10ff2080",
+                backgroundColor: settingColor("medium"),
               }}
               className='w-4 h-4 border self-center mr-2'></div>
-            {setting == "incorrect"
-              ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors)
-                  .medium
-              : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                  .medium}
+            {rangeFinder("medium")}
           </div>
           <div className='flex text-lg text-muted-foreground'>
             <div
               style={{
-                backgroundColor:
-                  setting == "incorrect" ? "#ff6753f0" : "#10ff20",
+                backgroundColor: settingColor("high"),
               }}
               className='w-4 h-4 border self-center mr-2'></div>
-            {setting == "incorrect"
-              ? getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high
-              : getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-                  .high}
+            {rangeFinder("high")}
           </div>
         </div>
       </div>
@@ -801,8 +815,8 @@ function Heatmap({ test }) {
             <SelectItem value='incorrect'>Incorrect Letters</SelectItem>
             <SelectItem value='correct'>Correct Letters</SelectItem>
 
-            <SelectItem value='largest'>Largest Delay</SelectItem>
-            <SelectItem value='smallest'>Smallest Delay</SelectItem>
+            <SelectItem value='largest'>Keystroke Delay</SelectItem>
+            {/* <SelectItem value='smallest'>Smallest Delay</SelectItem> */}
           </SelectContent>
         </Select>
       </div>

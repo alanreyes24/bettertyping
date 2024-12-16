@@ -254,7 +254,7 @@ const Test = ({ user, AIMode, sendData }) => {
       }
     }
 
-    if (test.state == 3 && !sent) {
+    if (test.state == 4 && !sent) {
       handleEndTest();
     }
   }, [test.state, test.timer]);
@@ -513,15 +513,13 @@ const Test = ({ user, AIMode, sendData }) => {
             test={test}
             selectedDifficulty={test.settings.difficulty}
             passWords={(w) => {
-              setTimeout(() => {
-                setTest((prevTest) => ({
-                  ...prevTest,
-                  words: {
-                    ...prevTest.words,
-                    wordList: w,
-                  },
-                }));
-              }, 0);
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  wordList: w,
+                },
+              }));
             }}
             passCorrectLetters={(l) => {
               setTest((prevTest) => ({
@@ -569,6 +567,8 @@ const Test = ({ user, AIMode, sendData }) => {
             passEventLog={(e) => {
               setTest((prevTest) => ({
                 ...prevTest,
+                state: 4,
+
                 timestamp: e[0]?.timestamp || Date.now(),
                 eventLog: e,
               }));
