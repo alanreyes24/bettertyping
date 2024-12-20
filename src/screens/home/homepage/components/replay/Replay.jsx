@@ -157,7 +157,7 @@ function Replay({ test }) {
   }, [replay.state]);
 
   return (
-    <div className='w-full mx-auto col-span-2 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
+    <div className='w-full mx-auto col-span-2 lg:col-span-5 rounded-lg border bg-card p-6 h shadow-sm'>
       <div className='flex items-center justify-between'>
         <div className='space-y-1'>
           <h2 className='text-2xl font-bold'>Replay</h2>
@@ -194,7 +194,7 @@ function Replay({ test }) {
       <div className='mt-6'>
         <div className='rounded-lg inline-flex flex-wrap overflow-scroll h-48'>
           {replay.wordList.map((word, index) => (
-            <div className='flex-row flex mr-7' key={index}>
+            <div className='flex-row flex mr-7 lg:mr-4' key={index}>
               {word.split("").map((letter, i) => (
                 <div className='letter replay' key={i}>
                   {letter}
