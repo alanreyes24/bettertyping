@@ -72,8 +72,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     );
     try {
       const response = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
+        `${import.meta.env.VITE_API_URL
         }/test/wordRankings?count=${count}&timeFrame=${time}`
       );
       console.log("API response data:", response.data);
@@ -93,8 +92,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     );
     try {
       const response = await axios.get(
-        `${
-          import.meta.env.VITE_API_URL
+        `${import.meta.env.VITE_API_URL
         }/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`
       );
       console.log("API response data:", response.data);
@@ -232,15 +230,15 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
               <SelectContent>
                 {testType === "Words"
                   ? wordCounts.map((count) => (
-                      <SelectItem key={count} value={count.toString()}>
-                        {count} Words
-                      </SelectItem>
-                    ))
+                    <SelectItem key={count} value={count.toString()}>
+                      {count} Words
+                    </SelectItem>
+                  ))
                   : durations.map((duration) => (
-                      <SelectItem key={duration} value={duration.toString()}>
-                        {duration} Seconds
-                      </SelectItem>
-                    ))}
+                    <SelectItem key={duration} value={duration.toString()}>
+                      {duration} Seconds
+                    </SelectItem>
+                  ))}
               </SelectContent>
             </Select>
           </div>

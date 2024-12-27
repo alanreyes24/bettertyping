@@ -74,8 +74,10 @@ function Replay({ test }) {
 
   const list = document.getElementsByClassName("replay");
 
-  if (test.state != 1) {
+  if (test.state != 0) {
+    // console.log('not 1')
     if (replay.state == 1 && replay.frame != test.eventLog.length) {
+
       if (replay.frame == 0) {
         for (let item of list) {
           item.classList.remove("correct");
@@ -83,7 +85,6 @@ function Replay({ test }) {
         }
       }
 
-      console.log(test.eventLog);
 
       //event log is updated but for some reason its using the old correct or not correct, i guess this needs to be in useeffect?
 
@@ -148,9 +149,9 @@ function Replay({ test }) {
             frame: prev.frame + 1,
           }));
         },
-        test.eventLog[replay.frame].delay > 0
+        test.eventLog[replay.frame].delay > 0 && test.eventLog[replay.frame].delay < 10000
           ? test.eventLog[replay.frame].delay
-          : 0
+          : 120
       );
     } else if (replay.state == 1 && replay.frame == test.eventLog.length + 1) {
       setReplay((prev) => ({
@@ -188,13 +189,13 @@ function Replay({ test }) {
             onClick={() => {
               replay.state == 1
                 ? setReplay((prev) => ({
-                    ...prev,
-                    state: 2,
-                  }))
+                  ...prev,
+                  state: 2,
+                }))
                 : setReplay((prev) => ({
-                    ...prev,
-                    state: 1,
-                  }));
+                  ...prev,
+                  state: 1,
+                }));
             }}
             className='inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 rounded-md px-3'>
             {replay.state == 0 ? "Play" : "Pause"}
