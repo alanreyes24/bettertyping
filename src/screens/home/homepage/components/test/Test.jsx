@@ -101,6 +101,43 @@ const Test = ({ user, AIMode, sendData }) => {
     gsap.to(".analysis", { opacity: 0, duration: 0.4, delay: 0 });
     gsap.to(".analysis", { display: "none", duration: 0.4, delay: 0.4 });
     gsap.to(window, { duration: 0.5, delay: 0, scrollTo: 0 });
+    // setTest((prevTest) => ({
+    //   userID: user._id,
+    //   username: user.username,
+    //   testID: 0,
+    //   state: -1,
+    //   finished: false,
+    //   words: {
+    //     wordList: [],
+    //     attemptedWords: 0,
+    //     correctLetters: [],
+    //     incorrectLetters: [],
+    //     chartData: [],
+    //     // trueWPMArray: [],
+    //     // rawWPMArray: [],
+    //   },
+    //   settings: {
+    //     type: test.settings.type,
+    //     length: test.settings.length,
+    //     count: test.settings.count,
+    //     difficulty: "normal",
+    //   },
+    //   timer: {
+    //     timeLeft:
+    //       typeValue == "time"
+    //         ? settingValue == 1
+    //           ? 150
+    //           : settingValue == 2
+    //           ? 300
+    //           : 600
+    //         : 0,
+    //     isActive: false,
+    //     timerGoesUp: test.timer.timerGoesUp,
+    //   },
+    //   results: {},
+    //   eventLog: [],
+    //   timestamp: 0,
+    // }));
   };
 
   const [test, setTest] = useState({
@@ -207,9 +244,23 @@ const Test = ({ user, AIMode, sendData }) => {
   }, [user]);
 
   useEffect(() => {
+    if (test.state == 1) {
+      console.log("playing");
+      // playReplay();
+    } else if (test.state == 2) {
+      console.log("paused");
+    } else if (test.state == 3) {
+      console.log("finished");
+    } else if (test.state == -1) {
+      console.log("resetting");
+    }
+  }, [test.state]);
+
+  useEffect(() => {
     // HANDLE TIMER
 
     if (test.state === 1) {
+      setSent(false);
       //TIMER CODE
       var interval = 100; // ms
       var expected = Date.now() + interval;
@@ -247,7 +298,7 @@ const Test = ({ user, AIMode, sendData }) => {
         }
 
         expected += interval;
-        let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
+        let other = setTimeout(step, Math.max(0, interval - dt));
 
         clearTimeout(timeout);
         clearTimeout(other);
@@ -261,8 +312,6 @@ const Test = ({ user, AIMode, sendData }) => {
 
   //WPM LOGGING
   useEffect(() => {
-    // console.log(test);
-
     if (test.timer.timeLeft % 10 == 0 && test.state == 1) {
       let totalCorrect = 0;
       let totalIncorrect = 0;
@@ -552,6 +601,7 @@ const Test = ({ user, AIMode, sendData }) => {
               }));
             }}
             onTextFinished={() => {
+              console.log("text finished");
               setTest((prevTest) => ({
                 ...prevTest,
                 userID: user._id,

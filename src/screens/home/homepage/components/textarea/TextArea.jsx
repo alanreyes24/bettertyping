@@ -142,6 +142,7 @@ function TextArea({
       test.state === 3 &&
       JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
     ) {
+      console.log("passing");
       passEventLog(eventLog);
     }
 
@@ -297,8 +298,13 @@ function TextArea({
           document.getElementsByClassName("letter").length ===
           currentLetterIndex + 2
         ) {
+          console.log("calling on finished");
           onTextFinished();
         }
+        console.log(
+          currentLetterIndex + 2,
+          document.getElementsByClassName("letter").length
+        );
       } else if (input === "Backspace" && currentLetterIndex > 0) {
         const lastLetter =
           document.getElementsByClassName("letter")[currentLetterIndex - 1];

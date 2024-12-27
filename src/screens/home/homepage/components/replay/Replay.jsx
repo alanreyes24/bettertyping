@@ -11,28 +11,38 @@ function Replay({ test }) {
     state: 0, //-1 resetting, 0 loaded, 1 playing, 2 paused, 3 finished
   });
 
-  const [delayArray, setDelayArray] = useState([]);
-
   useEffect(() => {
-    let builder = [];
-    let local = "";
+    if (test.state != 0) {
+      let builder = [];
+      let local = "";
 
-    if (test.state == 4) {
-      const list = document.getElementsByClassName("letter");
+      if (test.state == 4) {
+        const list = document.getElementsByClassName("letter");
 
-      for (let item of list) {
-        if (!item.classList.contains("space")) {
-          local += item.innerHTML;
-        } else {
-          builder.push(local);
-          local = "";
+        for (let item of list) {
+          if (!item.classList.contains("space")) {
+            local += item.innerHTML;
+          } else {
+            builder.push(local);
+            local = "";
+          }
         }
-      }
 
-      setReplay((prev) => ({
-        ...prev,
-        state: 0,
-        wordList: builder,
+        setReplay((prev) => ({
+          ...prev,
+          state: 0,
+          wordList: builder,
+        }));
+      }
+    } else {
+      setReplay(() => ({
+        wordList: [],
+        isRunning: false,
+        frame: 0,
+        letter: 0,
+        delay: 0,
+        spaces: 0,
+        state: 0, //-1 resetting, 0 loaded, 1 playing, 2 paused, 3 finished
       }));
     }
   }, [test.state]);
@@ -64,84 +74,92 @@ function Replay({ test }) {
 
   const list = document.getElementsByClassName("replay");
 
-  if (replay.state == 1 && replay.frame != test.eventLog.length) {
-    if (replay.frame == 0) {
-      for (let item of list) {
-        item.classList.remove("correct");
-        item.classList.remove("incorrect");
-      }
-    }
-    //if running go to next frame
-    //needs to be controlled based on letter not frame (calculate letter from frame info)
-    setTimeout(
-      () => {
-        if (test.eventLog[replay.frame].typed != "Backspace") {
-          if (test.eventLog[replay.frame].intended != " ") {
-            if (
-              test.eventLog[replay.frame].intended ==
-              test.eventLog[replay.frame].typed
-            ) {
-              list[replay.letter].classList.add("correct");
-            } else {
-              list[replay.letter].classList.add("incorrect");
-            }
-            setReplay((prev) => ({
-              ...prev,
-              letter: prev.letter + 1,
-            }));
-          } else {
-            setReplay((prev) => ({
-              ...prev,
-              // letter: prev.letter + 1,
-              spaces: prev.spaces + 1,
-            }));
-          }
-        } else {
-          //backspaces
-          //delete current class, make letter move backwards, but frame forwards
-          //make sure not on first letter
-
-          if (replay.letter >= 0) {
-            console.log(list[replay.letter]);
-
-            if (list[replay.letter].classList.contains("correct")) {
-              list[replay.letter].classList.remove("correct");
-            }
-
-            if (list[replay.letter].classList.contains("incorrect")) {
-              list[replay.letter].classList.remove("incorrect");
-            }
-
-            if (replay.letter > 0) {
-              setReplay((prev) => ({
-                ...prev,
-                letter: prev.letter - 1,
-              }));
-            } else {
-              setReplay((prev) => ({
-                ...prev,
-                letter: 0,
-              }));
-            }
-          }
+  if (test.state != 1) {
+    if (replay.state == 1 && replay.frame != test.eventLog.length) {
+      if (replay.frame == 0) {
+        for (let item of list) {
+          item.classList.remove("correct");
+          item.classList.remove("incorrect");
         }
+      }
 
-        setReplay((prev) => ({
-          ...prev,
-          delay: delayArray[replay.frame],
-          frame: prev.frame + 1,
-        }));
-      },
-      test.eventLog[replay.frame].delay > 0
-        ? test.eventLog[replay.frame].delay
-        : 0
-    );
-  } else if (replay.state == 1 && replay.frame == test.eventLog.length + 1) {
-    setReplay((prev) => ({
-      ...prev,
-      state: 3,
-    }));
+      console.log(test.eventLog);
+
+      //event log is updated but for some reason its using the old correct or not correct, i guess this needs to be in useeffect?
+
+      //if running go to next frame
+      //needs to be controlled based on letter not frame (calculate letter from frame info)
+      setTimeout(
+        () => {
+          if (test.eventLog[replay.frame].typed != "Backspace") {
+            if (test.eventLog[replay.frame].intended != " ") {
+              if (
+                test.eventLog[replay.frame].intended ==
+                test.eventLog[replay.frame].typed
+              ) {
+                console.log("correct", test.eventLog[replay.frame].intended);
+                list[replay.letter].classList.add("correct");
+              } else {
+                list[replay.letter].classList.add("incorrect");
+              }
+              setReplay((prev) => ({
+                ...prev,
+                letter: prev.letter + 1,
+              }));
+            } else {
+              setReplay((prev) => ({
+                ...prev,
+                // letter: prev.letter + 1,
+                spaces: prev.spaces + 1,
+              }));
+            }
+          } else {
+            //backspaces
+            //delete current class, make letter move backwards, but frame forwards
+            //make sure not on first letter
+
+            if (replay.letter >= 0) {
+              console.log(list[replay.letter]);
+
+              if (list[replay.letter].classList.contains("correct")) {
+                list[replay.letter].classList.remove("correct");
+              }
+
+              if (list[replay.letter].classList.contains("incorrect")) {
+                list[replay.letter].classList.remove("incorrect");
+              }
+
+              if (replay.letter > 0) {
+                setReplay((prev) => ({
+                  ...prev,
+                  letter: prev.letter - 1,
+                }));
+              } else {
+                setReplay((prev) => ({
+                  ...prev,
+                  letter: 0,
+                }));
+              }
+            }
+          }
+
+          setReplay((prev) => ({
+            ...prev,
+            frame: prev.frame + 1,
+          }));
+        },
+        test.eventLog[replay.frame].delay > 0
+          ? test.eventLog[replay.frame].delay
+          : 0
+      );
+    } else if (replay.state == 1 && replay.frame == test.eventLog.length + 1) {
+      setReplay((prev) => ({
+        ...prev,
+        state: 3,
+      }));
+    }
   }
+
   useEffect(() => {
     if (replay.state == 1) {
       console.log("playing");
