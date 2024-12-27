@@ -88,6 +88,10 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
           />
 
           {/* ANALYSIS */}
+
+
+
+
           <div className='analysis hidden opacity-0 mb-24'>
             <div className='space-y-4 justify-center text-center self-center mt-24 mx-auto max-w-3xl lg:max-w-6xl'>
               <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
@@ -133,8 +137,8 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
                       tickLine={false}
                       axisLine={false}
 
-                      // tickMargin={8}
-                      // tickCount={8}
+                    // tickMargin={8}
+                    // tickCount={8}
                     />
                     <Tooltip
                       contentStyle={{
@@ -170,7 +174,9 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
               {/* HEATMAP */}
               <Heatmap test={test} />
 
-              <Replay test={test} />
+              {test.state == 4 ? <Replay test={test} /> : <></>}
+
+
 
               {/* MISTAKES */}
               {/* <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>

@@ -101,43 +101,6 @@ const Test = ({ user, AIMode, sendData }) => {
     gsap.to(".analysis", { opacity: 0, duration: 0.4, delay: 0 });
     gsap.to(".analysis", { display: "none", duration: 0.4, delay: 0.4 });
     gsap.to(window, { duration: 0.5, delay: 0, scrollTo: 0 });
-    // setTest((prevTest) => ({
-    //   userID: user._id,
-    //   username: user.username,
-    //   testID: 0,
-    //   state: -1,
-    //   finished: false,
-    //   words: {
-    //     wordList: [],
-    //     attemptedWords: 0,
-    //     correctLetters: [],
-    //     incorrectLetters: [],
-    //     chartData: [],
-    //     // trueWPMArray: [],
-    //     // rawWPMArray: [],
-    //   },
-    //   settings: {
-    //     type: test.settings.type,
-    //     length: test.settings.length,
-    //     count: test.settings.count,
-    //     difficulty: "normal",
-    //   },
-    //   timer: {
-    //     timeLeft:
-    //       typeValue == "time"
-    //         ? settingValue == 1
-    //           ? 150
-    //           : settingValue == 2
-    //           ? 300
-    //           : 600
-    //         : 0,
-    //     isActive: false,
-    //     timerGoesUp: test.timer.timerGoesUp,
-    //   },
-    //   results: {},
-    //   eventLog: [],
-    //   timestamp: 0,
-    // }));
   };
 
   const [test, setTest] = useState({
@@ -470,8 +433,8 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     count:
                       settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
@@ -483,8 +446,8 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: value == "time" ? false : true,
                   },
@@ -523,8 +486,8 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? v == 1
                           ? 150
                           : v == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: typeValue == "time" ? false : true,
                   },
@@ -623,7 +586,7 @@ const Test = ({ user, AIMode, sendData }) => {
                 eventLog: e,
               }));
             }}
-            onFocus={() => {}}
+            onFocus={() => { }}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
@@ -654,8 +617,8 @@ const Test = ({ user, AIMode, sendData }) => {
                       ? settingValue == 1
                         ? 150
                         : settingValue == 2
-                        ? 300
-                        : 600
+                          ? 300
+                          : 600
                       : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,

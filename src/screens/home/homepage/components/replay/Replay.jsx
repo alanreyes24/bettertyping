@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 function Replay({ test }) {
   const [replay, setReplay] = useState({
+    eventLog: test.eventLog,
     wordList: [],
     isRunning: false,
     frame: 0,
@@ -12,6 +13,7 @@ function Replay({ test }) {
   });
 
   useEffect(() => {
+
     if (test.state != 0) {
       let builder = [];
       let local = "";
@@ -75,6 +77,7 @@ function Replay({ test }) {
   const list = document.getElementsByClassName("replay");
 
   if (test.state != 0) {
+    console.log(test.eventLog)
     // console.log('not 1')
     if (replay.state == 1 && replay.frame != test.eventLog.length) {
 
@@ -149,7 +152,8 @@ function Replay({ test }) {
             frame: prev.frame + 1,
           }));
         },
-        test.eventLog[replay.frame].delay > 0 && test.eventLog[replay.frame].delay < 10000
+        //the beginning timestamp is like 18091820938 and the second one is like -1809123098 so i just fake those instead of actually dealing with the problem :)
+        test.eventLog[replay.frame].delay > 0 && test.eventLog[replay.frame].delay < 100000
           ? test.eventLog[replay.frame].delay
           : 120
       );

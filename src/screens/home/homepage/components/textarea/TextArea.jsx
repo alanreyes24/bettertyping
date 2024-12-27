@@ -106,7 +106,11 @@ function TextArea({
 
     if (reset) {
       setWordList([]);
+      setEventLog([]);
       setCorrectLetters([]);
+      setLastTimestamp(0)
+      setStartTime(0);
+
       setCurrentLetterArrayIndexValue(0);
       setCurrentLetterIndex(0);
       setDeleteLines(0);
@@ -253,11 +257,14 @@ function TextArea({
       document.getElementsByClassName("letter")[currentLetterIndex];
     const nextLetter =
       document.getElementsByClassName("letter")[currentLetterIndex + 1];
-    const timestamp = Date.now() - startTime;
+
+
 
     if (!startTime) {
       setStartTime(Date.now());
     }
+
+    const timestamp = Date.now() - startTime;
 
     if (currentLetter.textContent != undefined) {
       setEventLog((prevLog) => [
@@ -266,10 +273,17 @@ function TextArea({
           timestamp,
           intended: currentLetter.textContent,
           typed: input,
+
           delay: timestamp - lastTimestamp,
         },
       ]);
-      setLastTimestamp(timestamp);
+
+      // THIS IS TO CHECK THE TIMESTAMP IS NOT STUPIDLY HIGH (i.e. the start marker or someone just running a test forever)
+      if (timestamp < 10000000) {
+        setLastTimestamp(timestamp);
+      } else {
+        setLastTimestamp(0)
+      }
 
       if (input !== "Backspace") {
         setTextTyped((prev) => prev + input);
