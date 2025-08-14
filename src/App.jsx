@@ -11,7 +11,6 @@ import AITest from "./screens/aitest/AITest";
 import Information from "./screens/information/Information";
 
 function App() {
-
   const [user, setUser] = useState({
     _id: "",
     username: "guest",
@@ -90,7 +89,6 @@ function App() {
                 handleUserChange={handleUserChange}
                 handleLogout={handleLogout}
               />
-
             }
           />
           <Route

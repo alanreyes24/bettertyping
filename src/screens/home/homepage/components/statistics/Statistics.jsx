@@ -13,63 +13,64 @@ function Statistics({ test }) {
     // Badge assignment based on category and value
     if (category === "WPM") {
       if (value >= 80) {
-        badgeText = "Excellent";
+        badgeText = "excellent";
         badgeStyle = "bg-amber-300";
       } else if (value >= 50) {
-        badgeText = "Above Average";
+        badgeText = "above average";
         badgeStyle = "bg-green-400";
       } else if (value >= 30) {
-        badgeText = "Average";
+        badgeText = "average";
         badgeStyle = "bg-green-600";
       } else {
-        badgeText = "Below Average";
+        badgeText = "below average";
         badgeStyle = "bg-red-400";
       }
     } else if (category === "Accuracy") {
       if (value >= 100) {
-        badgeText = "Perfect";
+        badgeText = "perfect";
         badgeStyle = "bg-amber-300";
       } else if (value >= 95) {
-        badgeText = "Above Average";
+        badgeText = "above average";
         badgeStyle = "bg-green-400";
       } else if (value >= 70) {
-        badgeText = "Average";
+        badgeText = "average";
         badgeStyle = "bg-green-600";
       } else {
-        badgeText = "Below Average";
+        badgeText = "below average";
         badgeStyle = "bg-red-400";
       }
     } else if (category === "Mistakes") {
       if (value <= 0) {
-        badgeText = "Perfect";
+        badgeText = "perfect";
         badgeStyle = "bg-amber-300";
       } else if (value <= 5) {
-        badgeText = "Above Average";
+        badgeText = "above average";
         badgeStyle = "bg-green-400";
       } else if (value <= 10) {
-        badgeText = "Average";
+        badgeText = "average";
         badgeStyle = "bg-green-600";
       } else {
-        badgeText = "Below Average";
+        badgeText = "below average";
         badgeStyle = "bg-red-400";
       }
     }
 
     return (
       <div
-        className={`${badgeStyle} h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2`}>
+        className={`${badgeStyle} h-6 w-32 justify-center text-black inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2`}
+      >
         {badgeText}
       </div>
     );
   };
 
   return (
-    <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
-      <div className='flex items-center justify-between'>
-        <div className='space-y-1'>
-          <h2 className='text-2xl font-bold'>Statistics</h2>
-          <p className='text-muted-foreground'>
-            Review your typing performance and get insights.
+    <div className="w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-bold">statistics</h2>
+          <p className="text-muted-foreground">
+            review your performance and get insights
           </p>
         </div>
         {/* <div className="flex items-center gap-2">
@@ -79,17 +80,15 @@ function Statistics({ test }) {
                 </div> */}
       </div>
 
-      <div className='mt-6'>
-        <div className='grid gap-4'>
-          <div className='flex items-center justify-between'>
+      <div className="mt-6">
+        <div className="grid gap-4">
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className='text-lg font-medium'>Words Per Minute</h3>
-              <p className='text-xs text-muted-foreground'>
-                Your average typing speed
-              </p>
+              <h3 className="text-lg font-medium">words per minute</h3>
+              <p className="text-xs text-muted-foreground">x̄ typing speed</p>
             </div>
 
-            <div className='text-3xl font-bold flex flex-col-reverse text-center justify-end'>
+            <div className="text-3xl font-bold flex flex-col-reverse text-center justify-end">
               {test.results != undefined ? (
                 getPerformanceBadge("WPM", test.results.trueWPM, 1)
               ) : (
@@ -98,14 +97,14 @@ function Statistics({ test }) {
               {test.results != undefined ? test.results.trueWPM : 142.82}
             </div>
           </div>
-          <div className='flex items-center justify-between'>
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className='text-xl lg:text-lg font-medium'>Accuracy</h3>
-              <p className='text-xs text-muted-foreground'>
-                Percentage of correct letters
+              <h3 className="text-xl lg:text-lg font-medium">accuracy</h3>
+              <p className="text-xs text-muted-foreground">
+                % of correct letters
               </p>
             </div>
-            <div className='text-4xl font-bold flex-col-reverse text-center flex justify-center'>
+            <div className="text-4xl font-bold flex-col-reverse text-center flex justify-center">
               {test.results != undefined ? (
                 getPerformanceBadge("Accuracy", test.results.accuracy, 1)
               ) : (
@@ -115,14 +114,14 @@ function Statistics({ test }) {
             </div>
           </div>
 
-          <div className='flex items-center justify-between'>
+          <div className="flex items-center justify-between">
             <div>
-              <h3 className='text-lg font-medium'>Mistakes</h3>
-              <p className='text-xs text-muted-foreground'>
-                Number of mistakes made
+              <h3 className="text-lg font-medium">mistakes</h3>
+              <p className="text-xs text-muted-foreground">
+                # of mistakes made
               </p>
             </div>
-            <div className='text-4xl font-bold flex flex-col-reverse text-center justify-center'>
+            <div className="text-4xl font-bold flex flex-col-reverse text-center justify-center">
               {test.results != undefined ? (
                 getPerformanceBadge("Mistakes", test.results.mistakes, 1)
               ) : (

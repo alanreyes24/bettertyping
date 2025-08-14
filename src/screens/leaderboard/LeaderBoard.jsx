@@ -126,10 +126,10 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
 
       <div className="mt-16 space-y-4 justify-center text-center self-center mx-auto max-w-3xl lg:max-w-6xl">
         <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
-          Leaderboard
+          leaderboard
         </h1>
         <p className="max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed">
-          Track your progress versus others!
+          see how you compare to others!
         </p>
       </div>
 
@@ -191,12 +191,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
         <div className="space-y-1 flex justify-between">
           <div>
             <h2 className="text-4xl font-bold">
-              {timeFrame.charAt(0).toUpperCase() + timeFrame.slice(1)}
+              {timeFrame.charAt(0).toLowerCase() + timeFrame.slice(1)}
             </h2>
             <p className="text-muted-foreground">
               {testType === "Words"
-                ? `${testLength} Words`
-                : `${testLength} Seconds`}
+                ? `${testLength} words`
+                : `${testLength} seconds`}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -208,9 +208,9 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                 <SelectValue placeholder="Select Time" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="daily">Daily</SelectItem>
-                <SelectItem value="weekly">Weekly</SelectItem>
-                <SelectItem value="all-time">All Time</SelectItem>
+                <SelectItem value="daily">daily</SelectItem>
+                <SelectItem value="weekly">weekly</SelectItem>
+                <SelectItem value="all-time">all time</SelectItem>
               </SelectContent>
             </Select>
             <Select onValueChange={(v) => setTestType(v)} value={testType}>
@@ -218,8 +218,8 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                 <SelectValue placeholder="Select Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Timed">Timed</SelectItem>
-                <SelectItem value="Words">Words</SelectItem>
+                <SelectItem value="Timed">timed</SelectItem>
+                <SelectItem value="Words">words</SelectItem>
               </SelectContent>
             </Select>
             <Select
@@ -233,12 +233,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
                 {testType === "Words"
                   ? wordCounts.map((count) => (
                       <SelectItem key={count} value={count.toString()}>
-                        {count} Words
+                        {count} words
                       </SelectItem>
                     ))
                   : durations.map((duration) => (
                       <SelectItem key={duration} value={duration.toString()}>
-                        {duration} Seconds
+                        {duration} seconds
                       </SelectItem>
                     ))}
               </SelectContent>
@@ -247,23 +247,22 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
         </div>
 
         <Table className="text-lg">
-          <TableCaption>If you&apos;re on here, good job!</TableCaption>
           <TableHeader>
             <TableRow>
               <TableHead className="text-left font-bold text-xl">
-                Place
+                place
               </TableHead>
               <TableHead className="text-left font-bold text-xl">
-                Name
+                name
               </TableHead>
               <TableHead className="text-center font-bold text-xl">
-                WPM
+                wpm
               </TableHead>
               <TableHead className="text-center font-bold text-xl">
-                Accuracy
+                accuracy
               </TableHead>
               <TableHead className="text-center font-bold text-xl">
-                Date
+                date
               </TableHead>
             </TableRow>
           </TableHeader>
