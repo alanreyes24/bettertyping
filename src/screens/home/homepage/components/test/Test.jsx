@@ -363,49 +363,36 @@ const Test = ({ user, AIMode, sendData }) => {
 
   return (
     <>
-      {/* INTRO */}
-      <div className='intro pt-32 opacity-0 space-y-4 justify-center text-center self-center mt-16'>
-        <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
-          Test Your Typing Speed
-        </h1>
-        <p className='max-w-2xl self-center text-muted-foreground md:text-xl/relaxed'>
-          Take a short typing test to analyze your typing speed, accuracy, and
-          keystrokes.
-          {/* and we will match you with an individualized
-          AI program to improve your skils! */}
-        </p>
-      </div>
-
       {/* TEST */}
-      <div className='test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border'>
+      <div className="test opacity-0 w-full mt-16 mx-auto max-w-10xl lg:max-w-7xl rounded-lg shadow-sm bg-card p-6 border">
         {/* SETTINGS AND TIMER*/}
-        <div className='flex items-center justify-between'>
-          <div className='space-y-1'>
+        <div className="flex items-center justify-between">
+          <div className="space-y-1">
             {test.state === 1 ? (
               <Timer test={test} />
             ) : (
               <>
-                <h2 className='text-4xl font-bold'>
+                <h2 className="text-4xl font-bold">
                   {test.settings.type == "time"
-                    ? "Timed, "
-                    : "Count, " + test.settings.count}
+                    ? "timed, "
+                    : "count, " + test.settings.count}
                   {test.settings.type == "time"
-                    ? test.settings.length / 10 + " Seconds"
-                    : " Words"}
+                    ? test.settings.length / 10 + " seconds"
+                    : " words"}
                 </h2>
-                <p className='text-muted-foreground ml-1'>
+                <p className="text-muted-foreground ml-1">
                   {test.settings.type == "time"
-                    ? "Type as many words as you can in "
-                    : "Type these " + test.settings.count}
+                    ? "type as many words as you can in "
+                    : "type these " + test.settings.count}
                   {test.settings.type == "time"
-                    ? test.settings.length / 10 + " Seconds"
-                    : " Words as fast as you can!"}
+                    ? test.settings.length / 10 + " seconds!"
+                    : " words as fast as you can!"}
                 </p>
               </>
             )}
           </div>
           {/* SETTINGS */}
-          <div className='flex items-center gap-2'>
+          <div className="flex items-center gap-2">
             <Select
               onValueChange={(value) => {
                 cancelTest();
@@ -441,18 +428,20 @@ const Test = ({ user, AIMode, sendData }) => {
                   },
                 }));
               }}
-              defaultValue='words'>
+              defaultValue="words"
+            >
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id='type'
-                aria-label='Select Type'>
-                <SelectValue placeholder='Select Test' />
+                id="type"
+                aria-label="Select Type"
+              >
+                <SelectValue placeholder="select test" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value='time'>Timed</SelectItem>
-                <SelectItem value='words'>Count</SelectItem>
+                <SelectItem value="time">timed</SelectItem>
+                <SelectItem value="words">count</SelectItem>
               </SelectContent>
             </Select>
 
@@ -481,24 +470,26 @@ const Test = ({ user, AIMode, sendData }) => {
                   },
                 }));
               }}
-              defaultValue={1}>
+              defaultValue={1}
+            >
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id='length'
-                aria-label='Select Length'>
-                <SelectValue placeholder='Select Length' />
+                id="length"
+                aria-label="Select Length"
+              >
+                <SelectValue placeholder="Select Length" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={1}>
-                  {test.settings.type == "time" ? "15 Seconds" : "25 Words"}
+                  {test.settings.type == "time" ? "15 seconds" : "25 Words"}
                 </SelectItem>
                 <SelectItem value={2}>
-                  {test.settings.type == "time" ? "30 Seconds" : "50 Words"}
+                  {test.settings.type == "time" ? "30 seconds" : "50 Words"}
                 </SelectItem>
                 <SelectItem value={3}>
-                  {test.settings.type == "time" ? "60 Seconds" : "100 Words"}
+                  {test.settings.type == "time" ? "60 seconds" : "100 Words"}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -506,7 +497,7 @@ const Test = ({ user, AIMode, sendData }) => {
         </div>
 
         {/* TEXT AREA */}
-        <div className='flex justify-center m-4 '>
+        <div className="flex justify-center m-4 ">
           <TextArea
             user={user}
             aiMode={AIMode}
@@ -618,18 +609,6 @@ const Test = ({ user, AIMode, sendData }) => {
           />
         </div>
       </div>
-      {user.username == "guest" && !test.sent ? (
-        <>
-          <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  '>
-            UNSAVED
-          </p>
-          <p className='intro opacity-0 max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed '>
-            Sign in to save your test
-          </p>
-        </>
-      ) : (
-        <></>
-      )}
     </>
   );
 };

@@ -18,7 +18,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
 
   const handleUsernameFromLoginPopup = (data) => {
     setUsername(data.username);
-    passLoggedIn(data.userID, data.username)
+    passLoggedIn(data.userID, data.username);
     // this function only runs when login was successful so I can set showLogin to false
     setUserLoggedIn(true);
     setShowLogin(false);
@@ -27,7 +27,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   useEffect(() => {
     if (user.username && user.username !== "guest") {
       setUserLoggedIn(true);
-      setUsername(user.username)
+      setUsername(user.username);
     } else {
       setUserLoggedIn(false);
     }
@@ -63,21 +63,24 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   }
 
   return (
-    <div className="z-50 sticky top-0 bg-background container mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-      <a className="text-xl font-bold text-foreground cursor-pointer" onClick={() => {
-        navigate("/")
-      }} >
+    <div className="z-50 sticky top-0 bg-background container mx-auto flex h-16 max-w-9xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <a
+        className="text-xl font-bold text-foreground cursor-pointer"
+        onClick={() => {
+          navigate("/");
+        }}
+      >
         bettertyping
       </a>
 
       {username ? (
-        <div className="welcome-message">Welcome, {username}</div>
+        <div className="welcome-message">welcome, {username}</div>
       ) : null}
 
       <div className="flex items-center gap-4">
         <Link to="/leaderboard">
           <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
-            Leaderboard
+            leaderboard
           </button>
         </Link>
 
@@ -102,7 +105,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
               <polyline points="10 17 15 12 10 7"></polyline>
               <line x1="15" x2="3" y1="12" y2="12"></line>
             </svg>
-            Sign In
+            log in
           </button>
         )}
 
@@ -132,7 +135,10 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
         )}
       </div>
       {showLogin && (
-        <LoginPopup showHide={() => setShowLogin(!showLogin)} sendUsernameToHeader={handleUsernameFromLoginPopup} />
+        <LoginPopup
+          showHide={() => setShowLogin(!showLogin)}
+          sendUsernameToHeader={handleUsernameFromLoginPopup}
+        />
       )}
     </div>
 
