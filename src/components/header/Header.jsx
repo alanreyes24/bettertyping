@@ -80,6 +80,21 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
       <div className="flex items-center gap-4">
         <Link to="/leaderboard">
           <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="20"
+              height="20"
+              viewBox="0 0 20 20"
+              style={{ marginRight: "6px", verticalAlign: "middle" }}
+            >
+              <g fill="currentColor" fillRule="evenodd" clipRule="evenodd">
+                <path d="M13.693 3.25H6.307a1 1 0 0 0-.99 1.142l.637 4.45c.01.075.031.147.062.216c1.554 3.421 6.414 3.421 7.967 0a.792.792 0 0 0 .063-.216l.637-4.45a1 1 0 0 0-.99-1.142Zm-7.386-1a2 2 0 0 0-1.98 2.283l.637 4.451c.024.168.072.332.142.487c1.909 4.204 7.88 4.204 9.788 0c.07-.155.118-.319.142-.487l.637-4.45a2 2 0 0 0-1.98-2.284H6.307Z"></path>
+                <path d="M9.5 14.75v-2.5h1v2.5h-1Z"></path>
+                <path d="m13.086 16.75l-.793-.793a3.243 3.243 0 0 0-4.586 0l-.793.793h6.172ZM13 15.25a4.243 4.243 0 0 0-6 0l-.793.793c-.63.63-.184 1.707.707 1.707h6.172c.89 0 1.337-1.077.707-1.707L13 15.25ZM5 5a.5.5 0 0 1-.5.5H2a.5.5 0 0 1 0-1h2.5A.5.5 0 0 1 5 5Z"></path>
+                <path d="M5.429 9.495c-2.151-.31-3.774-2.123-3.916-4.276l-.012-.186a.5.5 0 0 1 .998-.066l.012.186c.112 1.697 1.391 3.112 3.06 3.352l-.142.99ZM15 5a.5.5 0 0 0 .5.5H18a.5.5 0 0 0 0-1h-2.5a.5.5 0 0 0-.5.5Z"></path>
+                <path d="M14.571 9.495c2.114-.304 3.77-1.946 3.906-4.116l.022-.348a.5.5 0 0 0-.998-.062l-.022.347c-.103 1.66-1.366 2.947-3.05 3.19l.142.989Z"></path>
+              </g>
+            </svg>
             leaderboard
           </button>
         </Link>
@@ -91,19 +106,19 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width="1em"
+              height="1em"
               viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mr-2 h-4 w-4"
+              style={{ marginRight: "6px", verticalAlign: "middle" }}
             >
-              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10 17 15 12 10 7"></polyline>
-              <line x1="15" x2="3" y1="12" y2="12"></line>
+              <g fill="currentColor">
+                <path
+                  fillRule="evenodd"
+                  d="M11 20a1 1 0 0 0-1-1H5V5h5a1 1 0 1 0 0-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h5a1 1 0 0 0 1-1z"
+                  clipRule="evenodd"
+                ></path>
+                <path d="M21.714 12.7a.996.996 0 0 0 .286-.697v-.006a.997.997 0 0 0-.293-.704l-4-4a1 1 0 1 0-1.414 1.414L18.586 11H9a1 1 0 1 0 0 2h9.586l-2.293 2.293a1 1 0 0 0 1.414 1.414l4-4l.007-.007z"></path>
+              </g>
             </svg>
             log in
           </button>
@@ -116,19 +131,19 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
+              width="1em"
+              height="1em"
               viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mr-2 h-4 w-4"
+              style={{ marginRight: "6px", verticalAlign: "middle" }}
             >
-              <path d="M9 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-              <polyline points="10 17 15 12 10 7"></polyline>
-              <line x1="15" x2="3" y1="12" y2="12"></line>
+              <path
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4m-5-4l5-5l-5-5m5 5H3"
+              ></path>
             </svg>
             Sign Out
           </button>
