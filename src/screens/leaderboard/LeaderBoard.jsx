@@ -23,7 +23,7 @@ import {
 
 function LeaderBoard({ user, handleUserChange, handleLogout }) {
   // State variables for selections
-  const [timeFrame, setTimeFrame] = useState("daily");
+  const [timeFrame, setTimeFrame] = useState("all-time");
   const [testType, setTestType] = useState("Words");
   const [testLength, setTestLength] = useState(25);
   const [testData, setTestData] = useState([]);
@@ -210,7 +210,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
               <SelectContent>
                 <SelectItem value="daily">daily</SelectItem>
                 <SelectItem value="weekly">weekly</SelectItem>
-                <SelectItem value="all-time">all time</SelectItem>
+                <SelectItem value="all-time">all-time</SelectItem>
               </SelectContent>
             </Select>
             <Select onValueChange={(v) => setTestType(v)} value={testType}>
