@@ -8,18 +8,14 @@ import "./Header.css";
 function Header({ user, AIMode, passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const [isTestFinished, setIsTestFinished] = useState(false);
   const location = useLocation();
-  const navigate = useNavigate(); // Hook to programmatically navigate
-
-  // temporary solution until i connect the back passing into app.jsx
+  const navigate = useNavigate();
 
   const [username, setUsername] = useState("");
 
   const handleUsernameFromLoginPopup = (data) => {
     setUsername(data.username);
     passLoggedIn(data.userID, data.username);
-    // this function only runs when login was successful so I can set showLogin to false
     setUserLoggedIn(true);
     setShowLogin(false);
   };
@@ -32,10 +28,6 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
       setUserLoggedIn(false);
     }
   }, [user.username]);
-
-  useEffect(() => {
-    setIsTestFinished(location.pathname === "/test-finished");
-  }, [location.pathname]);
 
   async function logUserOut() {
     try {
@@ -52,7 +44,6 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
     }
   }
 
-  // Handle home button click
   function handleHomeClick(e) {
     if (location.pathname === "/") {
       // e.preventDefault();
@@ -63,21 +54,51 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   }
 
   return (
-    <div className="z-50 sticky top-0 bg-background container mx-auto flex h-16 max-w-9xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <div className="z-50 sticky top-0 bg-background container mx-auto flex h-16 max-w-9xl items-center justify-between px-4 sm:px-6 lg:px-8 mt-2">
       <a
-        className="text-xl font-bold text-foreground cursor-pointer"
+        className="text-xl font-bold text-foreground cursor-pointer inline-flex"
         onClick={() => {
           navigate("/");
         }}
       >
         bettertyping
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="1.5em"
+          height="1.5em"
+          viewBox="0 0 17 16"
+          style={{ marginLeft: "6px", marginTop: "1px" }}
+        >
+          <path
+            fill="currentColor"
+            fillRule="evenodd"
+            d="M1 4.031V11h14.997V4.031H1zM11.969 5h1.047v1.023h-1.047V5zm1.047 1.969v1.047h-1.031V6.969h1.031zm-3.049-1.99h1.05v1.06h-1.05v-1.06zm1.055 1.996v1.062H9.979V6.975h1.043zm-3.04-1.996h1.033v1.036H7.982V4.979zm-.017 1.996h1.078v1.084H7.965V6.975zm-2.993-1.98h1.054v1.028H4.972V4.995zM7 6.988v1.049H5.985V6.988H7zm-1.969-.013v1.062H3.97V6.975h1.061zM2.969 4.984h1.062v1.047H2.969V4.984zm-1 1.995H3v1.037H1.969V6.979zM4 10H2V9h2v1zm8.021.021H4.969V8.968h7.052v1.053zM15 10h-2V9h2v1zm.016-2h-1.031V6.969h1.031V8zm0-1.977h-1.047V5h1.047v1.023z"
+          />
+        </svg>
       </a>
 
-      {username ? (
-        <div className="welcome-message">welcome, {username}</div>
-      ) : null}
-
       <div className="flex items-center gap-4">
+        {userLoggedIn && (
+          <div>
+            <Link to="/history">
+              <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="1em"
+                  height="1em"
+                  viewBox="0 0 448 512"
+                  style={{ marginRight: "6px" }}
+                >
+                  <path
+                    fill="currentColor"
+                    d="M448 360V24c0-13.3-10.7-24-24-24H96C43 0 0 43 0 96v320c0 53 43 96 96 96h328c13.3 0 24-10.7 24-24v-16c0-7.5-3.5-14.3-8.9-18.7c-4.2-15.4-4.2-59.3 0-74.7c5.4-4.3 8.9-11.1 8.9-18.6zM128 134c0-3.3 2.7-6 6-6h212c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H134c-3.3 0-6-2.7-6-6v-20zm0 64c0-3.3 2.7-6 6-6h212c3.3 0 6 2.7 6 6v20c0 3.3-2.7 6-6 6H134c-3.3 0-6-2.7-6-6v-20zm253.4 250H96c-17.7 0-32-14.3-32-32c0-17.6 14.4-32 32-32h285.4c-1.9 17.1-1.9 46.9 0 64z"
+                  ></path>
+                </svg>
+                history
+              </button>
+            </Link>
+          </div>
+        )}
         <Link to="/leaderboard">
           <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2">
             <svg
@@ -145,7 +166,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
                 d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4m-5-4l5-5l-5-5m5 5H3"
               ></path>
             </svg>
-            Sign Out
+            sign out
           </button>
         )}
       </div>
@@ -156,135 +177,6 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
         />
       )}
     </div>
-
-    // <div
-    //   className="bg-background sticky top-0 container mx-auto my-12 max-w-7xl px-4 sm:px-6 lg:px-8"
-    // >
-    //   <div className="">
-    //     <div className="ml-4 text-3xl font-medium">
-    //       <a href="/" onClick={handleHomeClick}>
-    //         bettertyping
-    //       </a>
-    //       {/* Use the home click handler */}
-    //     </div>
-
-    //     <div className="center-message">
-    //       {userLoggedIn && !AIMode && (
-    //         <div className="welcome-message">welcome, {user.username}</div>
-    //       )}
-    //     </div>
-
-    //     <div className="button-container">
-    //       <Link to="/" onClick={handleHomeClick}>
-    //         <button className="button">
-    //           <svg
-    //             xmlns="http://www.w3.org/2000/svg"
-    //             viewBox="0 0 24 24"
-    //             width="24"
-    //             height="24"
-    //             className="icon"
-    //           >
-    //             <path
-    //               fill="#ffffff"
-    //               d="M12 3l9 9-1.5 1.5L18 11.5V21H6v-9.5l-1.5 1.5L3 12l9-9z"
-    //             />
-    //           </svg>
-    //         </button>
-    //       </Link>
-
-    //       <Link to="/leaderboard">
-    //         <button className="button">
-    //           <svg
-    //             width="28px"
-    //             height="28px"
-    //             viewBox="0 0 24 24"
-    //             fill="none"
-    //             xmlns="http://www.w3.org/2000/svg"
-    //           >
-    //             <path
-    //               d="M14.2718 10.445L18 2M9.31612 10.6323L5 2M12.7615 10.0479L8.835 2M14.36 2L13.32 4.5M6 16C6 19.3137 8.68629 22 12 22C15.3137 22 18 19.3137 18 16C18 12.6863 15.3137 10 12 10C8.68629 10 6 12.6863 6 16Z"
-    //               stroke="#ffffff"
-    //               strokeWidth="1.5"
-    //               strokeLinecap="round"
-    //               strokeLinejoin="round"
-    //             />
-    //             <path
-    //               d="M10.5 15L12.5 13.5V18.5"
-    //               stroke="#ffffff"
-    //               strokeWidth="1.5"
-    //               strokeLinecap="round"
-    //               strokeLinejoin="round"
-    //             />
-    //           </svg>
-    //         </button>
-    //       </Link>
-
-    //       <Link to="/history">
-    //         <button className="button">
-    //           <svg
-    //             xmlns="http://www.w3.org/2000/svg"
-    //             viewBox="0 0 24 24"
-    //             width="24"
-    //             height="24"
-    //             className="icon"
-    //           >
-    //             <path
-    //               fill="#ffffff"
-    //               d="M12 1C5.9 1 1 5.9 1 12s4.9 11 11 11 11-4.9 11-11S18.1 1 12 1zm0 2c5 0 9 4 9 9s-4 9-9 9-9-4-9-9 4-9 9-9zm-.5 2v6.3l5.3 3.2.7-1.2-4.5-2.7V5H11.5z"
-    //             />
-    //           </svg>
-    //         </button>
-    //       </Link>
-
-    //       {!isTestFinished &&
-    //         (!userLoggedIn ? (
-    //           <button
-    //             className="button"
-    //             onClick={() => setShowLogin(!showLogin)}
-    //           >
-    //             <svg
-    //               xmlns="http://www.w3.org/2000/svg"
-    //               viewBox="0 0 24 24"
-    //               width="24"
-    //               height="24"
-    //               className="icon"
-    //             >
-    //               <path
-    //                 fill="#ffffff"
-    //                 d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.4-8 4v2h16v-2c0-2.6-5.3-4-8-4z"
-    //               />
-    //             </svg>
-    //           </button>
-    //         ) : (
-    //           <button className="button" onClick={logUserOut}>
-    //             <svg
-    //               xmlns="http://www.w3.org/2000/svg"
-    //               viewBox="0 0 24 24"
-    //               width="24"
-    //               height="24"
-    //               className="icon"
-    //             >
-    //               <path
-    //                 fill="#ffffff"
-    //                 d="M10 4v3H3v10h7v3h-8V4h8zm7 9l-4 4v-3h-5v-2h5v-3l4 4z"
-    //               />
-    //             </svg>
-    //           </button>
-    //         ))}
-
-    // {showLogin && (
-    //   <Login
-    //     loginVisible={showLogin}
-    //     passLoggedIn={(userID, username) => {
-    //       setShowLogin(false);
-    //       setUserLoggedIn(true);
-    //       passLoggedIn(userID, username);
-    //     }}
-    //   />
-    // )}
-    //     </div>
-    //   </div>
-    // </div>
   );
 }
 
