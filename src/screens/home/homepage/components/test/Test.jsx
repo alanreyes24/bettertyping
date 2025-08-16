@@ -207,9 +207,23 @@ const Test = ({ user, AIMode, sendData }) => {
   }, [user]);
 
   useEffect(() => {
+    if (test.state == 1) {
+      console.log("playing");
+      // playReplay();
+    } else if (test.state == 2) {
+      console.log("paused");
+    } else if (test.state == 3) {
+      console.log("finished");
+    } else if (test.state == -1) {
+      console.log("resetting");
+    }
+  }, [test.state]);
+
+  useEffect(() => {
     // HANDLE TIMER
 
     if (test.state === 1) {
+      setSent(false);
       //TIMER CODE
       var interval = 100; // ms
       var expected = Date.now() + interval;
@@ -247,22 +261,20 @@ const Test = ({ user, AIMode, sendData }) => {
         }
 
         expected += interval;
-        let other = setTimeout(step, Math.max(0, interval - dt)); // take into account drift
+        let other = setTimeout(step, Math.max(0, interval - dt));
 
         clearTimeout(timeout);
         clearTimeout(other);
       }
     }
 
-    if (test.state == 3 && !sent) {
+    if (test.state == 4 && !sent) {
       handleEndTest();
     }
   }, [test.state, test.timer]);
 
   //WPM LOGGING
   useEffect(() => {
-    // console.log(test);
-
     if (test.timer.timeLeft % 10 == 0 && test.state == 1) {
       let totalCorrect = 0;
       let totalIncorrect = 0;
@@ -363,8 +375,10 @@ const Test = ({ user, AIMode, sendData }) => {
 
   return (
     <>
+      {/* INTRO */}
+
       {/* TEST */}
-      <div className="test opacity-0 w-full mt-16 mx-auto max-w-10xl lg:max-w-7xl rounded-lg shadow-sm bg-card p-6 border">
+      <div className="test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
         {/* SETTINGS AND TIMER*/}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -385,7 +399,7 @@ const Test = ({ user, AIMode, sendData }) => {
                     ? "type as many words as you can in "
                     : "type these " + test.settings.count}
                   {test.settings.type == "time"
-                    ? test.settings.length / 10 + " seconds!"
+                    ? test.settings.length / 10 + " seconds"
                     : " words as fast as you can!"}
                 </p>
               </>
@@ -437,7 +451,7 @@ const Test = ({ user, AIMode, sendData }) => {
                 id="type"
                 aria-label="Select Type"
               >
-                <SelectValue placeholder="select test" />
+                <SelectValue placeholder="Select Test" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="time">timed</SelectItem>
@@ -483,13 +497,13 @@ const Test = ({ user, AIMode, sendData }) => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={1}>
-                  {test.settings.type == "time" ? "15 seconds" : "25 Words"}
+                  {test.settings.type == "time" ? "15 Seconds" : "25 Words"}
                 </SelectItem>
                 <SelectItem value={2}>
-                  {test.settings.type == "time" ? "30 seconds" : "50 Words"}
+                  {test.settings.type == "time" ? "30 Seconds" : "50 Words"}
                 </SelectItem>
                 <SelectItem value={3}>
-                  {test.settings.type == "time" ? "60 seconds" : "100 Words"}
+                  {test.settings.type == "time" ? "60 Seconds" : "100 Words"}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -504,15 +518,13 @@ const Test = ({ user, AIMode, sendData }) => {
             test={test}
             selectedDifficulty={test.settings.difficulty}
             passWords={(w) => {
-              setTimeout(() => {
-                setTest((prevTest) => ({
-                  ...prevTest,
-                  words: {
-                    ...prevTest.words,
-                    wordList: w,
-                  },
-                }));
-              }, 0);
+              setTest((prevTest) => ({
+                ...prevTest,
+                words: {
+                  ...prevTest.words,
+                  wordList: w,
+                },
+              }));
             }}
             passCorrectLetters={(l) => {
               setTest((prevTest) => ({
@@ -545,6 +557,7 @@ const Test = ({ user, AIMode, sendData }) => {
               }));
             }}
             onTextFinished={() => {
+              console.log("text finished");
               setTest((prevTest) => ({
                 ...prevTest,
                 userID: user._id,
@@ -560,6 +573,8 @@ const Test = ({ user, AIMode, sendData }) => {
             passEventLog={(e) => {
               setTest((prevTest) => ({
                 ...prevTest,
+                state: 4,
+
                 timestamp: e[0]?.timestamp || Date.now(),
                 eventLog: e,
               }));
@@ -609,6 +624,18 @@ const Test = ({ user, AIMode, sendData }) => {
           />
         </div>
       </div>
+      {user.username == "guest" && !test.sent ? (
+        <>
+          <p className="intro opacity-0 max-w-2xl self-center text-center mx-auto font-bold text-3xl text-red-600 mt-8  ">
+            UNSAVED
+          </p>
+          <p className="intro opacity-0 max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-sm/relaxed ">
+            Sign in to save your test
+          </p>
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
