@@ -1,28 +1,64 @@
 :root {
-  --primary-blue: #273564;
+  --primary-grey: #19191a;
 }
 
 body {
-  background-color: var(--primary-blue);
+  background-color: var(--primary-grey);
+}
+
+.test-card {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 18%;
+  min-width: 150px;
+  color: #fff;
+  margin: 5px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  text-align: left;
+  transition: all 0.3s ease;
+}
+
+.test-information {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  /* background-color: hsl(var(--secondary, 222 47% 11%)); */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
 }
 
 .history-container {
   display: flex;
-  justify-content: space-between;
-  padding: 20px;
+  width: 100%;
+  justify-content: center;
+  gap: 20px;
+  padding: 0 20px;
 }
 
 .history-content-scrollable {
-  flex: 1;
-  height: calc(100vh - 100px);
+  height: calc(100vh - 80px);
   overflow-y: auto;
-  margin-right: 20px;
   display: flex;
   flex-direction: column;
+  width: 20%;
+  min-width: 250px;
+  align-items: center;
+  padding: 20px 10px;
 }
 
 .test-display {
-  flex: 2;
+  flex: 1;
+  max-width: 75%;
   height: calc(100vh - 100px);
   background: #1d1c1c;
   box-shadow: rgba(0, 0, 0, 0.4) 10px 20px 30px,
@@ -31,7 +67,9 @@ body {
   display: flex;
   flex-direction: column;
   padding: 20px;
-  background-color: var(--primary-blue);
+  background-color: var(--primary-grey);
+  overflow-y: auto;
+  border-radius: 5px;
 }
 
 .test-info {
@@ -56,7 +94,7 @@ body {
 }
 
 .card {
-  background: var(--primary-blue);
+  background: var(--primary-grey);
   color: #fff;
   margin-bottom: 20px;
   padding: 10px 20px;
@@ -64,6 +102,8 @@ body {
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   cursor: pointer;
   text-align: left;
+  height: 20vh;
+  width: 33vh;
 }
 
 .details {
@@ -76,13 +116,12 @@ body {
   background-color: #1c274d;
 }
 
-/* Loading styles */
 .loading-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background-color: var(--primary-blue);
+  background-color: var(--primary-grey);
 }
 
 .load {

@@ -54,7 +54,7 @@ function Header({ user, AIMode, passLoggedIn, passLogout }) {
   }
 
   return (
-    <div className="z-50 sticky top-0 bg-background container mx-auto flex h-16 max-w-9xl items-center justify-between px-4 sm:px-6 lg:px-8 mt-2">
+    <div className="z-50 sticky top-0 bg-background container mx-auto flex h-12 max-w-9xl items-center justify-between px-4 sm:px-6 lg:px-8 mt-2">
       <a
         className="text-xl font-bold text-foreground cursor-pointer inline-flex"
         onClick={() => {

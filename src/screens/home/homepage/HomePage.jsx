@@ -5,6 +5,7 @@ import Test from "./components/test/Test";
 import Landing from "./components/landing/Landing";
 import { useState } from "react";
 import { useRef, useEffect } from "react";
+import Replay from "./components/replay/Replay";
 
 ("use client");
 
@@ -166,40 +167,12 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
               {/* STATISTICS */}
 
               <Statistics test={test} />
+
+              {/* REPLAY */}
+              {test.state == 4 ? <Replay test={test} /> : <></>}
+
               {/* HEATMAP */}
               <Heatmap test={test} />
-
-              {/* MISTAKES */}
-              {/* <div className='w-full mx-auto col-span-1 lg:col-span-2 rounded-lg border bg-card p-6 h shadow-sm'>
-                <div className='flex items-center justify-between'>
-                  <div className='space-y-1'>
-                    <h2 className='text-2xl font-bold'>Mistakes</h2>
-                    <p className='text-muted-foreground'>
-                      List of all word errors
-                    </p>
-                  </div>
-                </div> */}
-
-              {/* header */}
-              {/* <div className='grid grid-cols-3 gap-4 border-b mt-4 text-center'>
-                  <div className='text-lg font-medium'>Word</div>
-                  <div className='text-lg font-medium'>Typed</div>
-                  <div className='text-lg font-medium'>Count</div>
-                </div> */}
-
-              {/* list */}
-              {/* <ScrollArea className='h-64'>
-                  <div className='grid grid-cols-3 gap-2 text-center'>
-                    <div>our</div>
-                    <div>uor</div>
-
-                    <div>124ms</div>
-                    <div>given</div>
-                    <div>givn</div>
-                    <div>204ms</div>
-                  </div>
-                </ScrollArea>
-              </div> */}
             </div>
           </div>
         </div>

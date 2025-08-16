@@ -4,6 +4,7 @@ import { Scatter } from "react-chartjs-2";
 import "chart.js/auto";
 import "./History.css";
 import HeaderWrapper from "../../components/header/HeaderWrapper";
+import Replay from "../home/homepage/components/replay/Replay";
 
 import {
   Area,
@@ -16,7 +17,6 @@ import {
 } from "recharts";
 
 function History({ user, handleUserChange, handleLogout }) {
-
   const [chartData, setChartData] = useState([]);
 
   const [allUserTests, setAllUserTests] = useState([]);
@@ -49,7 +49,7 @@ function History({ user, handleUserChange, handleLogout }) {
         setAllUserTests(response.data);
         setCurrentlySelectedTest(response.data[0]);
 
-        console.log(response.data)
+        console.log(response.data);
 
         setTrueWPMArray(response.data[0].words.trueWPMArray);
         setRawWPMArray(response.data[0].words.rawWPMArray);
@@ -78,12 +78,11 @@ function History({ user, handleUserChange, handleLogout }) {
     setChartData(allUserTests[index].words.chartData);
     setTrueWPMArray(allUserTests[index].words.trueWPMArray);
     setRawWPMArray(allUserTests[index].words.rawWPMArray);
-    console.log(chartData)
-
+    console.log(chartData);
   };
 
   useEffect(() => {
-    console.log(chartData)
+    console.log(chartData);
   }, []);
 
   if (loading) {
@@ -212,11 +211,10 @@ function History({ user, handleUserChange, handleLogout }) {
                 <div>
                   {convertTimestampToTime(allUserTests[index].timestamp)}
                 </div>
-                <div>WPM: {test.results.trueWPM}</div>
                 <div className="details">
-                  <div>Length: {(test.settings.length || 0) / 10}</div>
-                  <div>Accuracy: {test.results.accuracy}%</div>
-                  <div>Word difficulty: {test.settings.difficulty}</div>
+                  <div>wpm: {test.results.trueWPM}</div>
+                  <div>length: {(test.settings.length || 0) / 10}</div>
+                  <div>accuracy: {test.results.accuracy}%</div>
                 </div>
               </div>
             ))
@@ -229,86 +227,87 @@ function History({ user, handleUserChange, handleLogout }) {
 
         {currentlySelectedTest && (
           <div className="test-display">
-            <div className="test-info">
-              <div>
-                <strong>Type:</strong> {currentlySelectedTest.settings.type}
+            <div className="test-information">
+              <div className="test-card">
+                <strong>type:</strong> {currentlySelectedTest.settings.type}
               </div>
-              <div>
-                <strong>Length:</strong>{" "}
+              <div className="test-card">
+                <strong>length:</strong>{" "}
                 {(currentlySelectedTest.settings.length || 0) / 10}
               </div>
-              <div>
-                <strong>True WPM:</strong>{" "}
+              <div className="test-card">
+                <strong>true wpm:</strong>{" "}
                 {currentlySelectedTest.results.trueWPM}
               </div>
-              <div>
-                <strong>Raw WPM:</strong> {currentlySelectedTest.results.rawWPM}
+              <div className="test-card">
+                <strong>raw wpm:</strong> {currentlySelectedTest.results.rawWPM}
               </div>
-              <div>
-                <strong>Accuracy:</strong>{" "}
+              <div className="test-card">
+                <strong>accuracy:</strong>{" "}
                 {currentlySelectedTest.results.accuracy}%
               </div>
-              <div>
-                <strong>Word difficulty:</strong>{" "}
-                {currentlySelectedTest.settings.difficulty}
-              </div>
             </div>
-            <div style={{ width: "100%", height: "60%", marginTop: "20px" }}>
-              <ResponsiveContainer width='100%' height={300}>
-                <AreaChart
-                  data={chartData}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}>
-                  <CartesianGrid strokeDasharray='3 3' vertical={false} />
-                  <XAxis
+            <div className="mb-[5px]">
+              <Replay test={currentlySelectedTest}> </Replay>
+            </div>
 
-                    testKey='second'
-                    tickLine={false}
-                    axisLine={false}
-                    tickMargin={2}
-                    tickFormatter={(value) => value + 1}
-                  />
-                  {/* <YAxis /> */}
-                  <YAxis
-                    // type='number'
-                    domain={["dataMin", "dataMax + 25"]}
-                    tickLine={false}
-                    axisLine={false}
-
-                  // tickMargin={8}
-                  // tickCount={8}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      backgroundColor: "hsl(var(--secondary))",
-                      border: 0,
-                      borderRadius: "0.5rem",
+            <div className="w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm">
+              <div style={{ width: "100%", height: "60%", marginTop: "20px" }}>
+                <ResponsiveContainer width="100%" height={180}>
+                  <AreaChart
+                    data={chartData}
+                    margin={{
+                      top: 10,
+                      right: 30,
+                      left: 0,
+                      bottom: 0,
                     }}
-                    wrapperStyle={{ color: "white", borderRadius: "2rem" }}
-                  />
-                  <Area
+                  >
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    <XAxis
+                      testKey="second"
+                      tickLine={false}
+                      axisLine={false}
+                      tickMargin={2}
+                      tickFormatter={(value) => value + 1}
+                    />
+                    {/* <YAxis /> */}
+                    <YAxis
+                      // type='number'
+                      domain={["dataMin", "dataMax + 25"]}
+                      tickLine={false}
+                      axisLine={false}
 
-                    type='monotone'
-                    dataKey='trueWPM'
-                    stackId='1'
-                    stroke='hsl(143, 100%, 51%)'
-                    fill='hsl(143, 100%, 51%)'
-                    fillOpacity={0.15}
-                  />
-                  <Area
-                    type='monotone'
-                    dataKey='rawWPM'
-                    stackId='0'
-                    stroke='hsl(20, 100%, 47%)'
-                    fill='hsl(34, 100%, 47%)'
-                    fillOpacity={0.1}
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
+                      // tickMargin={8}
+                      // tickCount={8}
+                    />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "hsl(var(--secondary))",
+                        border: 0,
+                        borderRadius: "0.5rem",
+                      }}
+                      wrapperStyle={{ color: "white", borderRadius: "2rem" }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="trueWPM"
+                      stackId="1"
+                      stroke="hsl(143, 100%, 51%)"
+                      fill="hsl(143, 100%, 51%)"
+                      fillOpacity={0.15}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="rawWPM"
+                      stackId="0"
+                      stroke="hsl(20, 100%, 47%)"
+                      fill="hsl(34, 100%, 47%)"
+                      fillOpacity={0.1}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
             </div>
           </div>
         )}
