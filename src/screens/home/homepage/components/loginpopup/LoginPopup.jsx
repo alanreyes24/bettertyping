@@ -66,38 +66,48 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
 
   return (
     <>
-      <div className='fixed top-0 left-0 bg-[#090909a0] w-[100vw] h-[100vh] -z-10 ' onClick={() => { showHide() }}></div>
-      <Card className='mx-auto max-w-sm login-container border rounded-lg blur-none'>
+      <div
+        className="fixed top-0 left-0 bg-[#090909a0] w-[100vw] h-[100vh] -z-10 "
+        onClick={() => {
+          showHide();
+        }}
+      ></div>
+      <Card className="mx-auto max-w-sm login-container border rounded-lg blur-none">
         <CardHeader>
-          <CardTitle className='text-2xl'>{showRegister ? "Register" : "Sign In"}</CardTitle>
+          <CardTitle className="text-2xl">
+            {showRegister ? "register" : "sign in"}
+          </CardTitle>
           <CardDescription>
-            Enter your username below to {showRegister ? "register for an account" : "sign in to your account"}
+            enter your username below to{" "}
+            {showRegister
+              ? "register for an account"
+              : "sign in to your account"}
           </CardDescription>
         </CardHeader>
         <form
-          className='login-form'
-          onSubmit={showRegister ? handleRegister : handleLogin}>
-          <CardContent className='w-64'>
-            <div className='grid gap-4'>
-              <div className='grid gap-2'>
-                <Label htmlFor='name'>Username</Label>
+          className="login-form"
+          onSubmit={showRegister ? handleRegister : handleLogin}
+        >
+          <CardContent className="w-64">
+            <div className="grid gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="name">username</Label>
                 <Input
                   className="bg-secondary"
-                  id='name'
-                  type='username'
+                  id="name"
+                  type="username"
                   onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
-              <div className='grid gap-2'>
-                <div className='flex items-center'>
-                  <Label htmlFor='password'>Password</Label>
+              <div className="grid gap-2">
+                <div className="flex items-center">
+                  <Label htmlFor="password">password</Label>
                 </div>
                 <Input
                   className="bg-secondary"
-                  id='password'
-
-                  type='password'
+                  id="password"
+                  type="password"
                   required
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -106,17 +116,20 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
                 Forgot your password?
               </a> */}
               {error.toString()}
-              <Button className='login-button' type='submit'>
-                {showRegister ? "Register" : "Sign In"}
+              <Button className="login-button" type="submit">
+                {showRegister ? "register" : "sign in"}
               </Button>
             </div>
-            <div className='mt-4 text-center text-sm'>
-              {showRegister ? "Already have an account? " : "Don't have an account? "}
+            <div className="mt-4 text-center text-sm">
+              {showRegister
+                ? "already have an account? "
+                : "don't have an account? "}
 
               <a
-                className='toggle-link text-primary-foreground'
-                onClick={() => setShowRegister(!showRegister)}>
-                {showRegister ? " Sign In " : "Register"}
+                className="toggle-link text-primary-foreground"
+                onClick={() => setShowRegister(!showRegister)}
+              >
+                {showRegister ? "sign in " : "register"}
               </a>
             </div>
           </CardContent>

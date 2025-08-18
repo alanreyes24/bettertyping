@@ -33,7 +33,7 @@ function Login({ loginVisible, passLoggedIn }) {
       await passLoggedIn(userID, confirmedUsername);
       setLoginVisible(false);
     } catch (error) {
-      setError(error.response ? error.response.data : "An error occurred");
+      setError(error.response ? error.response.data : "an error occurred");
       console.log(error.response ? error.response.data : error);
     }
   };
@@ -50,9 +50,9 @@ function Login({ loginVisible, passLoggedIn }) {
       );
       setShowRegister(false);
     } catch (error) {
-      setError(error.response ? error.response.data : "An error occurred");
+      setError(error.response ? error.response.data : "an error occurred");
       console.error(
-        "Error registering:",
+        "error registering:",
         error.response ? error.response.data : error
       );
     }
@@ -83,7 +83,7 @@ function Login({ loginVisible, passLoggedIn }) {
             <div style={{ color: "red" }}>{error.message || error}</div>
           )}
           <button className="login-button" type="submit">
-            {showRegister ? "Register" : "Login"}
+            {showRegister ? "register" : "login"}
           </button>
           <div className="toggle-link-container">
             <a
@@ -91,8 +91,8 @@ function Login({ loginVisible, passLoggedIn }) {
               onClick={() => setShowRegister(!showRegister)}
             >
               {showRegister
-                ? "Already have an account? Login"
-                : "Don't have an account? Register"}
+                ? "already have an account? login"
+                : "don't have an account? register"}
             </a>
           </div>
         </form>
