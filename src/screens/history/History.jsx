@@ -213,14 +213,16 @@ function History({ user, handleUserChange, handleLogout }) {
                 </div>
                 <div className="details">
                   <div>wpm: {test.results.trueWPM}</div>
-                  <div>length: {(test.settings.length || 0) / 10}</div>
+                  {test.settings.type == "words" && (
+                    <div>length: {(test.settings.length || 0) / 10}</div>
+                  )}
                   <div>accuracy: {test.results.accuracy}%</div>
                 </div>
               </div>
             ))
           ) : (
             <div className="no-tests-message">
-              You need to take a test to have history displayed.
+              you need to take a test to have history displayed
             </div>
           )}
         </div>
@@ -231,10 +233,12 @@ function History({ user, handleUserChange, handleLogout }) {
               <div className="test-card">
                 <strong>type:</strong> {currentlySelectedTest.settings.type}
               </div>
-              <div className="test-card">
-                <strong>length:</strong>{" "}
-                {(currentlySelectedTest.settings.length || 0) / 10}
-              </div>
+              {currentlySelectedTest.settings.type == "words" && (
+                <div className="test-card">
+                  <strong>length:</strong>{" "}
+                  {(currentlySelectedTest.settings.length || 0) / 10}
+                </div>
+              )}
               <div className="test-card">
                 <strong>true wpm:</strong>{" "}
                 {currentlySelectedTest.results.trueWPM}
@@ -253,7 +257,7 @@ function History({ user, handleUserChange, handleLogout }) {
 
             <div className="w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm">
               <div style={{ width: "100%", height: "60%", marginTop: "20px" }}>
-                <ResponsiveContainer width="100%" height={180}>
+                <ResponsiveContainer width="100%" height={170}>
                   <AreaChart
                     data={chartData}
                     margin={{

@@ -172,7 +172,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
               {test.state == 4 ? <Replay test={test} /> : <></>}
 
               {/* HEATMAP */}
-              <Heatmap test={test} />
+              {/* <Heatmap test={test} /> */}
             </div>
           </div>
         </div>
