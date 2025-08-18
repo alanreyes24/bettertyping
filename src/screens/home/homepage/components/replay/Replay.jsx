@@ -245,7 +245,7 @@ function Replay({ test }) {
       </div>
 
       <div className="mt-6">
-        <div className="rounded-lg inline-flex flex-wrap overflow-scroll h-48">
+        <div className="rounded-lg inline-flex flex-wrap overflow-auto h-48">
           {replay.wordList.map((word, wordIndex) => (
             <div className="flex-row flex mr-7 lg:mr-4" key={wordIndex}>
               {word.split("").map((letter, letterIndex) => {
