@@ -68,8 +68,10 @@ function TextArea({
   }
 
   useEffect(() => {
-    focusInput();
-  });
+    if (test.state === 0) {
+      focusInput();
+    }
+  }, [test.state]);
 
   useEffect(() => {
     // handle line shifting
