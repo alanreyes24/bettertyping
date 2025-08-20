@@ -68,6 +68,10 @@ function TextArea({
   }
 
   useEffect(() => {
+    focusInput();
+  });
+
+  useEffect(() => {
     // handle line shifting
     if (test.state === 1) {
       const currentLetter =
