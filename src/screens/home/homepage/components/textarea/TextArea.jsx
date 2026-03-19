@@ -74,6 +74,14 @@ function TextArea({
   }, [test.state]);
 
   useEffect(() => {
+    if (test.state === 0) {
+      focusInput();
+      onFocus();
+      setShouldUpdateCursor(true);
+    }
+  });
+
+  useEffect(() => {
     // handle line shifting
     if (test.state === 1) {
       const currentLetter =
