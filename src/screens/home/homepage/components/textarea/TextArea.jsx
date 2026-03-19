@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useReducer } from "react";
+import React, {
+  useEffect,
+  useState,
+  useReducer,
+  useRef,
+  useCallback,
+} from "react";
 
 import Word from "../word/Word";
 import axios from "axios";
@@ -30,7 +36,7 @@ function TextArea({
 
   const [currentLetterIndex, setCurrentLetterIndex] = useState(0);
   const [currentCorrectLetterArray, setCurrentCorrectLetterArray] = useState(
-    []
+    [],
   );
   const [currentIncorrectLetterArray, setCurrentIncorrectLetterArray] =
     useState([]);
@@ -51,11 +57,13 @@ function TextArea({
 
   const [AIWordList, setAIWordList] = useState([" "]);
 
+  const inputRef = useRef(null);
+
   async function retrieveAIWordList() {
     try {
       const response = await axios.get(
         `${import.meta.env.VITE_API_URL}/ai/getAIWordList`,
-        { withCredentials: true }
+        { withCredentials: true },
       );
       if (response.status >= 200 && response.status < 300) {
         setAIWordList(response.data.practiceWords);
@@ -67,19 +75,48 @@ function TextArea({
     }
   }
 
-  useEffect(() => {
-    if (test.state === 0) {
-      focusInput();
+  const focusInput = useCallback(() => {
+    if (inputRef.current) {
+      inputRef.current.focus();
     }
-  }, [test.state]);
+    onFocus();
+    setShouldUpdateCursor(true);
+  }, [onFocus]);
+
+  // Focus on mount and whenever test state resets
+  useEffect(() => {
+    focusInput();
+  }, []);
 
   useEffect(() => {
     if (test.state === 0) {
       focusInput();
-      onFocus();
-      setShouldUpdateCursor(true);
     }
-  });
+  }, [test.state, focusInput]);
+
+  // Re-focus when the user clicks anywhere on the page
+  useEffect(() => {
+    const handleWindowClick = () => {
+      focusInput();
+    };
+
+    window.addEventListener("click", handleWindowClick);
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+    };
+  }, [focusInput]);
+
+  // Re-focus when window/tab regains focus
+  useEffect(() => {
+    const handleWindowFocus = () => {
+      focusInput();
+    };
+
+    window.addEventListener("focus", handleWindowFocus);
+    return () => {
+      window.removeEventListener("focus", handleWindowFocus);
+    };
+  }, [focusInput]);
 
   useEffect(() => {
     // handle line shifting
@@ -112,8 +149,6 @@ function TextArea({
     // extend word list
     if (test.state === 1 && test.settings.type !== "words") {
       if (currentLetterIndex / 5 >= wordList.length - 30 && !reset) {
-        // console.log("extending")
-        // console.log(wordList.length)
         extendWordList(30);
       }
     }
@@ -163,16 +198,6 @@ function TextArea({
       console.log("passing");
       passEventLog(eventLog);
     }
-
-    // if (test.state === 3 && test.words.attemptedWords === 0) {
-    //   const arr = Array.from(
-    //     { length: totalCorrectWords },
-    //     (_, i) => document.getElementsByClassName("word")[i].textContent
-    //   );
-    //   setTimeout(() => {
-    //     passWords(arr);
-    //   }, 0);
-    // }
   }, [currentLetterArrayIndexValue, test.state, test.timer.timeLeft]);
 
   useEffect(() => {
@@ -203,15 +228,6 @@ function TextArea({
       cursor.classList.remove("cursorBlink");
     }
   }
-
-  const focusInput = () => {
-    const input = document.getElementById("input");
-    if (input) {
-      input.focus();
-    }
-    onFocus();
-    setShouldUpdateCursor(true);
-  };
 
   const getOffset = (element) => {
     const rect = element.getBoundingClientRect();
@@ -329,7 +345,7 @@ function TextArea({
         }
         console.log(
           currentLetterIndex + 2,
-          document.getElementsByClassName("letter").length
+          document.getElementsByClassName("letter").length,
         );
       } else if (input === "Backspace" && currentLetterIndex > 0) {
         const lastLetter =
@@ -352,6 +368,8 @@ function TextArea({
           currentLetter={currentLetterIndex}
         />
         <input
+          ref={inputRef}
+          autoFocus
           onBlur={() => {
             setShouldUpdateCursor(false);
           }}
@@ -376,7 +394,13 @@ function TextArea({
               handleUserInput(event);
             }
           }}
-          style={{ opacity: 0, height: 0, width: 0 }}
+          style={{
+            position: "absolute",
+            opacity: 0,
+            left: "-9999px",
+            width: "1px",
+            height: "1px",
+          }}
         />
 
         <div className="rounded-lg w-full h-44 overflow-hidden ">
