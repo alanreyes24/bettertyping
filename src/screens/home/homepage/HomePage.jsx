@@ -45,7 +45,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
   useGSAP(
     () => {
       const tl = gsap.timeline();
-    }
+    },
     // { scope: container }
   );
 
@@ -57,7 +57,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
         user={user}
       />
 
-      <div ref={container} className="bg-background w-full h-full">
+      <div ref={container} className='bg-background w-full h-full'>
         <OnboardingModal
           user={user}
           type={onboardingType}
@@ -76,7 +76,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
           }}
         />
 
-        <div className="flex flex-1 flex-col">
+        <div className='flex flex-1 flex-col'>
           {/* TEST */}
           <Test
             user={user}
@@ -88,27 +88,27 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
           />
 
           {/* ANALYSIS */}
-          <div className="analysis hidden opacity-0 mb-24">
-            <div className="space-y-4 justify-center text-center self-center mt-24 mx-auto max-w-3xl lg:max-w-6xl">
-              <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+          <div className='analysis hidden opacity-0 mb-24'>
+            <div className='space-y-4 justify-center text-center self-center mt-24 mx-auto max-w-3xl lg:max-w-6xl'>
+              <h1 className='text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl'>
                 analysis
               </h1>
-              <p className="max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed">
+              <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed'>
                 here's an indepth look on how you did
               </p>
             </div>
 
             {/* REPORT */}
-            <div className="max-w-3xl lg:max-w-6xl grid grid-cols-2 lg:grid-cols-5 mt-6 gap-6 mx-auto">
+            <div className='max-w-3xl lg:max-w-6xl grid grid-cols-2 lg:grid-cols-5 mt-6 gap-6 mx-auto'>
               {/* GRAPH */}
-              <div className="w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm">
-                <div className="space-y-1 mb-5">
-                  <h2 className="text-2xl font-bold">words per minute</h2>
-                  <p className="text-muted-foreground">
+              <div className='w-full col-span-1 lg:col-span-3 mx-auto rounded-lg border bg-card p-6 shadow-sm'>
+                <div className='space-y-1 mb-5'>
+                  <h2 className='text-2xl font-bold'>words per minute</h2>
+                  <p className='text-muted-foreground'>
                     track your WPM over the length of the test
                   </p>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
+                <ResponsiveContainer width='100%' height={300}>
                   <AreaChart
                     data={chartData}
                     margin={{
@@ -116,11 +116,10 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
                       right: 30,
                       left: 0,
                       bottom: 0,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                    }}>
+                    <CartesianGrid strokeDasharray='3 3' vertical={false} />
                     <XAxis
-                      testKey="second"
+                      testKey='second'
                       tickLine={false}
                       axisLine={false}
                       tickMargin={2}
@@ -145,19 +144,19 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
                       wrapperStyle={{ color: "white", borderRadius: "2rem" }}
                     />
                     <Area
-                      type="monotone"
-                      dataKey="trueWPM"
-                      stackId="1"
-                      stroke="hsl(143, 100%, 51%)"
-                      fill="hsl(143, 100%, 51%)"
+                      type='monotone'
+                      dataKey='trueWPM'
+                      stackId='1'
+                      stroke='hsl(143, 100%, 51%)'
+                      fill='hsl(143, 100%, 51%)'
                       fillOpacity={0.15}
                     />
                     <Area
-                      type="monotone"
-                      dataKey="rawWPM"
-                      stackId="0"
-                      stroke="hsl(20, 100%, 47%)"
-                      fill="hsl(34, 100%, 47%)"
+                      type='monotone'
+                      dataKey='rawWPM'
+                      stackId='0'
+                      stroke='hsl(20, 100%, 47%)'
+                      fill='hsl(34, 100%, 47%)'
                       fillOpacity={0.1}
                     />
                   </AreaChart>
@@ -168,11 +167,11 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
 
               <Statistics test={test} />
 
+              {/* HEATMAP */}
+              <Heatmap test={test} />
+
               {/* REPLAY */}
               {test.state == 4 ? <Replay test={test} /> : <></>}
-
-              {/* HEATMAP */}
-              {/* <Heatmap test={test} /> */}
             </div>
           </div>
         </div>
