@@ -95,16 +95,16 @@ function TextArea({
   }, [test.state, focusInput]);
 
   // Re-focus when the user clicks anywhere on the page
-  useEffect(() => {
-    const handleWindowClick = () => {
-      focusInput();
-    };
+  // useEffect(() => {
+  //   const handleWindowClick = () => {
+  //     focusInput();
+  //   };
 
-    window.addEventListener("click", handleWindowClick);
-    return () => {
-      window.removeEventListener("click", handleWindowClick);
-    };
-  }, [focusInput]);
+  //   window.addEventListener("click", handleWindowClick);
+  //   return () => {
+  //     window.removeEventListener("click", handleWindowClick);
+  //   };
+  // }, [focusInput]);
 
   // Re-focus when window/tab regains focus
   useEffect(() => {
@@ -243,7 +243,7 @@ function TextArea({
       return Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word word={AIWordList[i % AIWordList.length]} />
           </div>
         ));
@@ -251,7 +251,7 @@ function TextArea({
       let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className="word">
+          <div key={i} className='word'>
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
@@ -271,7 +271,7 @@ function TextArea({
     let wordArr = Array(amount)
       .fill(false)
       .map((_, i) => (
-        <div key={i + wordList.length} className="word">
+        <div key={i + wordList.length} className='word'>
           <Word selectedDifficulty={selectedDifficulty} />
         </div>
       ));
@@ -373,15 +373,15 @@ function TextArea({
           onBlur={() => {
             setShouldUpdateCursor(false);
           }}
-          id="input"
-          autoComplete="off"
-          autoCapitalize="off"
-          autoCorrect="off"
-          type="text"
-          data-gramm="false"
-          data-gramm_editor="false"
-          data-enable-grammarly="false"
-          list="autocompleteOff"
+          id='input'
+          autoComplete='off'
+          autoCapitalize='off'
+          autoCorrect='off'
+          type='text'
+          data-gramm='false'
+          data-gramm_editor='false'
+          data-enable-grammarly='false'
+          list='autocompleteOff'
           onKeyDown={(event) => {
             if (
               test.state === 0 &&
@@ -403,14 +403,13 @@ function TextArea({
           }}
         />
 
-        <div className="rounded-lg w-full h-44 overflow-hidden ">
+        <div className='rounded-lg w-full h-44 overflow-hidden '>
           <div
             onClick={focusInput}
-            className=""
+            className=''
             style={{
               marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
-            }}
-          >
+            }}>
             {wordsLoaded ? wordList : <></>}
           </div>
         </div>
