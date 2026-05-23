@@ -100,9 +100,17 @@ function TextArea({
     }
   }, [test.state, focusInput]);
 
-  // Re-focus when the user clicks anywhere on the page
+  // Re-focus when the user clicks the page — but NOT when they click an
+  // interactive element (e.g. a login input on another part of the page).
   useEffect(() => {
-    const handleWindowClick = () => {
+    const handleWindowClick = (e) => {
+      if (
+        e.target.closest(
+          "input, textarea, select, button, a, [contenteditable=true], [role='textbox'], [role='button']",
+        )
+      ) {
+        return;
+      }
       focusInput();
     };
 
@@ -112,9 +120,20 @@ function TextArea({
     };
   }, [focusInput]);
 
-  // Re-focus when window/tab regains focus
+  // Re-focus when window/tab regains focus — unless another input already
+  // has focus (user was mid-typing in something else when they tabbed back).
   useEffect(() => {
     const handleWindowFocus = () => {
+      const active = document.activeElement;
+      if (
+        active &&
+        active !== inputRef.current &&
+        active.matches?.(
+          "input, textarea, select, [contenteditable=true], [role='textbox']",
+        )
+      ) {
+        return;
+      }
       focusInput();
     };
 
@@ -327,9 +346,10 @@ function TextArea({
         return [
           ...prevLog,
           {
-            correct: currentLetter.textContent == input,
             intended: currentLetter.textContent,
             typed: input,
+            startTime: effectiveStart,
+            timestamp,
             delay,
             pressLength: null, // filled in on keyup
           },
