@@ -40,7 +40,7 @@ ChartJS.register(
   Filler,
   Title,
   Tooltip,
-  Legend
+  Legend,
 );
 gsap.registerPlugin(ScrollToPlugin);
 
@@ -270,6 +270,10 @@ const Test = ({ user, AIMode, sendData }) => {
 
     if (test.state == 4 && !sent) {
       handleEndTest();
+      setTest((prevTest) => ({
+        ...prevTest,
+        state: 5,
+      }));
     }
   }, [test.state, test.timer]);
 
@@ -329,7 +333,7 @@ const Test = ({ user, AIMode, sendData }) => {
         const { trueWPM, rawWPM } = calculateWPM(
           totalCorrect,
           totalIncorrect,
-          timeElapsed
+          timeElapsed,
         );
         const accuracy = calculateAccuracy(totalCorrect, totalIncorrect);
 
@@ -378,15 +382,15 @@ const Test = ({ user, AIMode, sendData }) => {
       {/* INTRO */}
 
       {/* TEST */}
-      <div className="test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
+      <div className='test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border'>
         {/* SETTINGS AND TIMER*/}
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
+        <div className='flex items-center justify-between'>
+          <div className='space-y-1'>
             {test.state === 1 ? (
               <Timer test={test} />
             ) : (
               <>
-                <h2 className="text-4xl font-bold">
+                <h2 className='text-4xl font-bold'>
                   {test.settings.type == "time"
                     ? "timed, "
                     : "count, " + test.settings.count}
@@ -394,7 +398,7 @@ const Test = ({ user, AIMode, sendData }) => {
                     ? test.settings.length / 10 + " seconds"
                     : " words"}
                 </h2>
-                <p className="text-muted-foreground ml-1">
+                <p className='text-muted-foreground ml-1'>
                   {test.settings.type == "time"
                     ? "type as many words as you can in "
                     : "type these " + test.settings.count}
@@ -406,34 +410,30 @@ const Test = ({ user, AIMode, sendData }) => {
             )}
           </div>
           {/* SETTINGS */}
-          <div className="flex items-center gap-2">
-            <div className="flex justify-center m-2">
+          <div className='flex items-center gap-2'>
+            <div className='flex justify-center m-2'>
               {test.state == 1 || test.state == 0 ? (
                 <button onClick={() => setResetWords(true)}>
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1.5em"
-                    height="1.5em"
-                    viewBox="0 0 24 24"
-                  >
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='1.5em'
+                    height='1.5em'
+                    viewBox='0 0 24 24'>
                     <path
-                      fill="currentColor"
-                      d="M12 22q-1.875 0-3.513-.713t-2.85-1.924q-1.212-1.213-1.924-2.85T3 13h2q0 2.925 2.038 4.963T12 20q2.925 0 4.963-2.038T19 13q0-2.925-2.038-4.963T12 6h-.15l1.55 1.55L12 9L8 5l4-4l1.4 1.45L11.85 4H12q1.875 0 3.513.713t2.85 1.925q1.212 1.212 1.925 2.85T21 13q0 1.875-.713 3.513t-1.924 2.85q-1.213 1.212-2.85 1.925T12 22Z"
-                    ></path>
+                      fill='currentColor'
+                      d='M12 22q-1.875 0-3.513-.713t-2.85-1.924q-1.212-1.213-1.924-2.85T3 13h2q0 2.925 2.038 4.963T12 20q2.925 0 4.963-2.038T19 13q0-2.925-2.038-4.963T12 6h-.15l1.55 1.55L12 9L8 5l4-4l1.4 1.45L11.85 4H12q1.875 0 3.513.713t2.85 1.925q1.212 1.212 1.925 2.85T21 13q0 1.875-.713 3.513t-1.924 2.85q-1.213 1.212-2.85 1.925T12 22Z'></path>
                   </svg>
                 </button>
               ) : (
                 <button onClick={() => window.location.reload()}>
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="1.5em"
-                    height="1.5em"
-                    viewBox="0 0 24 24"
-                  >
+                    xmlns='http://www.w3.org/2000/svg'
+                    width='1.5em'
+                    height='1.5em'
+                    viewBox='0 0 24 24'>
                     <path
-                      fill="currentColor"
-                      d="M12 22q-1.875 0-3.513-.713t-2.85-1.924q-1.212-1.213-1.924-2.85T3 13h2q0 2.925 2.038 4.963T12 20q2.925 0 4.963-2.038T19 13q0-2.925-2.038-4.963T12 6h-.15l1.55 1.55L12 9L8 5l4-4l1.4 1.45L11.85 4H12q1.875 0 3.513.713t2.85 1.925q1.212 1.212 1.925 2.85T21 13q0 1.875-.713 3.513t-1.924 2.85q-1.213 1.212-2.85 1.925T12 22Z"
-                    ></path>
+                      fill='currentColor'
+                      d='M12 22q-1.875 0-3.513-.713t-2.85-1.924q-1.212-1.213-1.924-2.85T3 13h2q0 2.925 2.038 4.963T12 20q2.925 0 4.963-2.038T19 13q0-2.925-2.038-4.963T12 6h-.15l1.55 1.55L12 9L8 5l4-4l1.4 1.45L11.85 4H12q1.875 0 3.513.713t2.85 1.925q1.212 1.212 1.925 2.85T21 13q0 1.875-.713 3.513t-1.924 2.85q-1.213 1.212-2.85 1.925T12 22Z'></path>
                   </svg>
                 </button>
               )}
@@ -453,8 +453,8 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     count:
                       settingValue == 1 ? 25 : settingValue == 2 ? 50 : 100,
@@ -466,27 +466,25 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? settingValue == 1
                           ? 150
                           : settingValue == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: value == "time" ? false : true,
                   },
                 }));
               }}
-              defaultValue="words"
-            >
+              defaultValue='words'>
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="type"
-                aria-label="Select Type"
-              >
-                <SelectValue placeholder="Select Test" />
+                id='type'
+                aria-label='Select Type'>
+                <SelectValue placeholder='Select Test' />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="time">timed</SelectItem>
-                <SelectItem value="words">count</SelectItem>
+                <SelectItem value='time'>timed</SelectItem>
+                <SelectItem value='words'>count</SelectItem>
               </SelectContent>
             </Select>
 
@@ -508,23 +506,21 @@ const Test = ({ user, AIMode, sendData }) => {
                         ? v == 1
                           ? 150
                           : v == 2
-                          ? 300
-                          : 600
+                            ? 300
+                            : 600
                         : 0,
                     timerGoesUp: typeValue == "time" ? false : true,
                   },
                 }));
               }}
-              defaultValue={1}
-            >
+              defaultValue={1}>
               <SelectTrigger
                 onFocus={(e) => {
                   cancelTest();
                 }}
-                id="length"
-                aria-label="Select Length"
-              >
-                <SelectValue placeholder="Select Length" />
+                id='length'
+                aria-label='Select Length'>
+                <SelectValue placeholder='Select Length' />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={1}>
@@ -542,7 +538,7 @@ const Test = ({ user, AIMode, sendData }) => {
         </div>
 
         {/* TEXT AREA */}
-        <div className="flex justify-center m-4 ">
+        <div className='flex justify-center m-4 '>
           <TextArea
             user={user}
             aiMode={AIMode}
@@ -641,8 +637,8 @@ const Test = ({ user, AIMode, sendData }) => {
                       ? settingValue == 1
                         ? 150
                         : settingValue == 2
-                        ? 300
-                        : 600
+                          ? 300
+                          : 600
                       : 0,
                   isActive: false,
                   timerGoesUp: test.timer.timerGoesUp,
