@@ -10,6 +10,7 @@ import Word from "../word/Word";
 import axios from "axios";
 import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
+// import { start } from "repl";
 
 function TextArea({
   user,
@@ -59,6 +60,11 @@ function TextArea({
 
   const inputRef = useRef(null);
 
+  // Tracks in-flight keydowns so we can compute pressLength on keyup.
+  // Keyed by event.code (stable across modifier changes).
+  // Each entry: { downTime: number, eventIndex: number }
+  const keyDownInfoRef = useRef({});
+
   async function retrieveAIWordList() {
     try {
       const response = await axios.get(
@@ -95,16 +101,16 @@ function TextArea({
   }, [test.state, focusInput]);
 
   // Re-focus when the user clicks anywhere on the page
-  // useEffect(() => {
-  //   const handleWindowClick = () => {
-  //     focusInput();
-  //   };
+  useEffect(() => {
+    const handleWindowClick = () => {
+      focusInput();
+    };
 
-  //   window.addEventListener("click", handleWindowClick);
-  //   return () => {
-  //     window.removeEventListener("click", handleWindowClick);
-  //   };
-  // }, [focusInput]);
+    window.addEventListener("click", handleWindowClick);
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+    };
+  }, [focusInput]);
 
   // Re-focus when window/tab regains focus
   useEffect(() => {
@@ -159,10 +165,10 @@ function TextArea({
       setCorrectLetters([]);
       setLastTimestamp(0);
       setStartTime(0);
-
       setCurrentLetterArrayIndexValue(0);
       setCurrentLetterIndex(0);
       setDeleteLines(0);
+      keyDownInfoRef.current = {}; // clear in-flight keydowns
       onReset();
     }
   }, [
@@ -243,7 +249,7 @@ function TextArea({
       return Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className='word'>
+          <div key={i} className="word">
             <Word word={AIWordList[i % AIWordList.length]} />
           </div>
         ));
@@ -251,7 +257,7 @@ function TextArea({
       let arr = Array(amount)
         .fill(false)
         .map((_, i) => (
-          <div key={i} className='word'>
+          <div key={i} className="word">
             <Word selectedDifficulty={selectedDifficulty} />
           </div>
         ));
@@ -271,7 +277,7 @@ function TextArea({
     let wordArr = Array(amount)
       .fill(false)
       .map((_, i) => (
-        <div key={i + wordList.length} className='word'>
+        <div key={i + wordList.length} className="word">
           <Word selectedDifficulty={selectedDifficulty} />
         </div>
       ));
@@ -283,35 +289,52 @@ function TextArea({
 
     if (input == "Shift") return;
 
+    // Ignore auto-repeat keydowns so they don't overwrite the original downTime
+    // for an already-held key.
+    if (event.repeat) return;
+
     const currentLetter =
       document.getElementsByClassName("letter")[currentLetterIndex];
     const nextLetter =
       document.getElementsByClassName("letter")[currentLetterIndex + 1];
 
-    if (!startTime) {
-      setStartTime(Date.now());
+    // Capture "now" once so all timing math is consistent on this keystroke.
+    const now = Date.now();
+    const isFirstKey = !startTime;
+    const effectiveStart = startTime || now;
+
+    if (isFirstKey) {
+      setStartTime(now);
     }
 
-    const timestamp = Date.now() - startTime;
+    // Timestamp relative to the start of the test (0 on first keystroke).
+    const timestamp = now - effectiveStart;
+
+    // Delay from previous keystroke (0 on first keystroke).
+    const delay = isFirstKey ? 0 : now - lastTimestamp;
+
+    // Store absolute epoch ms consistently so the next keystroke can subtract.
+    setLastTimestamp(now);
 
     if (currentLetter.textContent != undefined) {
-      setEventLog((prevLog) => [
-        ...prevLog,
-        {
-          timestamp,
-          intended: currentLetter.textContent,
-          typed: input,
-
-          delay: timestamp - lastTimestamp,
-        },
-      ]);
-
-      // THIS IS TO CHECK THE TIMESTAMP IS NOT STUPIDLY HIGH (i.e. the start marker or someone just running a test forever)
-      if (timestamp < 10000000) {
-        setLastTimestamp(timestamp);
-      } else {
-        setLastTimestamp(0);
-      }
+      // Capture the keydown so onKeyUp can fill in pressLength later.
+      // Using the functional updater means prevLog.length is the correct,
+      // race-free index for the entry we're about to push.
+      const code = event.code;
+      setEventLog((prevLog) => {
+        const eventIndex = prevLog.length;
+        keyDownInfoRef.current[code] = { downTime: now, eventIndex };
+        return [
+          ...prevLog,
+          {
+            correct: currentLetter.textContent == input,
+            intended: currentLetter.textContent,
+            typed: input,
+            delay,
+            pressLength: null, // filled in on keyup
+          },
+        ];
+      });
 
       if (input !== "Backspace") {
         setTextTyped((prev) => prev + input);
@@ -360,6 +383,27 @@ function TextArea({
     }
   };
 
+  const handleKeyUp = (event) => {
+    if (event.key === "Shift") return;
+
+    const info = keyDownInfoRef.current[event.code];
+    if (!info) return;
+
+    const pressLength = Date.now() - info.downTime;
+    delete keyDownInfoRef.current[event.code];
+
+    setEventLog((prev) => {
+      // Guard against a reset clearing the log between down and up.
+      if (!prev[info.eventIndex]) return prev;
+      const updated = [...prev];
+      updated[info.eventIndex] = {
+        ...updated[info.eventIndex],
+        pressLength,
+      };
+      return updated;
+    });
+  };
+
   return (
     <>
       <div>
@@ -373,15 +417,15 @@ function TextArea({
           onBlur={() => {
             setShouldUpdateCursor(false);
           }}
-          id='input'
-          autoComplete='off'
-          autoCapitalize='off'
-          autoCorrect='off'
-          type='text'
-          data-gramm='false'
-          data-gramm_editor='false'
-          data-enable-grammarly='false'
-          list='autocompleteOff'
+          id="input"
+          autoComplete="off"
+          autoCapitalize="off"
+          autoCorrect="off"
+          type="text"
+          data-gramm="false"
+          data-gramm_editor="false"
+          data-enable-grammarly="false"
+          list="autocompleteOff"
           onKeyDown={(event) => {
             if (
               test.state === 0 &&
@@ -394,6 +438,7 @@ function TextArea({
               handleUserInput(event);
             }
           }}
+          onKeyUp={handleKeyUp}
           style={{
             position: "absolute",
             opacity: 0,
@@ -403,13 +448,14 @@ function TextArea({
           }}
         />
 
-        <div className='rounded-lg w-full h-44 overflow-hidden '>
+        <div className="rounded-lg w-full h-44 overflow-hidden ">
           <div
             onClick={focusInput}
-            className=''
+            className=""
             style={{
               marginTop: deleteLines > 1 ? (deleteLines - 1) * -2.5 + "rem" : 0,
-            }}>
+            }}
+          >
             {wordsLoaded ? wordList : <></>}
           </div>
         </div>
