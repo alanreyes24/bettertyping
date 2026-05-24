@@ -10,7 +10,6 @@ function HeaderWrapper({ passLoggedIn, passLogout, user}) {
       passLoggedIn={passLoggedIn}
       passLogout={passLogout}
       user={user}
-
     />
   );
 }
