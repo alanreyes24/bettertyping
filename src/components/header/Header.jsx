@@ -5,7 +5,7 @@ import Login from "../login/Login";
 import LoginPopup from "../../screens/home/homepage/components/loginpopup/LoginPopup";
 import "./Header.css";
 
-function Header({ user, AIMode, passLoggedIn, passLogout }) {
+function Header({ user,passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
   const location = useLocation();

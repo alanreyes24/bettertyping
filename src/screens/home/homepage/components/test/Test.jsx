@@ -45,6 +45,7 @@ ChartJS.register(
 gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, sendData }) => {
+  
   const sendTestToBackend = async () => {
     try {
       console.log("SENDING!");
@@ -147,7 +148,7 @@ const Test = ({ user, sendData }) => {
     }));
   }, [user]);
 
-  useEffect(() => {
+  useEffect(() => { 
     if (test.username != undefined && test.userID != undefined) {
       if (
         test.username != "guest" &&

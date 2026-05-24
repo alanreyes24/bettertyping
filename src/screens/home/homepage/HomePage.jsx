@@ -84,7 +84,6 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
               setTest(test);
               setChartData(test.words.chartData);
             }}
-            AIMode={false}
           />
 
           {/* ANALYSIS */}

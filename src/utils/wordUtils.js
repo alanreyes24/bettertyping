@@ -6,34 +6,17 @@ import { DEFAULT_CONFIG } from "../constants/textAreaConstants";
  */
 export const generateWordComponents = async (
   amount,
-  aiMode,
   AIWordList,
   selectedDifficulty,
-  retrieveAIWordList
+  retrieveAIWordList,
 ) => {
-  if (aiMode && AIWordList.length > 1) {
-    // Check for more than just the default " "
-    // Only retrieve if we don't have enough words
-    if (AIWordList.length < amount) {
-      await retrieveAIWordList();
-    }
-
-    return Array(amount)
-      .fill(false)
-      .map((_, i) => (
-        <div key={i} className="word">
-          <Word word={AIWordList[i % AIWordList.length]} />
-        </div>
-      ));
-  } else {
-    return Array(amount)
-      .fill(false)
-      .map((_, i) => (
-        <div key={i} className="word">
-          <Word selectedDifficulty={selectedDifficulty} />
-        </div>
-      ));
-  }
+  return Array(amount)
+    .fill(false)
+    .map((_, i) => (
+      <div key={i} className="word">
+        <Word selectedDifficulty={selectedDifficulty} />
+      </div>
+    ));
 };
 
 /**
@@ -42,7 +25,7 @@ export const generateWordComponents = async (
 export const generateExtendedWords = (
   amount,
   startIndex,
-  selectedDifficulty
+  selectedDifficulty,
 ) => {
   return Array(amount)
     .fill(false)
@@ -60,7 +43,7 @@ export const shouldExtendWordList = (
   currentLetterIndex,
   wordListLength,
   testType,
-  reset
+  reset,
 ) => {
   return (
     testType !== "words" &&
