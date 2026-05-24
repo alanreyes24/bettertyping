@@ -46,15 +46,22 @@ gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, sendData }) => {
   const sendTestToBackend = async () => {
+
+    if (test.results.trueWPM < 15 || test.results.accuracy < 50) {
+      test.isValid = false;
+    }
+
     if (test.userID === "") {
+
       test.userID = "guest";
       test.username = "guest";
 
       try {
-        console.log("SENDING!");
+        console.log("SENDING GUEST TEST!");
         await axios.post(
           `${import.meta.env.VITE_API_URL}/test/guest`,
           test,
+
           {},
         );
       } catch (error) {
@@ -63,7 +70,9 @@ const Test = ({ user, sendData }) => {
     } else {
       try {
         console.log("SENDING!");
-        await axios.post(`${import.meta.env.VITE_API_URL}/test`, test, {});
+        await axios.post(`${import.meta.env.VITE_API_URL}/test`, test, {
+          withCredentials: true,
+        });
       } catch (error) {
         console.error("Error submitting test:", error.response?.data);
       }
@@ -109,6 +118,7 @@ const Test = ({ user, sendData }) => {
     testID: 0,
     state: -1,
     finished: false,
+    isValid: true,
     words: {
       wordList: [],
       attemptedWords: 0,
@@ -406,7 +416,6 @@ const Test = ({ user, sendData }) => {
             <Select
               onValueChange={(value) => {
                 cancelTest();
-                console.log(value);
                 setTypeValue(value);
                 setTest((prevTest) => ({
                   ...prevTest,
