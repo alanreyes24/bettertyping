@@ -10,9 +10,6 @@ import HeaderWrapper from "../../components/header/HeaderWrapper";
 function Analysis({ user, handleUserChange, handleLogout }) {
   const navigate = useNavigate();
 
-  const handleAITestRedirect = () => {
-    navigate("/ai-test");
-  };
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -75,13 +72,6 @@ function Analysis({ user, handleUserChange, handleLogout }) {
           </div>
         )}
         <div style={{ fontSize: "10px" }}>{JSON.stringify(analysisJson)}</div>
-
-        {Object.keys(analysisJson).length > 0 && (
-          <button onClick={handleAITestRedirect}>
-            {" "}
-            navigate to your ai test{" "}
-          </button>
-        )}
       </div>
     </>
   );

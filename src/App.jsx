@@ -7,7 +7,6 @@ import LeaderBoard from "./screens/leaderboard/LeaderBoard";
 import Analysis from "./screens/analysis/Analysis";
 import History from "./screens/history/History";
 import TestFinished from "./screens/testfinished/TestFinished";
-import AITest from "./screens/aitest/AITest";
 import Information from "./screens/information/Information";
 
 function App() {
@@ -105,16 +104,6 @@ function App() {
             path="/history"
             element={
               <History
-                user={user}
-                handleUserChange={handleUserChange}
-                handleLogout={handleLogout}
-              />
-            }
-          />
-          <Route
-            path="/ai-test"
-            element={
-              <AITest
                 user={user}
                 handleUserChange={handleUserChange}
                 handleLogout={handleLogout}
