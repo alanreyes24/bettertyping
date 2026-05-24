@@ -14,7 +14,6 @@ import "./TextAreaStyles.css";
 
 function TextArea({
   user,
-  aiMode,
   selectedDifficulty,
   onTextFinished,
   passEventLog,
@@ -55,31 +54,12 @@ function TextArea({
   const [eventLog, setEventLog] = useState([]);
   const [startTime, setStartTime] = useState(0);
   const [lastTimestamp, setLastTimestamp] = useState(0);
-
-  const [AIWordList, setAIWordList] = useState([" "]);
-
   const inputRef = useRef(null);
 
   // Tracks in-flight keydowns so we can compute pressLength on keyup.
   // Keyed by event.code (stable across modifier changes).
   // Each entry: { downTime: number, eventIndex: number }
   const keyDownInfoRef = useRef({});
-
-  async function retrieveAIWordList() {
-    try {
-      const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/ai/getAIWordList`,
-        { withCredentials: true },
-      );
-      if (response.status >= 200 && response.status < 300) {
-        setAIWordList(response.data.practiceWords);
-      } else {
-        console.error("Failed to retrieve AI word list:", response.statusText);
-      }
-    } catch (error) {
-      console.error("Error retrieving AI word list:", error.message);
-    }
-  }
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -263,26 +243,15 @@ function TextArea({
   };
 
   const wordMap = async (amount) => {
-    if (aiMode && AIWordList.length) {
-      await retrieveAIWordList();
-      return Array(amount)
-        .fill(false)
-        .map((_, i) => (
-          <div key={i} className="word">
-            <Word word={AIWordList[i % AIWordList.length]} />
-          </div>
-        ));
-    } else {
-      let arr = Array(amount)
-        .fill(false)
-        .map((_, i) => (
-          <div key={i} className="word">
-            <Word selectedDifficulty={selectedDifficulty} />
-          </div>
-        ));
+    let arr = Array(amount)
+      .fill(false)
+      .map((_, i) => (
+        <div key={i} className="word">
+          <Word selectedDifficulty={selectedDifficulty} />
+        </div>
+      ));
 
-      return arr;
-    }
+    return arr;
   };
 
   async function populateWordList(amount) {

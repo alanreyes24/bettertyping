@@ -44,7 +44,7 @@ ChartJS.register(
 );
 gsap.registerPlugin(ScrollToPlugin);
 
-const Test = ({ user, AIMode, sendData }) => {
+const Test = ({ user, sendData }) => {
   const sendTestToBackend = async () => {
     try {
       console.log("SENDING!");
@@ -55,22 +55,9 @@ const Test = ({ user, AIMode, sendData }) => {
       console.error("Error submitting test:", error.response?.data);
     }
   };
-
-  const sendAITestToBackend = async () => {
-    try {
-      await axios.post(`${import.meta.env.VITE_API_URL}/ai/test`, test, {
-        withCredentials: true,
-      });
-    } catch (error) {
-      console.error("Error submitting AI test:", error.response?.data);
-    }
-  };
-
   const handleEndTest = () => {
-    // navigate("/test-finished", { state: { AIMode } });
-    console.log(test.timestamp);
 
-    //weird things happen (its sent twice) while timestamp is 0 (i have no ide awhy)
+    // weird things happen (its sent twice) while timestamp is 0 (i have no idea awhy)
 
     if (user.username !== "guest" && test.timestamp != 0) {
       console.log("sending from end test");
@@ -541,7 +528,6 @@ const Test = ({ user, AIMode, sendData }) => {
         <div className='flex justify-center m-4 '>
           <TextArea
             user={user}
-            aiMode={AIMode}
             test={test}
             selectedDifficulty={test.settings.difficulty}
             passWords={(w) => {
