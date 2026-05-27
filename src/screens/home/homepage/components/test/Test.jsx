@@ -47,9 +47,13 @@ gsap.registerPlugin(ScrollToPlugin);
 const Test = ({ user, sendData }) => {
   const sendTestToBackend = async () => {
 
-    if (test.results.trueWPM < 15 || test.results.accuracy < 50) {
+    if (test.results.trueWPM < 15 || test.results.accuracy < 50 || test.settings.length - test.timer.timeLeft > 100) {
       test.isValid = false;
     }
+
+    console.log(test.words.wordList);
+
+    console.log("above was word list");
 
     if (test.userID === "") {
 

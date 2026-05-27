@@ -6,11 +6,17 @@ import React, {
   useCallback,
 } from "react";
 
+
 import Word from "../word/Word";
 import axios from "axios";
 import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
 // import { start } from "repl";
+
+// NOTE: Import your word lists here (or pull them from wherever they live).
+// They need to be accessible from this file so we can generate the actual
+// word strings (not just React elements).
+import { easyWords, normalWords, hardWords } from "../word/wordLists.js";
 
 function TextArea({
   user,
@@ -28,6 +34,7 @@ function TextArea({
   onReset,
 }) {
   const [wordList, setWordList] = useState([]);
+  const [wordStrings, setWordStrings] = useState([]); // raw word strings for backend
   const [wordsLoaded, setWordsLoaded] = useState(false);
   let correctLettersArray = [];
 
@@ -79,6 +86,14 @@ function TextArea({
       focusInput();
     }
   }, [test.state, focusInput]);
+
+  // Pass the actual word strings to the parent when the test ends
+  useEffect(() => {
+    if (test.state === 4) {
+      console.log("passing words", wordStrings);
+      passWords(wordStrings);
+    }
+  }, [test.state, passWords, wordStrings]);
 
   // Re-focus when the user clicks the page — but NOT when they click an
   // interactive element (e.g. a login input on another part of the page).
@@ -160,6 +175,7 @@ function TextArea({
 
     if (reset) {
       setWordList([]);
+      setWordStrings([]); // reset the raw word strings too
       setEventLog([]);
       setCorrectLetters([]);
       setLastTimestamp(0);
@@ -242,35 +258,61 @@ function TextArea({
     };
   };
 
-  const wordMap = async (amount) => {
-    let arr = Array(amount)
-      .fill(false)
-      .map((_, i) => (
-        <div key={i} className="word">
-          <Word selectedDifficulty={selectedDifficulty} />
-        </div>
-      ));
+  // Generate an array of actual word STRINGS (not React elements) based on
+  // the selected difficulty. This lets us both render them AND send them
+  // to the backend.
+  const generateWords = (amount, difficulty) => {
+    let wordArray;
+    if (difficulty === "easy") {
+      wordArray = easyWords;
+    } else if (difficulty === "hard") {
+      wordArray = hardWords;
+    } else {
+      wordArray = normalWords;
+    }
 
-    return arr;
+    const words = [];
+    for (let i = 0; i < amount; i++) {
+      const randomIndex = Math.floor(Math.random() * wordArray.length);
+      words.push(wordArray[randomIndex]);
+    }
+    return words;
   };
 
-  async function populateWordList(amount) {
-    const result = await wordMap(amount);
+  function populateWordList(amount) {
+    // Generate the actual word strings first
+    const words = generateWords(amount, selectedDifficulty);
+
+    // Then build the React elements from those strings
+    const elements = words.map((word, i) => (
+      <div key={i} className="word">
+        <Word word={word} selectedDifficulty={selectedDifficulty} />
+      </div>
+    ));
+
     setWordsLoaded(true);
-    setWordList(result);
+    setWordList(elements);
+    setWordStrings(words); 
+    passWords(words);
     onTextLoaded();
   }
 
-  function extendWordList(amount) {
-    let wordArr = Array(amount)
-      .fill(false)
-      .map((_, i) => (
-        <div key={i + wordList.length} className="word">
-          <Word selectedDifficulty={selectedDifficulty} />
-        </div>
-      ));
-    setWordList((prev) => [...prev, ...wordArr]);
-  }
+function extendWordList(amount) {
+  const newWords = generateWords(amount, selectedDifficulty);
+
+  const wordArr = newWords.map((word, i) => (
+    <div key={i + wordList.length} className="word">
+      <Word word={word} selectedDifficulty={selectedDifficulty} />
+    </div>
+  ));
+
+  setWordList((prev) => [...prev, ...wordArr]);
+  setWordStrings((prev) => {
+    const updated = [...prev, ...newWords];
+    passWords(updated);
+    return updated;
+  });
+}
 
   const handleUserInput = (event) => {
     const input = event.key;
@@ -355,10 +397,6 @@ function TextArea({
           console.log("calling on finished");
           onTextFinished();
         }
-        console.log(
-          currentLetterIndex + 2,
-          document.getElementsByClassName("letter").length,
-        );
       } else if (input === "Backspace" && currentLetterIndex > 0) {
         const lastLetter =
           document.getElementsByClassName("letter")[currentLetterIndex - 1];
