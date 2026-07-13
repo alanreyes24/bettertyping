@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -7,260 +7,139 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-import { useState } from "react";
+const LAYOUTS = {
+  qwerty: [
+    ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"],
+    ["A", "S", "D", "F", "G", "H", "J", "K", "L"],
+    ["Z", "X", "C", "V", "B", "N", "M"],
+  ],
+  dvorak: [
+    ["P", "Y", "F", "G", "C", "R", "L"],
+    ["A", "O", "E", "U", "I", "D", "H", "T", "N", "S"],
+    ["Q", "J", "K", "X", "B", "M", "W", "V", "Z"],
+  ],
+};
+
+const EMPTY_STAT = { correct: 0, incorrect: 0, delay: 0 };
+
+// Delays above this are pauses (tabbing away, thinking), not typing speed.
+const MAX_REASONABLE_DELAY = 10000;
+
+const isLetterKey = (key) => /^[a-z]$/.test(key);
 
 function Heatmap({ test }) {
   const [setting, setSetting] = useState("incorrect");
   const [type, setType] = useState("qwerty");
 
-  const [keyboard, setKeyboard] = useState({
-    finished: false,
-    setting: "incorrect",
-    minErrors: 0,
-    maxErrors: 6,
-    minCorrect: 0,
-    maxCorrect: 6,
-    minDelay: 0,
-    maxDelay: 1500,
-    rows: [
-      [
-        { key: "Q", incorrect: 0, correct: 0, delay: 0 },
-        { key: "W", incorrect: 0, correct: 0, delay: 0 },
-        { key: "E", incorrect: 0, correct: 0, delay: 0 },
-        { key: "R", incorrect: 0, correct: 0, delay: 0 },
-        { key: "T", incorrect: 0, correct: 0, delay: 0 },
-        { key: "Y", incorrect: 0, correct: 0, delay: 0 },
-        { key: "U", incorrect: 0, correct: 0, delay: 0 },
-        { key: "I", incorrect: 0, correct: 0, delay: 0 },
-        { key: "O", incorrect: 0, correct: 0, delay: 0 },
-        { key: "P", incorrect: 0, correct: 0, delay: 0 },
-      ],
-      [
-        { key: "A", incorrect: 0, correct: 0, delay: 0 },
-        { key: "S", incorrect: 0, correct: 0, delay: 0 },
-        { key: "D", incorrect: 0, correct: 0, delay: 0 },
-        { key: "F", incorrect: 0, correct: 0, delay: 0 },
-        { key: "G", incorrect: 0, correct: 0, delay: 0 },
-        { key: "H", incorrect: 0, correct: 0, delay: 0 },
-        { key: "J", incorrect: 0, correct: 0, delay: 0 },
-        { key: "K", incorrect: 0, correct: 0, delay: 0 },
-        { key: "L", incorrect: 0, correct: 0, delay: 0 },
-      ],
-      [
-        { key: "Z", incorrect: 0, correct: 0, delay: 0 },
-        { key: "X", incorrect: 0, correct: 0, delay: 0 },
-        { key: "C", incorrect: 0, correct: 0, delay: 0 },
-        { key: "V", incorrect: 0, correct: 0, delay: 0 },
-        { key: "B", incorrect: 0, correct: 0, delay: 0 },
-        { key: "N", incorrect: 0, correct: 0, delay: 0 },
-        { key: "M", incorrect: 0, correct: 0, delay: 0 },
-      ],
-    ],
-  });
+  // Per-letter stats derived from the finished test. Keyed by the typed
+  // character, so they follow the letter across layout switches.
+  const stats = useMemo(() => {
+    const counts = {};
+    if (test.state != 4 || !test.words) return counts;
 
-  useEffect(() => {
-    if (keyboard.finished == true && test.state == 0) {
-      setKeyboard((prev) => ({
-        finished: false,
-        setting: "incorrect",
-        minErrors: 0,
-        maxErrors: 6,
-        minCorrect: 0,
-        maxCorrect: 6,
-        minDelay: 0,
-        maxDelay: 1500,
-        rows: [
-          [
-            { key: "Q", incorrect: 0, correct: 0, delay: 0 },
-            { key: "W", incorrect: 0, correct: 0, delay: 0 },
-            { key: "E", incorrect: 0, correct: 0, delay: 0 },
-            { key: "R", incorrect: 0, correct: 0, delay: 0 },
-            { key: "T", incorrect: 0, correct: 0, delay: 0 },
-            { key: "Y", incorrect: 0, correct: 0, delay: 0 },
-            { key: "U", incorrect: 0, correct: 0, delay: 0 },
-            { key: "I", incorrect: 0, correct: 0, delay: 0 },
-            { key: "O", incorrect: 0, correct: 0, delay: 0 },
-            { key: "P", incorrect: 0, correct: 0, delay: 0 },
-          ],
-          [
-            { key: "A", incorrect: 0, correct: 0, delay: 0 },
-            { key: "S", incorrect: 0, correct: 0, delay: 0 },
-            { key: "D", incorrect: 0, correct: 0, delay: 0 },
-            { key: "F", incorrect: 0, correct: 0, delay: 0 },
-            { key: "G", incorrect: 0, correct: 0, delay: 0 },
-            { key: "H", incorrect: 0, correct: 0, delay: 0 },
-            { key: "J", incorrect: 0, correct: 0, delay: 0 },
-            { key: "K", incorrect: 0, correct: 0, delay: 0 },
-            { key: "L", incorrect: 0, correct: 0, delay: 0 },
-          ],
-          [
-            { key: "Z", incorrect: 0, correct: 0, delay: 0 },
-            { key: "X", incorrect: 0, correct: 0, delay: 0 },
-            { key: "C", incorrect: 0, correct: 0, delay: 0 },
-            { key: "V", incorrect: 0, correct: 0, delay: 0 },
-            { key: "B", incorrect: 0, correct: 0, delay: 0 },
-            { key: "N", incorrect: 0, correct: 0, delay: 0 },
-            { key: "M", incorrect: 0, correct: 0, delay: 0 },
-          ],
-        ],
-      }));
-    }
-  }, [test.state]);
-
-  useEffect(() => {
-    if (test.state == 4 && keyboard.finished == false) {
-      const aggregateLetters = (correctLetters, incorrectLetters) => {
-        const counts = {};
-
-        const addCounts = (letterArray, type) => {
-          Object.values(letterArray)
-            .flat()
-            .forEach((letter) => {
-              if (!counts[letter]) {
-                counts[letter] = { correct: 0, incorrect: 0 };
-              }
-              counts[letter][type]++;
-            });
-        };
-
-        addCounts(correctLetters, "correct");
-        addCounts(incorrectLetters, "incorrect");
-
-        return counts;
-      };
-
-      const letterCounts = aggregateLetters(
-        test.words.correctLetters,
-        test.words.incorrectLetters,
-      );
-
-      keyboard.rows.forEach((row) => {
-        row.forEach((keyObj) => {
-          const lowerKey = keyObj.key.toLowerCase();
-
-          test.eventLog?.forEach((event) => {
-            if (event?.typed !== undefined) {
-              if (event.typed == lowerKey && keyObj.delay <= event.delay) {
-                keyObj.delay = event.delay;
-                // keyObj.delay = event.delay;
-              }
-            }
-          });
-
-          if (letterCounts[lowerKey]) {
-            keyObj.correct = letterCounts[lowerKey].correct;
-            keyObj.incorrect = letterCounts[lowerKey].incorrect;
-          }
+    const addCounts = (letterArray, statType) => {
+      Object.values(letterArray || {})
+        .flat()
+        .forEach((letter) => {
+          const key = String(letter).toLowerCase();
+          if (!isLetterKey(key)) return;
+          if (!counts[key]) counts[key] = { ...EMPTY_STAT };
+          counts[key][statType]++;
         });
-      });
+    };
 
-      const calculateErrorRange = (keyboard) => {
-        let minErrors = Infinity;
-        let minCorrect = Infinity;
-        let minDelay = Infinity;
-        let maxErrors = -Infinity;
-        let maxCorrect = -Infinity;
-        let maxDelay = -Infinity;
+    addCounts(test.words.correctLetters, "correct");
+    addCounts(test.words.incorrectLetters, "incorrect");
 
-        keyboard.rows.forEach((row) => {
-          row.forEach((keyObj) => {
-            if (keyObj.incorrect > 0) {
-              minErrors = Math.min(minErrors, keyObj.incorrect);
-              maxErrors = Math.max(maxErrors, keyObj.incorrect);
-            }
-            if (keyObj.correct > 0) {
-              minCorrect = Math.min(minCorrect, keyObj.correct);
-              maxCorrect = Math.max(maxCorrect, keyObj.correct);
-            }
-          });
-        });
+    // Each key shows its slowest keystroke of the test.
+    test.eventLog?.forEach((event) => {
+      if (!event || typeof event.typed !== "string") return;
+      const key = event.typed.toLowerCase();
+      if (!isLetterKey(key)) return;
+      if (!(event.delay > 0 && event.delay < MAX_REASONABLE_DELAY)) return;
+      if (!counts[key]) counts[key] = { ...EMPTY_STAT };
+      if (event.delay > counts[key].delay) counts[key].delay = event.delay;
+    });
 
-        //THIS IS THE MOST INNEFFICIENT THING I HAVE EVER DONE, FOR EVERY SINGLE LETTER IT LOOPS THE ENTIRE EVENT LOG ITS SO BAD
-        //BUT IT WORKS AND I WANT THINGS THAT WORK MORE THAN NOTHING
-        //TODO: RE WRITE THIS IS TERRIBLE
-
-        test.eventLog?.forEach((event) => {
-          if (event?.typed !== undefined && event?.typed != " ") {
-            if (event.delay > 0 && event.delay < 10000) {
-              minDelay = Math.min(minDelay, event.delay);
-              maxDelay = Math.max(maxDelay, event.delay);
-            }
-          }
-        });
-
-        return {
-          minErrors,
-          maxErrors,
-          minCorrect,
-          maxCorrect,
-          minDelay,
-          maxDelay,
-        };
-      };
-
-      const {
-        minErrors,
-        maxErrors,
-        minCorrect,
-        maxCorrect,
-        minDelay,
-        maxDelay,
-      } = calculateErrorRange(keyboard);
-
-      setKeyboard((prev) => ({
-        ...prev,
-        finished: true,
-        minErrors,
-        minCorrect,
-        maxErrors,
-        maxCorrect,
-        minDelay,
-        maxDelay,
-      }));
-    }
+    return counts;
   }, [test]);
 
-  const getHeatmapColor = (obj) => {
+  const ranges = useMemo(() => {
+    let minErrors = Infinity;
+    let maxErrors = -Infinity;
+    let minCorrect = Infinity;
+    let maxCorrect = -Infinity;
+    let minDelay = Infinity;
+    let maxDelay = -Infinity;
+
+    Object.values(stats).forEach((stat) => {
+      if (stat.incorrect > 0) {
+        minErrors = Math.min(minErrors, stat.incorrect);
+        maxErrors = Math.max(maxErrors, stat.incorrect);
+      }
+      if (stat.correct > 0) {
+        minCorrect = Math.min(minCorrect, stat.correct);
+        maxCorrect = Math.max(maxCorrect, stat.correct);
+      }
+      if (stat.delay > 0) {
+        minDelay = Math.min(minDelay, stat.delay);
+        maxDelay = Math.max(maxDelay, stat.delay);
+      }
+    });
+
+    // Placeholder ranges so the legend reads sensibly before any data exists.
+    if (minErrors === Infinity) {
+      minErrors = 0;
+      maxErrors = 6;
+    }
+    if (minCorrect === Infinity) {
+      minCorrect = 0;
+      maxCorrect = 6;
+    }
+    if (minDelay === Infinity) {
+      minDelay = 0;
+      maxDelay = 1500;
+    }
+
+    return { minErrors, maxErrors, minCorrect, maxCorrect, minDelay, maxDelay };
+  }, [stats]);
+
+  const getHeatmapColor = (stat) => {
     if (setting == "incorrect") {
-      const range = keyboard.maxErrors - keyboard.minErrors;
-      const lowThreshold = keyboard.minErrors + range / 3;
-      const mediumThreshold = keyboard.minErrors + (2 * range) / 3;
-      if (obj.incorrect >= mediumThreshold) {
-        // High error count
+      const range = ranges.maxErrors - ranges.minErrors;
+      const lowThreshold = ranges.minErrors + range / 3;
+      const mediumThreshold = ranges.minErrors + (2 * range) / 3;
+      if (stat.incorrect > 0 && stat.incorrect >= mediumThreshold) {
         return "#ff6753f0"; // Dark red
-      } else if (obj.incorrect >= lowThreshold) {
-        // Medium error count
+      } else if (stat.incorrect > 0 && stat.incorrect >= lowThreshold) {
         return "#ff675340"; // Medium red
-      } else if (obj.incorrect > 0) {
-        // Low error count
+      } else if (stat.incorrect > 0) {
         return "#ff675310"; // Light red
       } else {
-        // No errors
         return "#191919f0";
       }
     } else if (setting == "correct") {
-      const range = keyboard.maxCorrect - keyboard.minCorrect;
-      const lowThreshold = keyboard.minCorrect + range / 3;
-      const mediumThreshold = keyboard.minCorrect + (2 * range) / 3;
-      if (obj.correct >= mediumThreshold) {
+      const range = ranges.maxCorrect - ranges.minCorrect;
+      const lowThreshold = ranges.minCorrect + range / 3;
+      const mediumThreshold = ranges.minCorrect + (2 * range) / 3;
+      if (stat.correct > 0 && stat.correct >= mediumThreshold) {
         return "#10ff20";
-      } else if (obj.correct >= lowThreshold) {
+      } else if (stat.correct > 0 && stat.correct >= lowThreshold) {
         return "#10ff2080";
-      } else if (obj.correct > 0) {
+      } else if (stat.correct > 0) {
         return "#10ff2030";
       } else {
         return "#191919f0";
       }
     } else {
-      const range = keyboard.maxDelay - keyboard.minDelay;
-      const lowThreshold = keyboard.minDelay + range / 3;
-      const mediumThreshold = keyboard.minDelay + (2 * range) / 3;
-
-      if (obj.delay >= mediumThreshold) {
+      const range = ranges.maxDelay - ranges.minDelay;
+      const lowThreshold = ranges.minDelay + range / 3;
+      const mediumThreshold = ranges.minDelay + (2 * range) / 3;
+      if (stat.delay > 0 && stat.delay >= mediumThreshold) {
         return "#ff6753f0";
-      } else if (obj.delay >= lowThreshold) {
+      } else if (stat.delay > 0 && stat.delay >= lowThreshold) {
         return "#ff675340";
-      } else if (obj.delay > 0) {
+      } else if (stat.delay > 0) {
         return "#ff675310";
       } else {
         return "#191919f0";
@@ -274,14 +153,6 @@ function Heatmap({ test }) {
         low: `${min}`,
         medium: `${min}`,
         high: `${min}`,
-      };
-    }
-
-    if (min == Infinity || isNaN(max)) {
-      return {
-        low: `0`,
-        medium: `0`,
-        high: `0`,
       };
     }
 
@@ -305,58 +176,29 @@ function Heatmap({ test }) {
     };
   };
 
-  const rangeFinder = (type) => {
+  const rangeFinder = (level) => {
     if (setting == "incorrect") {
-      if (type == "low") {
-        return getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).low;
-      } else if (type == "medium") {
-        return getThresholdRanges(keyboard.minErrors, keyboard.maxErrors)
-          .medium;
-      } else {
-        return getThresholdRanges(keyboard.minErrors, keyboard.maxErrors).high;
-      }
+      return getThresholdRanges(ranges.minErrors, ranges.maxErrors)[level];
     } else if (setting == "correct") {
-      if (type == "low") {
-        return getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect).low;
-      } else if (type == "medium") {
-        return getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-          .medium;
-      } else {
-        return getThresholdRanges(keyboard.minCorrect, keyboard.maxCorrect)
-          .high;
-      }
+      return getThresholdRanges(ranges.minCorrect, ranges.maxCorrect)[level];
     } else {
-      if (type == "low") {
-        return getThresholdRanges(keyboard.minDelay, keyboard.maxDelay).low;
-      } else if (type == "medium") {
-        return getThresholdRanges(keyboard.minDelay, keyboard.maxDelay).medium;
-      } else {
-        return getThresholdRanges(keyboard.minDelay, keyboard.maxDelay).high;
-      }
+      return getThresholdRanges(ranges.minDelay, ranges.maxDelay)[level];
     }
   };
 
-  const settingColor = (type) => {
-    if (setting == "incorrect") {
-      if (type == "low") {
-        return "#ff675310";
-      } else if (type == "medium") {
-        return "#ff675340";
-      } else {
-        return "#ff6753f0";
-      }
-    } else if (setting == "correct") {
-      if (type == "low") {
+  const settingColor = (level) => {
+    if (setting == "correct") {
+      if (level == "low") {
         return "#10ff2040";
-      } else if (type == "medium") {
+      } else if (level == "medium") {
         return "#10ff2080";
       } else {
         return "#10ff20";
       }
     } else {
-      if (type == "low") {
+      if (level == "low") {
         return "#ff675310";
-      } else if (type == "medium") {
+      } else if (level == "medium") {
         return "#ff675340";
       } else {
         return "#ff6753f0";
@@ -375,355 +217,7 @@ function Heatmap({ test }) {
           </p>
 
           <div className=''>
-            <Select
-              onValueChange={(value) => {
-                console.log(value);
-                setType(value);
-
-                if (value == "dvorak") {
-                  setKeyboard((prev) => ({
-                    ...prev,
-                    rows: [
-                      [
-                        {
-                          key: "P",
-                          incorrect: keyboard.rows[0][9].incorrect,
-                          correct: keyboard.rows[0][9].correct,
-                          delay: keyboard.rows[0][9].delay,
-                        },
-                        {
-                          key: "Y",
-                          incorrect: keyboard.rows[0][5].incorrect,
-                          correct: keyboard.rows[0][5].correct,
-                          delay: keyboard.rows[0][5].delay,
-                        },
-                        {
-                          key: "F",
-                          incorrect: keyboard.rows[1][3].incorrect,
-                          correct: keyboard.rows[1][3].correct,
-                          delay: keyboard.rows[1][3].delay,
-                        },
-                        {
-                          key: "G",
-                          incorrect: keyboard.rows[1][4].incorrect,
-                          correct: keyboard.rows[1][4].correct,
-                          delay: keyboard.rows[1][4].delay,
-                        },
-                        {
-                          key: "C",
-                          incorrect: keyboard.rows[2][2].incorrect,
-                          correct: keyboard.rows[2][2].correct,
-                          delay: keyboard.rows[2][2].delay,
-                        },
-                        {
-                          key: "R",
-                          incorrect: keyboard.rows[0][3].incorrect,
-                          correct: keyboard.rows[0][3].correct,
-                          delay: keyboard.rows[0][3].delay,
-                        },
-                        {
-                          key: "L",
-                          incorrect: keyboard.rows[1][8].incorrect,
-                          correct: keyboard.rows[1][8].correct,
-                          delay: keyboard.rows[1][8].delay,
-                        },
-                      ],
-                      [
-                        {
-                          key: "A",
-                          incorrect: keyboard.rows[1][0].incorrect,
-                          correct: keyboard.rows[1][0].correct,
-                          delay: keyboard.rows[1][0].delay,
-                        },
-                        {
-                          key: "O",
-                          incorrect: keyboard.rows[0][8].incorrect,
-                          correct: keyboard.rows[0][8].correct,
-                          delay: keyboard.rows[0][8].delay,
-                        },
-                        {
-                          key: "E",
-                          incorrect: keyboard.rows[0][2].incorrect,
-                          correct: keyboard.rows[0][2].correct,
-                          delay: keyboard.rows[0][2].delay,
-                        },
-                        {
-                          key: "U",
-                          incorrect: keyboard.rows[0][6].incorrect,
-                          correct: keyboard.rows[0][6].correct,
-                          delay: keyboard.rows[0][6].delay,
-                        },
-
-                        {
-                          key: "I",
-                          incorrect: keyboard.rows[0][7].incorrect,
-                          correct: keyboard.rows[0][7].correct,
-                          delay: keyboard.rows[0][7].delay,
-                        },
-                        {
-                          key: "D",
-                          incorrect: keyboard.rows[1][2].incorrect,
-                          correct: keyboard.rows[1][2].correct,
-                          delay: keyboard.rows[1][2].delay,
-                        },
-                        {
-                          key: "H",
-                          incorrect: keyboard.rows[1][5].incorrect,
-                          correct: keyboard.rows[1][5].correct,
-                          delay: keyboard.rows[1][5].delay,
-                        },
-                        {
-                          key: "T",
-                          incorrect: keyboard.rows[0][4].incorrect,
-                          correct: keyboard.rows[0][4].correct,
-                          delay: keyboard.rows[0][4].delay,
-                        },
-                        {
-                          key: "N",
-                          incorrect: keyboard.rows[2][5].incorrect,
-                          correct: keyboard.rows[2][5].correct,
-                          delay: keyboard.rows[2][5].delay,
-                        },
-                        {
-                          key: "S",
-                          incorrect: keyboard.rows[1][1].incorrect,
-                          correct: keyboard.rows[1][1].correct,
-                          delay: keyboard.rows[1][1].delay,
-                        },
-                      ],
-                      [
-                        {
-                          key: "Q",
-                          incorrect: keyboard.rows[0][0].incorrect,
-                          correct: keyboard.rows[0][0].correct,
-                          delay: keyboard.rows[0][0].delay,
-                        },
-
-                        {
-                          key: "J",
-                          incorrect: keyboard.rows[1][6].incorrect,
-                          correct: keyboard.rows[1][6].correct,
-                          delay: keyboard.rows[1][6].delay,
-                        },
-                        {
-                          key: "K",
-                          incorrect: keyboard.rows[1][7].incorrect,
-                          correct: keyboard.rows[1][7].correct,
-                          delay: keyboard.rows[1][7].delay,
-                        },
-
-                        {
-                          key: "X",
-                          incorrect: keyboard.rows[2][1].incorrect,
-                          correct: keyboard.rows[2][1].correct,
-                          delay: keyboard.rows[2][1].delay,
-                        },
-
-                        {
-                          key: "B",
-                          incorrect: keyboard.rows[2][4].incorrect,
-                          correct: keyboard.rows[2][4].correct,
-                          delay: keyboard.rows[2][4].delay,
-                        },
-
-                        {
-                          key: "M",
-                          incorrect: keyboard.rows[2][6].incorrect,
-                          correct: keyboard.rows[2][6].correct,
-                          delay: keyboard.rows[2][6].delay,
-                        },
-                        {
-                          key: "W",
-                          incorrect: keyboard.rows[0][1].incorrect,
-                          correct: keyboard.rows[0][1].correct,
-                          delay: keyboard.rows[0][1].delay,
-                        },
-                        {
-                          key: "V",
-                          incorrect: keyboard.rows[2][3].incorrect,
-                          correct: keyboard.rows[2][3].correct,
-                          delay: keyboard.rows[2][3].delay,
-                        },
-                        {
-                          key: "Z",
-                          incorrect: keyboard.rows[2][0].incorrect,
-                          correct: keyboard.rows[2][0].correct,
-                          delay: keyboard.rows[2][0].delay,
-                        },
-                      ],
-                    ],
-                  }));
-                } else {
-                  setKeyboard((prev) => ({
-                    ...prev,
-                    rows: [
-                      [
-                        {
-                          key: "Q",
-                          incorrect: keyboard.rows[2][0].incorrect,
-                          correct: keyboard.rows[2][0].correct,
-                          delay: keyboard.rows[2][0].delay,
-                        },
-                        {
-                          key: "W",
-                          incorrect: keyboard.rows[2][6].incorrect,
-                          correct: keyboard.rows[2][6].correct,
-                          delay: keyboard.rows[2][6].delay,
-                        },
-                        {
-                          key: "E",
-                          incorrect: keyboard.rows[1][2].incorrect,
-                          correct: keyboard.rows[1][2].correct,
-                          delay: keyboard.rows[1][2].delay,
-                        },
-                        {
-                          key: "R",
-                          incorrect: keyboard.rows[0][5].incorrect,
-                          correct: keyboard.rows[0][5].correct,
-                          delay: keyboard.rows[0][5].delay,
-                        },
-                        {
-                          key: "T",
-                          incorrect: keyboard.rows[1][7].incorrect,
-                          correct: keyboard.rows[1][7].correct,
-                          delay: keyboard.rows[1][7].delay,
-                        },
-                        {
-                          key: "Y",
-                          incorrect: keyboard.rows[0][1].incorrect,
-                          correct: keyboard.rows[0][1].correct,
-                          delay: keyboard.rows[0][1].delay,
-                        },
-                        {
-                          key: "U",
-                          incorrect: keyboard.rows[1][3].incorrect,
-                          correct: keyboard.rows[1][3].correct,
-                          delay: keyboard.rows[1][3].delay,
-                        },
-                        {
-                          key: "I",
-                          incorrect: keyboard.rows[1][4].incorrect,
-                          correct: keyboard.rows[1][4].correct,
-                          delay: keyboard.rows[1][4].delay,
-                        },
-                        {
-                          key: "O",
-                          incorrect: keyboard.rows[1][1].incorrect,
-                          correct: keyboard.rows[1][1].correct,
-                          delay: keyboard.rows[1][1].delay,
-                        },
-                        {
-                          key: "P",
-                          incorrect: keyboard.rows[0][0].incorrect,
-                          correct: keyboard.rows[0][0].correct,
-                          delay: keyboard.rows[0][0].delay,
-                        },
-                      ],
-                      [
-                        {
-                          key: "A",
-                          incorrect: keyboard.rows[1][0].incorrect,
-                          correct: keyboard.rows[1][0].correct,
-                          delay: keyboard.rows[1][0].delay,
-                        },
-                        {
-                          key: "S",
-                          incorrect: keyboard.rows[1][9].incorrect,
-                          correct: keyboard.rows[1][9].correct,
-                          delay: keyboard.rows[1][9].delay,
-                        },
-                        {
-                          key: "D",
-                          incorrect: keyboard.rows[1][5].incorrect,
-                          correct: keyboard.rows[1][5].correct,
-                          delay: keyboard.rows[1][5].delay,
-                        },
-                        {
-                          key: "F",
-                          incorrect: keyboard.rows[0][2].incorrect,
-                          correct: keyboard.rows[0][2].correct,
-                          delay: keyboard.rows[0][2].delay,
-                        },
-                        {
-                          key: "G",
-                          incorrect: keyboard.rows[0][3].incorrect,
-                          correct: keyboard.rows[0][3].correct,
-                          delay: keyboard.rows[0][3].delay,
-                        },
-                        {
-                          key: "H",
-                          incorrect: keyboard.rows[1][6].incorrect,
-                          correct: keyboard.rows[1][6].correct,
-                          delay: keyboard.rows[1][6].delay,
-                        },
-                        {
-                          key: "J",
-                          incorrect: keyboard.rows[2][1].incorrect,
-                          correct: keyboard.rows[2][1].correct,
-                          delay: keyboard.rows[2][1].delay,
-                        },
-                        {
-                          key: "K",
-                          incorrect: keyboard.rows[2][2].incorrect,
-                          correct: keyboard.rows[2][2].correct,
-                          delay: keyboard.rows[2][2].delay,
-                        },
-                        {
-                          key: "L",
-                          incorrect: keyboard.rows[0][6].incorrect,
-                          correct: keyboard.rows[0][6].correct,
-                          delay: keyboard.rows[0][6].delay,
-                        },
-                      ],
-                      [
-                        {
-                          key: "Z",
-                          incorrect: keyboard.rows[2][8].incorrect,
-                          correct: keyboard.rows[2][8].correct,
-                          delay: keyboard.rows[2][8].delay,
-                        },
-                        {
-                          key: "X",
-                          incorrect: keyboard.rows[2][3].incorrect,
-                          correct: keyboard.rows[2][3].correct,
-                          delay: keyboard.rows[2][3].delay,
-                        },
-                        {
-                          key: "C",
-                          incorrect: keyboard.rows[2][4].incorrect,
-                          correct: keyboard.rows[2][4].correct,
-                          delay: keyboard.rows[2][4].delay,
-                        },
-                        {
-                          key: "V",
-                          incorrect: keyboard.rows[2][7].incorrect,
-                          correct: keyboard.rows[2][7].correct,
-                          delay: keyboard.rows[2][7].delay,
-                        },
-                        {
-                          key: "B",
-                          incorrect: keyboard.rows[2][4].incorrect,
-                          correct: keyboard.rows[2][4].correct,
-                          delay: keyboard.rows[2][4].delay,
-                        },
-                        {
-                          key: "N",
-                          incorrect: keyboard.rows[1][8].incorrect,
-                          correct: keyboard.rows[1][8].correct,
-                          delay: keyboard.rows[1][8].delay,
-                        },
-                        {
-                          key: "M",
-                          incorrect: keyboard.rows[2][5].incorrect,
-                          correct: keyboard.rows[2][5].correct,
-                          delay: keyboard.rows[2][5].delay,
-                        },
-                      ],
-                    ],
-                  }));
-                }
-              }}
-              defaultValue='qwerty'>
+            <Select onValueChange={(value) => setType(value)} defaultValue='qwerty'>
               <SelectTrigger id='status' aria-label='Select Layout'>
                 <SelectValue placeholder='Select Layout' />
               </SelectTrigger>
@@ -739,24 +233,26 @@ function Heatmap({ test }) {
       {/* KEYBOARD */}
       <div>
         <div className='grid text-white gap-3 font-bold grid-rows-3 mt-2'>
-          {keyboard.rows.map((row, index) => {
+          {LAYOUTS[type].map((row, rowIndex) => {
             return (
               <div
-                key={index}
+                key={rowIndex}
                 className='flex flex-row space-x-4 justify-center'
                 style={{
-                  marginLeft: index == 2 && type == "qwerty" ? "-4rem" : "",
-                  marginRight: index == 2 && type == "dvorak" ? "-6rem" : "",
+                  marginLeft: rowIndex == 2 && type == "qwerty" ? "-4rem" : "",
+                  marginRight: rowIndex == 2 && type == "dvorak" ? "-6rem" : "",
                 }}>
-                {keyboard.rows[index].map((obj, index) => {
+                {row.map((key) => {
+                  const stat = stats[key.toLowerCase()] || EMPTY_STAT;
                   return (
                     <div
-                      key={index}
+                      key={key}
+                      title={`${key}: ${stat.correct} correct, ${stat.incorrect} incorrect, ${stat.delay}ms slowest`}
                       style={{
-                        backgroundColor: getHeatmapColor(obj),
+                        backgroundColor: getHeatmapColor(stat),
                       }}
                       className='rounded-md w-12 h-12 flex justify-center items-center hover:scale-105 border'>
-                      {obj.key}
+                      {key}
                     </div>
                   );
                 })}
@@ -769,8 +265,7 @@ function Heatmap({ test }) {
           <div className='flex text-lg text-muted-foreground'>
             <div
               style={{
-                backgroundColor:
-                  setting == "incorrect" ? "#191919f0" : "#191919f0",
+                backgroundColor: "#191919f0",
               }}
               className='w-4 h-4 border self-center mr-2'></div>
             {0}
@@ -814,9 +309,7 @@ function Heatmap({ test }) {
           <SelectContent>
             <SelectItem value='incorrect'>Incorrect Letters</SelectItem>
             <SelectItem value='correct'>Correct Letters</SelectItem>
-
             <SelectItem value='largest'>Keystroke Delay</SelectItem>
-            {/* <SelectItem value='smallest'>Smallest Delay</SelectItem> */}
           </SelectContent>
         </Select>
       </div>

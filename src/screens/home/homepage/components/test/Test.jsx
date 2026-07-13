@@ -101,7 +101,6 @@ const Test = ({ user, sendData }) => {
     sendData(test);
 
     //SCROLLING ANIMATION
-
     gsap.to(".analysis", { display: "block" });
     gsap.to(".analysis", { opacity: 1, duration: 0.4, delay: 0.25 });
     gsap.to(window, { duration: 1.1, delay: 0.25, scrollTo: ".analysis" });

@@ -21,23 +21,25 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
   const [error, setError] = useState("");
   const [showRegister, setShowRegister] = useState(false);
 
+  const logIn = async () => {
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/auth/login`,
+      {
+        username,
+        password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    sendUsernameToHeader(response.data);
+  };
+
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/auth/login`,
-        {
-          username,
-          password,
-        },
-        {
-          withCredentials: true,
-        }
-      );
-
-      //   let userID = response.data.userID;
-      sendUsernameToHeader(response.data);
-      // await passLoggedIn(userID, confirmedUsername);
+      await logIn();
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");
       console.log(error.response ? error.response.data : error);
@@ -47,14 +49,18 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
+      await axios.post(
         `${import.meta.env.VITE_API_URL}/auth/signup`,
         {
           username,
           password,
+        },
+        {
+          withCredentials: true,
         }
       );
-      sendUsernameToHeader(response.data.username);
+      // sign the new account in right away
+      await logIn();
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");
       console.error(
