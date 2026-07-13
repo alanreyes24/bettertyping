@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useLayoutEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import Settings from "../settings/Settings";
@@ -193,55 +193,59 @@ const Test = ({ user, sendData }) => {
     }
   }, [test.state]);
 
+  // TIMER
+  // timeLeft is in deciseconds and is derived from wall-clock time, so late
+  // or throttled ticks (heavy load, background tab) can't stretch a "second".
+  const timerStartRef = useRef(null);
+  const lastSampledSecondRef = useRef(0);
+
   useEffect(() => {
-    // HANDLE TIMER
-
-    if (test.state === 1) {
-      setSent(false);
-      //TIMER CODE
-      var interval = 100; // ms
-      var expected = Date.now() + interval;
-      let timeout = setTimeout(step, interval);
-
-      // eslint-disable-next-line no-inner-declarations
-      function step() {
-        var dt = Date.now() - expected;
-        if (dt > interval) {
-          // THIS IS BAD
-          console.log("something strange happened, timer not working");
-        }
-
-        //DECREMENT TIMER
-        // console.log("DECREMENT");
-
-        if (test.settings.type === "time" && test.timer.timeLeft > 0) {
-          setTest((prevTest) => ({
-            ...prevTest,
-            timer: {
-              ...prevTest.timer,
-              timeLeft: prevTest.timer.timeLeft - 1,
-            },
-          }));
-        }
-
-        if (test.settings.type === "words") {
-          setTest((prevTest) => ({
-            ...prevTest,
-            timer: {
-              ...prevTest.timer,
-              timeLeft: prevTest.timer.timeLeft + 1,
-            },
-          }));
-        }
-
-        expected += interval;
-        let other = setTimeout(step, Math.max(0, interval - dt));
-
-        clearTimeout(timeout);
-        clearTimeout(other);
-      }
+    if (test.state !== 1) {
+      timerStartRef.current = null;
+      return;
     }
 
+    setSent(false);
+    timerStartRef.current = Date.now();
+    lastSampledSecondRef.current = 0;
+    const { type, length } = test.settings;
+
+    const intervalId = setInterval(() => {
+      const elapsed = Math.floor((Date.now() - timerStartRef.current) / 100);
+      setTest((prevTest) => ({
+        ...prevTest,
+        timer: {
+          ...prevTest.timer,
+          timeLeft: type === "time" ? Math.max(0, length - elapsed) : elapsed,
+        },
+      }));
+    }, 100);
+
+    return () => clearInterval(intervalId);
+  }, [test.state]);
+
+  // TIMED TEST RAN OUT
+  useEffect(() => {
+    if (
+      test.state === 1 &&
+      test.settings.type === "time" &&
+      test.timer.timeLeft <= 0
+    ) {
+      setTest((prevTest) => ({
+        ...prevTest,
+        userID: user._id,
+        username: user.username,
+        state: 3,
+        finished: true,
+        words: {
+          ...prevTest.words,
+          chartData: chartData,
+        },
+      }));
+    }
+  }, [test.state, test.timer.timeLeft, chartData, user]);
+
+  useEffect(() => {
     if (test.state == 4 && !sent) {
       handleEndTest();
       setTest((prevTest) => ({
@@ -249,107 +253,89 @@ const Test = ({ user, sendData }) => {
         state: 5,
       }));
     }
-  }, [test.state, test.timer]);
+  }, [test.state]);
 
-  //WPM LOGGING
-  useEffect(() => {
-    if (test.timer.timeLeft % 10 == 0 && test.state == 1) {
-      let totalCorrect = 0;
-      let totalIncorrect = 0;
-      for (const value of Object.values(test.words.correctLetters)) {
-        totalCorrect += value.length;
-      }
-      for (const value of Object.values(test.words.incorrectLetters)) {
-        totalIncorrect += value.length;
-      }
-
-      const calculateWPM = (totalCorrect, totalIncorrect, timeElapsed) => {
-        let trueWPM =
-          (600 * ((totalCorrect - totalIncorrect) / 5)) / timeElapsed;
-        let rawWPM =
-          (600 * ((totalCorrect + totalIncorrect) / 5)) / timeElapsed;
-        return { trueWPM, rawWPM };
-      };
-
-      const calculateAccuracy = (totalCorrect, totalIncorrect) => {
-        return (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
-      };
-
-      const updateResults = (trueWPM, rawWPM, accuracy, totalIncorrect) => {
-        setTest((prevTest) => ({
-          ...prevTest,
-          results: {
-            trueWPM: trueWPM.toFixed(2) * 1,
-            rawWPM: rawWPM.toFixed(2) * 1,
-            accuracy: accuracy.toFixed(1) * 1,
-            mistakes: totalIncorrect,
-          },
-        }));
-      };
-
-      const updateChartData = (trueWPM, rawWPM) => {
-        setChartData((prevArray) => [
-          ...prevArray,
-          {
-            second: prevArray.length + 1,
-            trueWPM: trueWPM.toFixed(2) * 1,
-            rawWPM: rawWPM.toFixed(2) * 1,
-          },
-        ]);
-      };
-
-      if (test.settings.type === "time" || test.settings.type !== "time") {
-        const timeElapsed =
-          test.settings.type === "time"
-            ? test.settings.length - test.timer.timeLeft
-            : test.timer.timeLeft;
-
-        const { trueWPM, rawWPM } = calculateWPM(
-          totalCorrect,
-          totalIncorrect,
-          timeElapsed,
-        );
-        const accuracy = calculateAccuracy(totalCorrect, totalIncorrect);
-
-        if (
-          trueWPM > 0 &&
-          !isNaN(trueWPM) &&
-          rawWPM > 0 &&
-          !isNaN(rawWPM) &&
-          accuracy >= 0
-        ) {
-          updateResults(trueWPM, rawWPM, accuracy, totalIncorrect);
-          updateChartData(trueWPM, rawWPM);
-        }
-        // console.log(chartData);
-      }
+  const countLetters = (letterArrays) => {
+    let total = 0;
+    for (const value of Object.values(letterArrays)) {
+      total += value.length;
     }
-  }, [test.timer.timeLeft]);
+    return total;
+  };
 
-  // ON TEST LOAD (state -1)
-  //TODO: FEST USER?
-  if (test.state === -1) {
-    //test
-  }
+  // WPM LOGGING — one sample per elapsed second, even if ticks are skipped
+  useEffect(() => {
+    if (test.state != 1) return;
 
-  // CHECK FOR TIMER 0
-  if (
-    test.state <= 1 &&
-    test.timer.timeLeft <= 0 &&
-    test.settings.type === "time"
-  ) {
-    setTest((prevTest) => ({
-      ...prevTest,
-      userID: user._id,
-      username: user.username,
-      state: 3,
-      finished: true,
-      words: {
-        ...prevTest.words,
-        chartData: chartData,
-      },
-    }));
-  }
+    const timeElapsed =
+      test.settings.type === "time"
+        ? test.settings.length - test.timer.timeLeft
+        : test.timer.timeLeft;
+    const currentSecond = Math.floor(timeElapsed / 10);
+
+    if (currentSecond <= lastSampledSecondRef.current) return;
+    lastSampledSecondRef.current = currentSecond;
+
+    const totalCorrect = countLetters(test.words.correctLetters);
+    const totalIncorrect = countLetters(test.words.incorrectLetters);
+
+    // timeElapsed is in deciseconds; 600 deciseconds per minute
+    const trueWPM = (600 * ((totalCorrect - totalIncorrect) / 5)) / timeElapsed;
+    const rawWPM = (600 * ((totalCorrect + totalIncorrect) / 5)) / timeElapsed;
+    const accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
+
+    if (trueWPM > 0 && !isNaN(trueWPM) && rawWPM > 0 && !isNaN(rawWPM)) {
+      setTest((prevTest) => ({
+        ...prevTest,
+        results: {
+          trueWPM: trueWPM.toFixed(2) * 1,
+          rawWPM: rawWPM.toFixed(2) * 1,
+          accuracy: accuracy.toFixed(1) * 1,
+          mistakes: totalIncorrect,
+        },
+      }));
+      setChartData((prevArray) => [
+        ...prevArray,
+        {
+          second: currentSecond,
+          trueWPM: trueWPM.toFixed(2) * 1,
+          rawWPM: rawWPM.toFixed(2) * 1,
+        },
+      ]);
+    }
+  }, [test.timer.timeLeft, test.state]);
+
+  // FINAL RESULTS — computed from real keystroke timestamps at test end, so
+  // the reported WPM doesn't depend on when the last per-second sample landed
+  const computeFinalResults = (prevTest, eventLog) => {
+    const totalCorrect = countLetters(prevTest.words.correctLetters);
+    const totalIncorrect = countLetters(prevTest.words.incorrectLetters);
+
+    // event timestamps are ms since the first keystroke; timed tests always
+    // run their full length
+    const lastKeystrokeMs = eventLog.length
+      ? eventLog[eventLog.length - 1].timestamp
+      : 0;
+    const elapsedMs =
+      prevTest.settings.type === "time"
+        ? prevTest.settings.length * 100
+        : lastKeystrokeMs;
+
+    if (elapsedMs <= 0 || totalCorrect + totalIncorrect === 0) {
+      return prevTest.results;
+    }
+
+    const trueWPM = (60000 * ((totalCorrect - totalIncorrect) / 5)) / elapsedMs;
+    const rawWPM = (60000 * ((totalCorrect + totalIncorrect) / 5)) / elapsedMs;
+    const accuracy = (totalCorrect / (totalCorrect + totalIncorrect)) * 100;
+
+    return {
+      trueWPM: Math.max(0, trueWPM.toFixed(2) * 1),
+      rawWPM: Math.max(0, rawWPM.toFixed(2) * 1),
+      accuracy: accuracy.toFixed(1) * 1,
+      mistakes: totalIncorrect,
+    };
+  };
 
   return (
     <>
@@ -584,6 +570,7 @@ const Test = ({ user, sendData }) => {
 
                 timestamp: e[0]?.timestamp || Date.now(),
                 eventLog: e,
+                results: computeFinalResults(prevTest, e),
               }));
             }}
             onFocus={() => {}}
