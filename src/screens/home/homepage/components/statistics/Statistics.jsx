@@ -1,16 +1,10 @@
 import React from "react";
 
 function Statistics({ test }) {
-  const getPerformanceBadge = (category, value, percentile) => {
+  const getPerformanceBadge = (category, value) => {
     let badgeText = "";
     let badgeStyle = "";
 
-    // Check for Top 1% or Top 0.1%
-    // if (percentile <= 1) {
-    //   badgeText = `Top ${percentile}%`;
-    //   badgeStyle = "bg-amber-300"; // Badge style for Top 1%
-    // } else {
-    // Badge assignment based on category and value
     if (category === "WPM") {
       if (value >= 80) {
         badgeText = "excellent";
@@ -90,7 +84,7 @@ function Statistics({ test }) {
 
             <div className="text-3xl font-bold flex flex-col-reverse text-center justify-end">
               {test.results != undefined ? (
-                getPerformanceBadge("WPM", test.results.trueWPM, 1)
+                getPerformanceBadge("WPM", test.results.trueWPM)
               ) : (
                 <></>
               )}
@@ -106,7 +100,7 @@ function Statistics({ test }) {
             </div>
             <div className="text-4xl font-bold flex-col-reverse text-center flex justify-center">
               {test.results != undefined ? (
-                getPerformanceBadge("Accuracy", test.results.accuracy, 1)
+                getPerformanceBadge("Accuracy", test.results.accuracy)
               ) : (
                 <></>
               )}
@@ -123,7 +117,7 @@ function Statistics({ test }) {
             </div>
             <div className="text-4xl font-bold flex flex-col-reverse text-center justify-center">
               {test.results != undefined ? (
-                getPerformanceBadge("Mistakes", test.results.mistakes, 1)
+                getPerformanceBadge("Mistakes", test.results.mistakes)
               ) : (
                 <></>
               )}

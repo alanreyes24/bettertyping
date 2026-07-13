@@ -6,7 +6,6 @@ import HomePage from "./screens/home/homepage/HomePage";
 import LeaderBoard from "./screens/leaderboard/LeaderBoard";
 import Analysis from "./screens/analysis/Analysis";
 import History from "./screens/history/History";
-import TestFinished from "./screens/testfinished/TestFinished";
 import Information from "./screens/information/Information";
 
 function App() {
@@ -59,11 +58,10 @@ function App() {
   };
 
   const handleLogout = () => {
-    console.log("Logging Out");
-    setUser((prevUser) => ({
+    setUser({
       _id: "",
       username: "guest",
-    }));
+    });
   };
 
   return (
@@ -120,7 +118,6 @@ function App() {
               />
             }
           />
-          <Route path="/test-finished" element={<TestFinished user={user} />} />
         </Routes>
       </div>
     </Router>

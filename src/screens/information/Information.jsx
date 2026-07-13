@@ -1,10 +1,10 @@
 import React from "react";
-import HeaderWrapper from "../../components/header/HeaderWrapper";
+import Header from "../../components/header/Header";
 
 function Information({ user, handleUserChange, handleLogout }) {
   return (
     <>
-      <HeaderWrapper
+      <Header
         passLoggedIn={handleUserChange}
         passLogout={handleLogout}
         user={user}

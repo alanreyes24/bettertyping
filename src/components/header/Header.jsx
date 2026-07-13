@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Login from "../login/Login";
+import { Link, useNavigate } from "react-router-dom";
 import LoginPopup from "../../screens/home/homepage/components/loginpopup/LoginPopup";
 import "./Header.css";
 
-function Header({ user,passLoggedIn, passLogout }) {
+function Header({ user, passLoggedIn, passLogout }) {
   const [showLogin, setShowLogin] = useState(false);
   const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
-  const [username, setUsername] = useState("");
-
   const handleUsernameFromLoginPopup = (data) => {
-    setUsername(data.username);
     passLoggedIn(data.userID, data.username);
     setUserLoggedIn(true);
     setShowLogin(false);
@@ -23,7 +18,6 @@ function Header({ user,passLoggedIn, passLogout }) {
   useEffect(() => {
     if (user.username && user.username !== "guest") {
       setUserLoggedIn(true);
-      setUsername(user.username);
     } else {
       setUserLoggedIn(false);
     }
@@ -37,19 +31,9 @@ function Header({ user,passLoggedIn, passLogout }) {
         { withCredentials: true }
       );
       setUserLoggedIn(false);
-      setUsername("");
       passLogout();
     } catch (error) {
       console.log(error);
-    }
-  }
-
-  function handleHomeClick(e) {
-    if (location.pathname === "/") {
-      // e.preventDefault();
-      // window.location.reload();
-    } else {
-      navigate("/");
     }
   }
 

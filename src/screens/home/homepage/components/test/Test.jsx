@@ -1,22 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
-import Settings from "../settings/Settings";
-import { Scatter } from "react-chartjs-2";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { LoginForm } from "../loginpopup/LoginPopup";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Filler,
-  Tooltip,
-  Legend,
-} from "chart.js";
 
 import {
   Select,
@@ -28,20 +13,7 @@ import {
 
 import { gsap } from "gsap";
 import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { useGSAP } from "@gsap/react";
 
-gsap.registerPlugin(useGSAP);
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Title,
-  Tooltip,
-  Legend,
-);
 gsap.registerPlugin(ScrollToPlugin);
 
 const Test = ({ user, sendData }) => {
@@ -145,7 +117,6 @@ const Test = ({ user, sendData }) => {
     timestamp: 0,
   });
 
-  const [hideSettings, setHideSettings] = useState(false);
   const [resetWords, setResetWords] = useState(false);
   const [chartData, setChartData] = useState([]);
 
@@ -342,7 +313,7 @@ const Test = ({ user, sendData }) => {
       {/* INTRO */}
 
       {/* TEST */}
-      <div className="test opacity-0 w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
+      <div className="test w-full mt-16 mx-auto max-w-3xl lg:max-w-6xl rounded-lg shadow-sm bg-card p-6 border">
         {/* SETTINGS AND TIMER*/}
         <div className="flex items-center justify-between">
           <div className="space-y-1">
@@ -439,7 +410,7 @@ const Test = ({ user, sendData }) => {
               defaultValue="words"
             >
               <SelectTrigger
-                onFocus={(e) => {
+                onFocus={() => {
                   cancelTest();
                 }}
                 id="type"
@@ -481,7 +452,7 @@ const Test = ({ user, sendData }) => {
               defaultValue={1}
             >
               <SelectTrigger
-                onFocus={(e) => {
+                onFocus={() => {
                   cancelTest();
                 }}
                 id="length"
@@ -507,7 +478,6 @@ const Test = ({ user, sendData }) => {
         {/* TEXT AREA */}
         <div className="flex justify-center m-4 ">
           <TextArea
-            user={user}
             test={test}
             selectedDifficulty={test.settings.difficulty}
             passWords={(w) => {
@@ -574,10 +544,12 @@ const Test = ({ user, sendData }) => {
               }));
             }}
             onFocus={() => {}}
+            onIdle={cancelTest}
             reset={resetWords}
             onReset={() => {
               setResetWords(false);
-              setTest((prevTest) => ({
+              setChartData([]);
+              setTest(() => ({
                 userID: user._id,
                 username: user.username,
                 testID: 0,

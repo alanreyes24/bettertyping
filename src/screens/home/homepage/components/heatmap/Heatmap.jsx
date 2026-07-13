@@ -33,9 +33,12 @@ function Heatmap({ test }) {
 
   // Per-letter stats derived from the finished test. Keyed by the typed
   // character, so they follow the letter across layout switches.
+  // Gated on the event log rather than a specific state number: the log is
+  // only attached once the test finishes (and cleared on reset), and the
+  // test object keeps advancing states (4 -> 5) after it's sent.
   const stats = useMemo(() => {
     const counts = {};
-    if (test.state != 4 || !test.words) return counts;
+    if (!test.eventLog?.length || !test.words) return counts;
 
     const addCounts = (letterArray, statType) => {
       Object.values(letterArray || {})

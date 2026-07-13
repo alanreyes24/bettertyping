@@ -1,13 +1,8 @@
 // src/components/homepage/HomePage.jsx
-import React from "react"; // Removed unused imports
-import HeaderWrapper from "../../../components/header/HeaderWrapper";
+import React, { useState } from "react";
+import Header from "../../../components/header/Header";
 import Test from "./components/test/Test";
-import Landing from "./components/landing/Landing";
-import { useState } from "react";
-import { useRef, useEffect } from "react";
 import Replay from "./components/replay/Replay";
-
-("use client");
 
 import {
   Area,
@@ -19,63 +14,22 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
 import Heatmap from "./components/heatmap/Heatmap";
 import Statistics from "./components/statistics/Statistics";
 
-import { gsap } from "gsap";
-import { useGSAP } from "@gsap/react";
-
-import OnboardingModal from "../homepage/components/onboarding/OnboardingModal";
-
-function HomePage({ user, handleUserChange, handleLogout, visited }) {
+function HomePage({ user, handleUserChange, handleLogout }) {
   const [chartData, setChartData] = useState([]);
   const [test, setTest] = useState({});
-  const [onboardingType, setOnboardingType] = useState("intro");
-
-  const container = useRef();
-
-  useEffect(() => {
-    if (test.state == 3) {
-      console.log("3");
-      setOnboardingType("analysis");
-    }
-  }, [test]);
-
-  useGSAP(
-    () => {
-      const tl = gsap.timeline();
-    },
-    // { scope: container }
-  );
 
   return (
     <>
-      <HeaderWrapper
+      <Header
         passLoggedIn={handleUserChange}
         passLogout={handleLogout}
         user={user}
       />
 
-      <div ref={container} className='bg-background w-full h-full'>
-        <OnboardingModal
-          user={user}
-          type={onboardingType}
-          onHide={() => {
-            gsap.to(".intro", {
-              opacity: 1,
-              delay: 0.25,
-              paddingTop: 0,
-              duration: 0.5,
-            });
-            gsap.to(".test", {
-              opacity: 1,
-              duration: 0.25,
-              delay: 0.25,
-            });
-          }}
-        />
-
+      <div className='bg-background w-full h-full'>
         <div className='flex flex-1 flex-col'>
           {/* TEST */}
           <Test
@@ -170,7 +124,7 @@ function HomePage({ user, handleUserChange, handleLogout, visited }) {
               <Heatmap test={test} />
 
               {/* REPLAY */}
-              {test.state == 4 ? <Replay test={test} /> : <></>}
+              {test.state >= 4 ? <Replay test={test} /> : <></>}
             </div>
           </div>
         </div>

@@ -1,25 +1,15 @@
-import React, {
-  useEffect,
-  useState,
-  useReducer,
-  useRef,
-  useCallback,
-} from "react";
-
+import React, { useEffect, useState, useRef, useCallback } from "react";
 
 import Word from "../word/Word";
-import axios from "axios";
 import Cursor from "../cursor/Cursor";
 import "./TextAreaStyles.css";
-// import { start } from "repl";
 
-// NOTE: Import your word lists here (or pull them from wherever they live).
-// They need to be accessible from this file so we can generate the actual
-// word strings (not just React elements).
 import { easyWords, normalWords, hardWords } from "../word/wordLists.js";
 
+// If the user stops typing for this long mid-test, the test is discarded.
+const IDLE_TIMEOUT_MS = 30000;
+
 function TextArea({
-  user,
   selectedDifficulty,
   onTextFinished,
   passEventLog,
@@ -29,6 +19,7 @@ function TextArea({
   onTextLoaded,
   onTextStarted,
   onFocus,
+  onIdle,
   test,
   reset,
   onReset,
@@ -36,7 +27,6 @@ function TextArea({
   const [wordList, setWordList] = useState([]);
   const [wordStrings, setWordStrings] = useState([]); // raw word strings for backend
   const [wordsLoaded, setWordsLoaded] = useState(false);
-  let correctLettersArray = [];
 
   const [correctLetters, setCorrectLetters] = useState({});
   const [incorrectLetters, setIncorrectLetters] = useState({});
@@ -50,11 +40,7 @@ function TextArea({
   const [currentLetterArrayIndexValue, setCurrentLetterArrayIndexValue] =
     useState(0);
 
-  const [totalCorrectLetters, setTotalCorrectLetters] = useState(1);
-  const [totalCorrectWords, setTotalCorrectWords] = useState(1);
   const [deleteLines, setDeleteLines] = useState(0);
-
-  const [textTyped, setTextTyped] = useState("");
 
   const [shouldUpdateCursor, setShouldUpdateCursor] = useState(false);
 
@@ -67,6 +53,26 @@ function TextArea({
   // Keyed by event.code (stable across modifier changes).
   // Each entry: { downTime: number, eventIndex: number }
   const keyDownInfoRef = useRef({});
+
+  // Epoch ms of the most recent keystroke, for the idle watchdog.
+  const lastKeystrokeAtRef = useRef(0);
+
+  // IDLE WATCHDOG — discard the test if the user walks away mid-test.
+  // Deliberately depends only on test.state: onIdle is recreated on every
+  // parent render (every timer tick), and restarting the interval with it
+  // would reset the idle baseline before it could ever fire.
+  useEffect(() => {
+    if (test.state !== 1) return;
+
+    lastKeystrokeAtRef.current = Date.now();
+    const intervalId = setInterval(() => {
+      if (Date.now() - lastKeystrokeAtRef.current > IDLE_TIMEOUT_MS) {
+        onIdle();
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [test.state]);
 
   const focusInput = useCallback(() => {
     if (inputRef.current) {
@@ -345,6 +351,7 @@ function extendWordList(amount) {
 
     // Store absolute epoch ms consistently so the next keystroke can subtract.
     setLastTimestamp(now);
+    lastKeystrokeAtRef.current = now;
 
     if (currentLetter.textContent != undefined) {
       // Capture the keydown so onKeyUp can fill in pressLength later.
@@ -368,17 +375,8 @@ function extendWordList(amount) {
       });
 
       if (input !== "Backspace") {
-        setTextTyped((prev) => prev + input);
-
         if (input === currentLetter.textContent) {
-          if (currentLetter.textContent !== " ") {
-            setCurrentCorrectLetterArray((prev) => [...prev, input]);
-            setTotalCorrectLetters((prev) => prev + 1);
-          } else {
-            setTotalCorrectWords((prev) => prev + 1);
-            setCurrentCorrectLetterArray((prev) => [...prev, input]);
-            setTextTyped("");
-          }
+          setCurrentCorrectLetterArray((prev) => [...prev, input]);
           currentLetter.classList.remove("incorrect");
           currentLetter.classList.add("correct");
           if (nextLetter) nextLetter.classList.add("next");
@@ -405,7 +403,6 @@ function extendWordList(amount) {
           lastLetter.classList.remove("incorrect");
         }
         setCurrentLetterIndex((prev) => prev - 1);
-        setTextTyped((prev) => prev.slice(0, -1));
       }
     }
   };

@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import HeaderWrapper from "../../components/header/HeaderWrapper";
+import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
 
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -116,7 +115,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
 
   return (
     <div className="">
-      <HeaderWrapper
+      <Header
         passLoggedIn={handleUserChange}
         passLogout={handleLogout}
         user={user}

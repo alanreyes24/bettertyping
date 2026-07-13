@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import PropTypes from "prop-types";
 
 function Replay({ test }) {
   // Initialize replay state with event log from the test

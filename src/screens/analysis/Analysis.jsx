@@ -1,16 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Header from "../../components/header/Header";
 import "./Analysis.css";
-import { useParams } from "react-router-dom";
 import axios from "axios";
-import Test from "./../home/homepage/components/test/Test";
-import { useNavigate } from "react-router-dom";
-import HeaderWrapper from "../../components/header/HeaderWrapper";
 
 function Analysis({ user, handleUserChange, handleLogout }) {
-  const navigate = useNavigate();
-
-
   const [isLoading, setIsLoading] = useState(false);
 
   async function getAnalysis() {
@@ -28,7 +21,7 @@ function Analysis({ user, handleUserChange, handleLogout }) {
 
   return (
     <>
-      <HeaderWrapper
+      <Header
         passLoggedIn={handleUserChange}
         passLogout={handleLogout}
         user={user}
