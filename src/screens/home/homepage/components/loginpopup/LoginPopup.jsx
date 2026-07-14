@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -42,7 +42,7 @@ export function LoginForm({ sendUsernameToHeader, showHide }) {
       await logIn();
     } catch (error) {
       setError(error.response ? error.response.data : "An error occurred");
-      console.log(error.response ? error.response.data : error);
+      console.error(error.response ? error.response.data : error);
     }
   };
 

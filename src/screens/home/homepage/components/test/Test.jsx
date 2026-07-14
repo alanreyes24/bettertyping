@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import Timer from "../timer/Timer";
 import TextArea from "../textarea/TextArea";
 import axios from "axios";
@@ -23,17 +23,12 @@ const Test = ({ user, sendData }) => {
       test.isValid = false;
     }
 
-    console.log(test.words.wordList);
-
-    console.log("above was word list");
-
     if (test.userID === "") {
 
       test.userID = "guest";
       test.username = "guest";
 
       try {
-        console.log("SENDING GUEST TEST!");
         await axios.post(
           `${import.meta.env.VITE_API_URL}/test/guest`,
           test,
@@ -45,7 +40,6 @@ const Test = ({ user, sendData }) => {
       }
     } else {
       try {
-        console.log("SENDING!");
         await axios.post(`${import.meta.env.VITE_API_URL}/test`, test, {
           withCredentials: true,
         });
@@ -58,11 +52,9 @@ const Test = ({ user, sendData }) => {
     // weird things happen (its sent twice) while timestamp is 0 (i have no idea awhy)
 
     if (test.timestamp != 0) {
-      console.log("sending from end test");
-
       sendTestToBackend()
         .catch((error) => {
-          console.log(error);
+          console.error(error);
         })
         .then(() => {
           setSent(true);
@@ -150,19 +142,6 @@ const Test = ({ user, sendData }) => {
       username: user.username,
     }));
   }, [user]);
-
-  useEffect(() => {
-    if (test.state == 1) {
-      console.log("playing");
-      // playReplay();
-    } else if (test.state == 2) {
-      console.log("paused");
-    } else if (test.state == 3) {
-      console.log("finished");
-    } else if (test.state == -1) {
-      console.log("resetting");
-    }
-  }, [test.state]);
 
   // TIMER
   // timeLeft is in deciseconds and is derived from wall-clock time, so late
@@ -520,7 +499,6 @@ const Test = ({ user, sendData }) => {
               }));
             }}
             onTextFinished={() => {
-              console.log("text finished");
               setTest((prevTest) => ({
                 ...prevTest,
                 userID: user._id,

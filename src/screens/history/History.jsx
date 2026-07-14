@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import "./History.css";
 import Header from "../../components/header/Header";
@@ -50,7 +50,7 @@ function History({ user, handleUserChange, handleLogout }) {
 
       setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error(error);
       setUserHasTakenTests(false);
       setLoading(false);
     }

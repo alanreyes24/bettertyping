@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 
 import Word from "../word/Word";
 import Cursor from "../cursor/Cursor";
@@ -96,7 +96,6 @@ function TextArea({
   // Pass the actual word strings to the parent when the test ends
   useEffect(() => {
     if (test.state === 4) {
-      console.log("passing words", wordStrings);
       passWords(wordStrings);
     }
   }, [test.state, passWords, wordStrings]);
@@ -222,7 +221,6 @@ function TextArea({
       test.state === 3 &&
       JSON.stringify(test.eventLog) !== JSON.stringify(eventLog)
     ) {
-      console.log("passing");
       passEventLog(eventLog);
     }
   }, [currentLetterArrayIndexValue, test.state, test.timer.timeLeft]);
@@ -392,7 +390,6 @@ function extendWordList(amount) {
           document.getElementsByClassName("letter").length ===
           currentLetterIndex + 2
         ) {
-          console.log("calling on finished");
           onTextFinished();
         }
       } else if (input === "Backspace" && currentLetterIndex > 0) {

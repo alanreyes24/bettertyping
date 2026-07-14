@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import LoginPopup from "../../screens/home/homepage/components/loginpopup/LoginPopup";
@@ -33,7 +33,7 @@ function Header({ user, passLoggedIn, passLogout }) {
       setUserLoggedIn(false);
       passLogout();
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   }
 

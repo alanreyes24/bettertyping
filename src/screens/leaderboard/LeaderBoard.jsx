@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import Header from "../../components/header/Header";
 import "./LeaderBoard.css";
@@ -32,14 +32,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
 
   // Fetch data when selections change
   useEffect(() => {
-    console.log(
-      "useEffect triggered with testType:",
-      testType,
-      "testLength:",
-      testLength,
-      "timeFrame:",
-      timeFrame
-    );
     if (testType === "Words") {
       retrieveWordTestRankings(testLength, timeFrame);
     } else {
@@ -56,26 +48,14 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
     }
   }, [testType]);
 
-  // Log testData updates
-  useEffect(() => {
-    console.log("Updated testData:", testData);
-  }, [testData]);
-
   // Fetch word test rankings
   async function retrieveWordTestRankings(count, time) {
-    console.log(
-      "Fetching word rankings with count:",
-      count,
-      "and timeFrame:",
-      time
-    );
     try {
       const response = await axios.get(
         `${
           import.meta.env.VITE_API_URL
         }/test/wordRankings?count=${count}&timeFrame=${time}`
       );
-      console.log("API response data:", response.data);
       setTestData(response.data.slice(0, 20)); // Limit to top 20
     } catch (error) {
       console.error("Error fetching rankings:", error.response);
@@ -84,19 +64,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
 
   // Fetch time test rankings
   async function retrieveTimeTestRankings(duration, timeFrame) {
-    console.log(
-      "Fetching time rankings with duration:",
-      duration,
-      "and timeFrame:",
-      timeFrame
-    );
     try {
       const response = await axios.get(
         `${
           import.meta.env.VITE_API_URL
         }/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`
       );
-      console.log("API response data:", response.data);
       setTestData(response.data.slice(0, 20)); // Limit to top 20
     } catch (error) {
       console.error("Error fetching rankings:", error.response);

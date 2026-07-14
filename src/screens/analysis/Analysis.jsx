@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "../../components/header/Header";
 import "./Analysis.css";
 import axios from "axios";
@@ -58,10 +58,10 @@ function Analysis({ user, handleUserChange, handleLogout }) {
           Get Analysis
         </a>
         {isLoading && (
-          <div class="load">
-            <div class="progress"></div>
-            <div class="progress"></div>
-            <div class="progress"></div>
+          <div className="load">
+            <div className="progress"></div>
+            <div className="progress"></div>
+            <div className="progress"></div>
           </div>
         )}
         <div style={{ fontSize: "10px" }}>{JSON.stringify(analysisJson)}</div>

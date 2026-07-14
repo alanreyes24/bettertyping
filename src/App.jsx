@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import axios from "axios";
 import "./App.css";
@@ -28,7 +28,7 @@ function App() {
         username: response.data.username,
       }));
     } catch (error) {
-      console.log(error.response.data);
+      console.error(error.response.data);
       if (
         error.response.data === "Token has expired." ||
         error.response.data === "No token provided."

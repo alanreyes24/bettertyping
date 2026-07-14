@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 function Replay({ test }) {
   // Initialize replay state with event log from the test
@@ -180,20 +180,6 @@ function Replay({ test }) {
     test.state,
   ]);
 
-  // Handle state changes
-  useEffect(() => {
-    if (replay.state === 1) {
-      console.log("playing");
-      // Playing state is handled by the frame update useEffect
-    } else if (replay.state === 2) {
-      console.log("paused");
-    } else if (replay.state === 3) {
-      console.log("finished");
-    } else if (replay.state === -1) {
-      console.log("resetting");
-      // Actual reset happens in resetReplay function
-    }
-  }, [replay.state]);
 
   // Get letter status class
   const getLetterClass = (letterIndex) => {

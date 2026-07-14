@@ -1,4 +1,5 @@
-import React, { useState, useEffect, createElement } from "react";
+import { useState, useEffect, createElement } from "react";
+import { easyWords, normalWords, hardWords } from "./wordLists";
 
 function Word({ selectedDifficulty, word }) {
  

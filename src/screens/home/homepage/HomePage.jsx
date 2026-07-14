@@ -1,5 +1,5 @@
 // src/components/homepage/HomePage.jsx
-import React, { useState } from "react";
+import { useState } from "react";
 import Header from "../../../components/header/Header";
 import Test from "./components/test/Test";
 import Replay from "./components/replay/Replay";
@@ -47,7 +47,7 @@ function HomePage({ user, handleUserChange, handleLogout }) {
                 analysis
               </h1>
               <p className='max-w-2xl self-center text-center mx-auto text-muted-foreground md:text-xl/relaxed'>
-                here's an indepth look on how you did
+                here&apos;s an indepth look on how you did
               </p>
             </div>
 
