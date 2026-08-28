@@ -20,9 +20,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+const TIME_FRAME = "all-time";
+
 function LeaderBoard({ user, handleUserChange, handleLogout }) {
   // State variables for selections
-  const [timeFrame, setTimeFrame] = useState("all-time");
   const [testType, setTestType] = useState("Words");
   const [testLength, setTestLength] = useState(25);
   const [testData, setTestData] = useState([]);
@@ -33,11 +34,11 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   // Fetch data when selections change
   useEffect(() => {
     if (testType === "Words") {
-      retrieveWordTestRankings(testLength, timeFrame);
+      retrieveWordTestRankings(testLength);
     } else {
-      retrieveTimeTestRankings(testLength, timeFrame);
+      retrieveTimeTestRankings(testLength);
     }
-  }, [testType, testLength, timeFrame]);
+  }, [testType, testLength]);
 
   // Reset test length when test type changes
   useEffect(() => {
@@ -49,12 +50,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   }, [testType]);
 
   // Fetch word test rankings
-  async function retrieveWordTestRankings(count, time) {
+  async function retrieveWordTestRankings(count) {
     try {
       const response = await axios.get(
         `${
           import.meta.env.VITE_API_URL
-        }/test/wordRankings?count=${count}&timeFrame=${time}`
+        }/test/wordRankings?count=${count}&timeFrame=${TIME_FRAME}`
       );
       setTestData(response.data.slice(0, 20)); // Limit to top 20
     } catch (error) {
@@ -63,12 +64,12 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
   }
 
   // Fetch time test rankings
-  async function retrieveTimeTestRankings(duration, timeFrame) {
+  async function retrieveTimeTestRankings(duration) {
     try {
       const response = await axios.get(
         `${
           import.meta.env.VITE_API_URL
-        }/test/timeRankings?duration=${duration}&timeFrame=${timeFrame}`
+        }/test/timeRankings?duration=${duration}&timeFrame=${TIME_FRAME}`
       );
       setTestData(response.data.slice(0, 20)); // Limit to top 20
     } catch (error) {
@@ -162,9 +163,7 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
       <div className="max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-1 mt-16 gap-6 mx-auto mb-64 slide-in-bottom-delay">
         <div className="space-y-1 flex justify-between">
           <div>
-            <h2 className="text-4xl font-bold">
-              {timeFrame.charAt(0).toLowerCase() + timeFrame.slice(1)}
-            </h2>
+            <h2 className="text-4xl font-bold">all-time</h2>
             <p className="text-muted-foreground">
               {testType === "Words"
                 ? `${testLength} words`
@@ -172,19 +171,6 @@ function LeaderBoard({ user, handleUserChange, handleLogout }) {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Select
-              onValueChange={(value) => setTimeFrame(value)}
-              value={timeFrame}
-            >
-              <SelectTrigger id="time" aria-label="Select Time">
-                <SelectValue placeholder="Select Time" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="daily">daily</SelectItem>
-                <SelectItem value="weekly">weekly</SelectItem>
-                <SelectItem value="all-time">all-time</SelectItem>
-              </SelectContent>
-            </Select>
             <Select onValueChange={(v) => setTestType(v)} value={testType}>
               <SelectTrigger id="type" aria-label="Select Type">
                 <SelectValue placeholder="Select Type" />
